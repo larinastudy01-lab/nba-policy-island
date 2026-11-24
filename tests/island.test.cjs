@@ -9,14 +9,14 @@ const O=require("../assets/online.js");
 const root=path.resolve(__dirname,"..");
 const sql=fs.readFileSync(path.join(root,"supabase/schema.sql"),"utf8");
 
-test("8 unique NBA teams and 15 distinct courts, five per public zone",()=>{
-  assert.equal(C.TEAMS.length,8);assert.equal(C.COURTS.length,15);
-  assert.equal(new Set([...C.TEAMS,...C.COURTS].map(x=>x.id)).size,23);
-  assert.equal(C.TEAMS.filter(t=>t.region==="灣岸區").length,3);
-  assert.equal(C.TEAMS.filter(t=>t.region==="高地區").length,2);
-  assert.equal(C.TEAMS.filter(t=>t.region==="都會區").length,3);
+test("16 unique NBA teams and 15 distinct courts, five per public zone",()=>{
+  assert.equal(C.TEAMS.length,16);assert.equal(C.COURTS.length,15);
+  assert.equal(new Set([...C.TEAMS,...C.COURTS,...C.ENCOUNTERS].map(x=>x.id)).size,34);
+  assert.equal(C.TEAMS.filter(t=>t.region==="洛城街區").length,2);
+  assert.equal(C.TEAMS.filter(t=>t.region==="五大湖區").length,2);
+  assert.equal(C.TEAMS.filter(t=>t.region==="東岸街區").length,3);
   for(const type of ["harbor","park","roof"])assert.equal(C.COURTS.filter(c=>c.type===type).length,5);
-  for(const item of [...C.TEAMS,...C.COURTS]){assert.ok(item.x>0&&item.x<1200);assert.ok(item.y>0&&item.y<800);assert.ok(item.name);}
+  for(const item of [...C.TEAMS,...C.COURTS]){assert.ok(item.x>0&&item.x<C.MAP.width);assert.ok(item.y>0&&item.y<C.MAP.height);assert.ok(item.name);}
 });
 test("landmark kinds route to separate data and reject invalid IDs",()=>{
   const state=C.createIslandState();
@@ -35,7 +35,7 @@ test("both team panels share home/away scores in all four states; only home aren
       if(state==="idle"||state==="scheduled"){assert.equal(home.homeScore,null);assert.equal(home.awayScore,null);}
     }
   }
-  assert.equal(C.TEAMS.filter(t=>C.gameForTeam(t.id,"live").glowing).length,4);
+  assert.equal(C.TEAMS.filter(t=>C.gameForTeam(t.id,"live").glowing).length,8);
   assert.equal(C.TEAMS.filter(t=>C.gameForTeam(t.id,"final").glowing).length,0);
   const warriors=C.gameForTeam("warriors","live");
   assert.equal(warriors.homeId,"lakers");assert.equal(warriors.awayId,"warriors");
@@ -124,7 +124,8 @@ test("Supabase adapter uses anonymous Auth and own-score RPC without a caller-su
 });
 test("SQL contract covers every RPC and all 15 court IDs; database execution remains pending",()=>{
   const online=fs.readFileSync(path.join(root,"assets/online.js"),"utf8");
-  for(const [,name] of online.matchAll(/rpc\("(nba_[a-z_]+)"/g))assert.ok(sql.includes(`function public.${name}(`),name);
+  const allSql=sql+fs.readFileSync(path.join(root,"supabase/games-v2.sql"),"utf8");
+  for(const [,name] of online.matchAll(/rpc\("(nba_[a-z_]+)"/g))assert.ok(allSql.includes(`function public.${name}(`),name);
   const courts=sql.match(/court_id = any\(array\[([^\]]+)\]/)[1].match(/'(?:harbor|park|roof)-\d+'/g).map(x=>x.slice(1,-1));
   assert.deepEqual([...courts].sort(),C.COURTS.map(c=>c.id).sort());
   assert.equal((sql.match(/enable row level security/g)||[]).length,2);
@@ -144,5 +145,5 @@ test("HTML assets and anchors resolve locally and beneath /nba-policy-island/",(
     assert.ok(ref.startsWith("./"),ref);assert.ok(fs.existsSync(path.join(root,ref)),ref);assert.ok(new URL(ref,"https://example.github.io/nba-policy-island/").pathname.startsWith("/nba-policy-island/"));
   }
   assert.doesNotMatch(html,/\son\w+=/i);assert.ok(html.includes('id="policy-challenge"'));
-  assert.ok(html.includes("多倫多暴龍"));assert.ok(html.includes("8／30"));
+  assert.ok(html.includes("多倫多暴龍"));assert.ok(html.includes("16／30"));
 });

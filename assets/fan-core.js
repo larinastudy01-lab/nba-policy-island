@@ -26,8 +26,16 @@
     { teamId: "mavericks", starId: "dirk", starName: "德克・諾威斯基", english: "Dirk Nowitzki", number: "41", venue: "藍色天際球館", point: "主場隊徽旁", x: 69, y: 75, skin: "peach", hair: "sweep", hairColor: "honey" },
     { teamId: "bulls", starId: "jordan", starName: "麥可・喬丹", english: "Michael Jordan", number: "23", venue: "紅色傳奇球館", point: "冠軍旗幟下", x: 65, y: 75, skin: "brown", hair: "shaved", hairColor: "ink" },
     { teamId: "celtics", starId: "bird", starName: "賴瑞・柏德", english: "Larry Bird", number: "33", venue: "綠衫經典球館", point: "木地板中線", x: 67, y: 74, skin: "peach", hair: "sweep", hairColor: "honey" },
-    { teamId: "knicks", starId: "ewing", starName: "派屈克・尤因", english: "Patrick Ewing", number: "33", venue: "都會橘藍球館", point: "球員席旁", x: 68, y: 75, skin: "deep", hair: "crop", hairColor: "ink", beard: true }
-  ].map(station => ({ ...station, label: "隊史球星致敬・非現役名單", illustration: `./assets/stars/${station.starId}.svg`, background: `./assets/arenas/${station.teamId}.svg` }));
+    { teamId: "knicks", starId: "ewing", starName: "派屈克・尤因", english: "Patrick Ewing", number: "33", venue: "都會橘藍球館", point: "球員席旁", x: 68, y: 75, skin: "deep", hair: "crop", hairColor: "ink", beard: true },
+    { teamId: "spurs", starId: "duncan", starName: "提姆・鄧肯", english: "Tim Duncan", number: "21", venue: "銀黑基石球館", point: "銀色旗幟旁", x: 66, y: 75, skin: "bronze", hair: "crop", hairColor: "ink", beard: true },
+    { teamId: "thunder", starId: "westbrook", starName: "羅素・衛斯布魯克", english: "Russell Westbrook", number: "0", venue: "雷鳴動力球館", point: "閃電看台前", x: 68, y: 75, skin: "brown", hair: "crop", hairColor: "ink", expression: "focus" },
+    { teamId: "suns", starId: "nash", starName: "史蒂夫・奈許", english: "Steve Nash", number: "13", venue: "紫橘日光球館", point: "日光入口旁", x: 65, y: 75, skin: "peach", hair: "sweep", hairColor: "chestnut" },
+    { teamId: "timberwolves", starId: "garnett", starName: "凱文・賈奈特", english: "Kevin Garnett", number: "21", venue: "森林狼影球館", point: "森林看台下", x: 67, y: 75, skin: "deep", hair: "shaved", hairColor: "ink", expression: "focus" },
+    { teamId: "bucks", starId: "kareem", starName: "卡里姆・阿布都賈霸", english: "Kareem Abdul-Jabbar", number: "33", venue: "綠鹿經典球館", point: "經典球衣牆前", x: 66, y: 75, skin: "brown", hair: "curls", hairColor: "ink", glasses: "sport", beard: true },
+    { teamId: "sixers", starId: "iverson", starName: "艾倫・艾佛森", english: "Allen Iverson", number: "3", venue: "費城答案球館", point: "藍紅通道旁", x: 68, y: 75, skin: "bronze", hair: "braids", hairColor: "ink", headband: "team" },
+    { teamId: "heat", starId: "wade", starName: "德韋恩・韋德", english: "Dwyane Wade", number: "3", venue: "南灣熱浪球館", point: "暖身球框旁", x: 65, y: 75, skin: "brown", hair: "crop", hairColor: "ink", beard: true },
+    { teamId: "raptors", starId: "carter", starName: "文斯・卡特", english: "Vince Carter", number: "15", venue: "北境飛翔球館", point: "北境旗幟下", x: 68, y: 75, skin: "bronze", hair: "shaved", hairColor: "ink" }
+  ].map(station => ({ ...station, id: `home-photo-${station.teamId}`, arenaId: Island.getLandmark("nba", station.teamId).arenaId, historical: true, label: "代表球星・隊史球星致敬（非現役名單）", illustration: `./assets/stars/${station.starId}.svg`, background: `./assets/arenas/${station.teamId}.svg` }));
 
   const copy = value => JSON.parse(JSON.stringify(value));
   const xml = value => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[char]);
@@ -47,6 +55,30 @@
     return normalizeAvatar(value);
   }
   function getStation(teamId) { return STATIONS.find(station => station.teamId === teamId) || null; }
+  function getStar(starId) { return STATIONS.find(station => station.starId === starId) || null; }
+  function validDateKey(value) {
+    if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const date = new Date(value + "T00:00:00Z");
+    return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
+  }
+  function taiwanDate(now = Date.now()) {
+    const parts = new Intl.DateTimeFormat("en", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(now));
+    const part = type => parts.find(item => item.type === type).value;
+    return `${part("year")}-${part("month")}-${part("day")}`;
+  }
+  function encounterDateConfig(base, now = Date.now()) {
+    const url = new URL(base), canTest = url.protocol === "file:" || ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
+    const requested = url.searchParams.get("encounterDate");
+    const isTest = Boolean(canTest && validDateKey(requested));
+    return { date: isTest ? requested : taiwanDate(now), canTest, isTest };
+  }
+  function dailyEncounter(date = taiwanDate()) {
+    if (!validDateKey(date)) throw new RangeError("Invalid encounter date.");
+    const day = Math.round((Date.parse(date + "T00:00:00Z") - Date.UTC(2026, 0, 1)) / 86400000);
+    const mod = (number, count) => ((number % count) + count) % count;
+    const star = STATIONS[mod(day, STATIONS.length)], place = Island.ENCOUNTERS[mod(day, Island.ENCOUNTERS.length)];
+    return { date, teamId: star.teamId, starId: star.starId, locationId: place.id };
+  }
   function nightAvailable(teamId, gameState) { return Boolean(getStation(teamId) && Island.gameForTeam(teamId, gameState).glowing); }
   function createPhoto(teamId, avatar, { pose = "stand", background = "day", capturedAt = new Date().toISOString() } = {}, gameState = "idle") {
     const station = getStation(teamId);
@@ -58,12 +90,34 @@
   }
   function normalizePhoto(value) {
     const station = value && getStation(value.teamId);
-    if (!station || value.version !== 1 || station.starId !== value.starId || !["stand", "ball"].includes(value.pose) || !["day", "night"].includes(value.background) || typeof value.capturedAt !== "string" || !Number.isFinite(Date.parse(value.capturedAt)) || !value.avatar || typeof value.avatar !== "object") return null;
+    if (!station || station.starId !== value.starId || !["stand", "ball"].includes(value.pose) || typeof value.capturedAt !== "string" || !Number.isFinite(Date.parse(value.capturedAt)) || !value.avatar || typeof value.avatar !== "object") return null;
+    if (value.version === 2 && value.kind === "encounter") {
+      const place = Island.getLandmark("encounter", value.locationId);
+      if (!place || value.background !== place.id || !validDateKey(value.encounterDate)) return null;
+      const sceneVersion=value.sceneVersion===2?2:1;
+      const legacyNames={"meet-pier":"碼頭步道","meet-plaza":"中央廣場","meet-garden":"綠園入口"};
+      const locationName=(typeof value.locationName==="string"?Array.from(value.locationName.replace(/[\u0000-\u001f\u007f]/g,"").replace(/[\uD800-\uDFFF]/gu,"�").trim()).slice(0,40).join(""):"")||(sceneVersion===2?place.name:legacyNames[place.id]);
+      return { version: 2, kind: "encounter", teamId: station.teamId, starId: station.starId, locationId: place.id, locationName,sceneVersion,background:place.id,encounterDate:value.encounterDate,avatar:normalizeAvatar(value.avatar),pose:value.pose,capturedAt:new Date(value.capturedAt).toISOString() };
+    }
+    if (value.version !== 1 || (value.kind && value.kind !== "home") || !["day", "night"].includes(value.background)) return null;
     // 收藏是歷史快照：重播夜場照片時不重新要求目前仍在 LIVE。
     return { version: 1, teamId: value.teamId, starId: value.starId, avatar: normalizeAvatar(value.avatar), pose: value.pose, background: value.background, capturedAt: new Date(value.capturedAt).toISOString() };
   }
+  function createEncounterPhoto(encounter, avatar, { pose = "stand", capturedAt = new Date().toISOString() } = {}) {
+    const scheduled = dailyEncounter(encounter.date);
+    if (["teamId", "starId", "locationId"].some(key => scheduled[key] !== encounter[key])) throw new RangeError("Invalid daily encounter.");
+    const record = normalizePhoto({ version: 2, kind: "encounter", ...scheduled, sceneVersion:2,encounterDate: scheduled.date, background: scheduled.locationId, avatar: normalizeAvatar(avatar), pose, capturedAt });
+    if (!record) throw new TypeError("Invalid encounter photo.");
+    return record;
+  }
+  function photoInfo(value) {
+    const record = normalizePhoto(value);if (!record) throw new TypeError("Invalid photo.");
+    const star = getStation(record.teamId), team = Island.getLandmark("nba", record.teamId), encounter = record.kind === "encounter";
+    const place = encounter ? Island.getLandmark("encounter", record.locationId) : null;
+    return { record, star, team, encounter, venue: record.locationName || place?.name || star.venue, backgroundLabel: encounter ? "島上偶遇" : record.background === "night" ? "夜場燈光" : "一般合影" };
+  }
   function createFanSession(storage) {
-    let saved = normalizeAvatar(), draft, album = {};
+    let saved = normalizeAvatar(), draft, album = {}, encounters = {};
     let storageAvailable = Boolean(storage && typeof storage.getItem === "function" && typeof storage.setItem === "function");
     function read(key) {
       let raw;
@@ -74,19 +128,22 @@
         const avatarData = read(AVATAR_KEY);
         if (avatarData?.version === 1) saved = normalizeAvatar(avatarData.avatar);
         const albumData = read(ALBUM_KEY);
-        if (albumData?.version === 1 && Array.isArray(albumData.photos)) {
-          for (const value of albumData.photos.slice(0, 100)) { const photo = normalizePhoto(value); if (photo) album[photo.teamId] = photo; }
+        if ([1, 2].includes(albumData?.version) && Array.isArray(albumData.photos)) {
+          for (const value of albumData.photos.slice(0, 100)) { const photo = normalizePhoto(value); if (photo && photo.kind !== "encounter") album[photo.teamId] = photo; }
+        }
+        if (albumData?.version === 2 && Array.isArray(albumData.encounters)) {
+          for (const value of albumData.encounters.slice(0, 100)) { const photo = normalizePhoto(value); if (photo?.kind === "encounter") encounters[photo.starId] = photo; }
         }
     }
     draft = copy(saved);
     function write(key, value) { if (storageAvailable) { try { storage.setItem(key, JSON.stringify(value)); } catch { storageAvailable = false; } } }
     return {
-      getState: () => ({ saved: copy(saved), draft: copy(draft), album: copy(album), collected: Object.keys(album).length, storageAvailable }),
+      getState: () => {const homeAlbum=Object.fromEntries(Object.values(album).map(photo=>[getStation(photo.teamId).arenaId,copy(photo)]));return {saved:copy(saved),draft:copy(draft),album:copy(album),homeAlbum,encounters:copy(encounters),collected:Object.keys(homeAlbum).length,encounterCollected:Object.keys(encounters).length,storageAvailable};},
       edit(patch) { draft = normalizeAvatar({ ...draft, ...patch }); return copy(draft); },
       randomize(random) { draft = randomAvatar(random, draft.nickname); return copy(draft); },
       reset() { draft = normalizeAvatar(); return copy(draft); },
       save() { saved = copy(draft); write(AVATAR_KEY, { version: 1, avatar: saved }); return copy(saved); },
-      collect(value) { const photo = normalizePhoto(value); if (!photo) throw new TypeError("Invalid photo record."); album[photo.teamId] = copy(photo); write(ALBUM_KEY, { version: 1, photos: Object.values(album) }); return copy(photo); }
+      collect(value) { const photo = normalizePhoto(value); if (!photo) throw new TypeError("Invalid photo record."); if (photo.kind === "encounter") encounters[photo.starId] = copy(photo);else album[photo.teamId] = copy(photo);write(ALBUM_KEY, { version: 2, photos: Object.values(album), encounters: Object.values(encounters) });return copy(photo); }
     };
   }
 
@@ -121,7 +178,7 @@ ${pose === "ball" ? '<g data-layer="ball"><circle cx="192" cy="103" r="25" fill=
     const a = normalizeAvatar(avatar);
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320" role="img" aria-label="${xml(a.nickname)}的籃球角色"><title>${xml(a.nickname)}的分層籃球角色</title>${avatarBody(a, options)}</svg>`;
   }
-  function starAvatar(station) { return normalizeAvatar({ ...DEFAULT_AVATAR, ...station, nickname: station.starName, jersey: station.teamId, expression: "smile", headband: "none", wristband: "team", shoes: "white" }); }
+  function starAvatar(station) { return normalizeAvatar({ ...DEFAULT_AVATAR, ...station, nickname: station.starName, jersey: station.teamId, expression: station.expression || "smile", headband: station.headband || "none", wristband: "team", shoes: "white" }); }
   function starSVG(teamId) { const station = getStation(teamId); if (!station) throw new RangeError("Unknown station."); return avatarSVG(starAvatar(station), { pose: "ball", beard: Boolean(station.beard) }).replace("</title>", `</title><desc>${xml(station.starName)}・原創 Q 版・${xml(station.label)}。非官方照片或隊徽素材。</desc>`); }
   function arenaBody(teamId, night = false) {
     const station = getStation(teamId), team = Island.TEAMS.find(item => item.id === teamId);
@@ -130,11 +187,20 @@ ${pose === "ball" ? '<g data-layer="ball"><circle cx="192" cy="103" r="25" fill=
     return `<rect width="960" height="640" fill="${night ? "#09142b" : "#1e3b50"}"/><path d="M0 110 170 30h620l170 80M80 0l180 130M880 0 700 130M0 110h960" fill="none" stroke="#8ba2aa" stroke-width="8"/>${seats}<rect x="372" y="70" width="216" height="88" rx="9" fill="#0a1c2e" stroke="${team.accent}" stroke-width="4"/><text x="480" y="105" fill="${team.accent}" font-family="sans-serif" font-size="18" text-anchor="middle">POLICY ISLAND</text><text x="480" y="140" fill="#f2edda" font-family="sans-serif" font-size="28" font-weight="700" text-anchor="middle">${team.abbr} HOME</text><path d="M0 340H960V640H0Z" fill="${night ? "#8c6b49" : "#c7a46d"}"/><path d="M0 398H960M0 465H960M0 533H960M0 602H960M180 340 100 640M365 340 340 640M595 340 620 640M780 340 860 640" stroke="#543d3429" stroke-width="2"/><ellipse cx="480" cy="472" rx="138" ry="69" fill="${team.color}" stroke="${team.accent}" stroke-width="5"/><text x="480" y="485" text-anchor="middle" fill="${team.accent}" font-family="sans-serif" font-size="38" font-weight="700">${team.abbr}</text><path d="M36 350h160l-42 190H10m914-190H764l42 190h144M480 340v300" fill="none" stroke="#fff1d5" stroke-width="4"/><rect x="90" y="220" width="100" height="120" rx="40" fill="#071827" stroke="${team.accent}" stroke-width="4"/><text x="140" y="275" text-anchor="middle" fill="#abc6d9" font-family="sans-serif" font-size="14">TUNNEL</text><path d="M866 155v200m-45-190h90v60h-90Z" fill="none" stroke="#c2d3d8" stroke-width="5"/><ellipse cx="866" cy="230" rx="23" ry="6" fill="none" stroke="#f3c45b" stroke-width="4"/>${night ? `<path d="M150 45 50 410h240ZM810 45 670 410h240Z" fill="${team.accent}" opacity=".13"/><g fill="#fff2c1"><circle cx="150" cy="45" r="12"/><circle cx="810" cy="45" r="12"/></g>` : '<g fill="#b9d8e0"><rect x="100" y="44" width="85" height="8" rx="4"/><rect x="775" y="44" width="85" height="8" rx="4"/></g>'}`;
   }
   function arenaSVG(teamId, night = false) { const station = getStation(teamId); if (!station) throw new RangeError("Unknown station."); return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" role="img"><title>${xml(station.venue)}・原創場館${night ? "夜場燈光" : "一般合影"}</title>${arenaBody(teamId, night)}</svg>`; }
+  function encounterBody(locationId,sceneVersion=2) {
+    const place = Island.getLandmark("encounter", locationId);if (!place) throw new RangeError("Unknown encounter place.");
+    const common = '<rect width="960" height="640" fill="#9cbdc1"/><circle cx="795" cy="92" r="38" fill="#f1d99a"/>';
+    if (place.type === "pier") return common + '<path d="M0 180Q480 128 960 180V640H0Z" fill="#39768d"/><path d="M30 230h160m460 25h220M80 315h190m410 45h170" stroke="#91bfca" stroke-width="4" opacity=".6"/><path d="M260 310 640 310 940 640H20Z" fill="#b68f65" stroke="#725d4e" stroke-width="5"/><path d="M190 395h525M128 470h657M72 545h781M335 310 205 640M555 310l165 330M250 315V205m400 110V205M240 235h420" stroke="#785f4b" stroke-width="5"/><path d="M110 230 122 85h45l13 145Z" fill="#e3ddbe"/><path d="M115 90h60V58h-60Z" fill="#e7b74f"/><path d="m108 58 37-27 37 27Z" fill="#365969"/>';
+    if (place.type === "plaza") return common + '<path d="M0 240 150 150 300 210 460 125 610 203 800 150 960 230V380H0Z" fill="#536d78"/><path d="M0 338H960V640H0Z" fill="#aab3a4"/><path d="M0 410H960M0 485H960M0 560H960M200 338 85 640M390 338 365 640M580 338 605 640M770 338 890 640" stroke="#d5dac7" stroke-width="4"/><ellipse cx="480" cy="443" rx="230" ry="98" fill="#335b70" stroke="#dbc375" stroke-width="8"/><ellipse cx="480" cy="443" rx="62" ry="29" fill="none" stroke="#dbc375" stroke-width="4"/><path d="M480 345v196m-224-98h448" stroke="#dbc375" stroke-width="4"/><path d="M100 350V170h50m710 180V170h-50" stroke="#415d6c" stroke-width="9"/><g fill="#f3d789"><ellipse cx="150" cy="170" rx="22" ry="8"/><ellipse cx="810" cy="170" rx="22" ry="8"/></g>';
+    const lake=sceneVersion===2?'<path d="M0 200Q360 150 960 200V400H0Z" fill="#397b96"/><path d="M30 245h180m310-20h330M80 310h220m420 30h190" stroke="#a0ccd0" stroke-width="4"/><path d="M0 395Q480 315 960 395V640H0Z" fill="#47795f"/>':'<path d="M0 230Q230 170 460 248Q680 160 960 238V640H0Z" fill="#47795f"/>';
+    return common + lake + '<path d="M360 280h240l240 360H120Z" fill="#c4b393"/><path d="M290 465h380M205 555h550M440 290 355 640m165-350 85 350" stroke="#a39477" stroke-width="3"/><path d="M200 345V120h560v225" fill="none" stroke="#7b6248" stroke-width="18"/><path d="M225 120q255-105 510 0" fill="none" stroke="#3b6d55" stroke-width="40"/><g fill="#315b49"><circle cx="105" cy="210" r="83"/><circle cx="850" cy="215" r="90"/></g><path d="M105 260v125m745-120v125" stroke="#7b6248" stroke-width="18"/><g fill="#71a276"><circle cx="78" cy="150" r="60"/><circle cx="137" cy="168" r="61"/><circle cx="822" cy="153" r="63"/><circle cx="882" cy="177" r="65"/></g>';
+  }
+  function encounterSVG(locationId) { const place = Island.getLandmark("encounter", locationId);if (!place) throw new RangeError("Unknown encounter place.");return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" role="img"><title>${xml(place.name)}・島上偶遇原創場景</title>${encounterBody(locationId)}</svg>`; }
   function photoDate(value) { return new Date(value).toLocaleString("zh-TW", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }); }
   function photoSVG(value) {
     const record = normalizePhoto(value); if (!record) throw new TypeError("Invalid photo.");
-    const station = getStation(record.teamId), team = Island.TEAMS.find(item => item.id === record.teamId);
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img"><title>${xml(record.avatar.nickname)}與${xml(station.starName)}的主場合影</title>${arenaBody(record.teamId, record.background === "night")}<svg x="210" y="176" width="240" height="320" viewBox="0 0 240 320">${avatarBody(record.avatar, { pose: record.pose })}</svg><svg x="508" y="153" width="258" height="344" viewBox="0 0 240 320">${avatarBody(starAvatar(station), { pose: "ball", beard: Boolean(station.beard) })}</svg><rect x="0" y="512" width="960" height="128" fill="#081b2e"/><path d="M30 532h8v80h-8Z" fill="${team.accent}"/><g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#edf4f2"><text x="60" y="548" font-size="16" fill="${team.accent}">NBA 政策島 ／ HOME COURT MEMORIES</text><text x="60" y="579" font-size="24" font-weight="700">${xml(record.avatar.nickname)} × ${xml(station.starName)}</text><text x="60" y="605" font-size="16">${xml(team.name)}・${xml(station.venue)}・${record.background === "night" ? "夜場燈光" : "一般合影"}</text><text x="900" y="548" font-size="14" text-anchor="end">${xml(photoDate(record.capturedAt))}（台灣）</text><text x="900" y="626" font-size="12" fill="#abc1d2" text-anchor="end">原創 Q 版・隊史球星致敬・非現役名單</text></g></svg>`;
+    const { star: station, team, encounter, venue, backgroundLabel } = photoInfo(record);
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img"><title>${xml(record.avatar.nickname)}與${xml(station.starName)}的${encounter ? "偶遇" : "主場"}合影</title>${encounter ? encounterBody(record.locationId,record.sceneVersion) : arenaBody(record.teamId, record.background === "night")}<svg x="210" y="176" width="240" height="320" viewBox="0 0 240 320">${avatarBody(record.avatar, { pose: record.pose })}</svg><svg x="508" y="153" width="258" height="344" viewBox="0 0 240 320">${avatarBody(starAvatar(station), { pose: "ball", beard: Boolean(station.beard) })}</svg><rect x="0" y="512" width="960" height="128" fill="#081b2e"/><path d="M30 532h8v80h-8Z" fill="${team.accent}"/><g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#edf4f2"><text x="60" y="548" font-size="16" fill="${team.accent}">NBA 政策島 ／ ${encounter ? "ISLAND ENCOUNTER" : "HOME COURT MEMORIES"}</text><text x="60" y="579" font-size="24" font-weight="700">${xml(record.avatar.nickname)} × ${xml(station.starName)}</text><text x="60" y="605" font-size="16">${xml(team.name)}・${xml(venue)}・${backgroundLabel}</text><text x="900" y="548" font-size="14" text-anchor="end">${xml(photoDate(record.capturedAt))}（台灣）</text><text x="900" y="626" font-size="12" fill="#abc1d2" text-anchor="end">原創 Q 版・代表球星・隊史致敬・非現役名單</text></g></svg>`;
   }
   function svgDataURL(svg) { return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`; }
   async function exportPNG(record, environment = {}) {
@@ -147,5 +213,5 @@ ${pose === "ball" ? '<g data-layer="ball"><circle cx="192" cy="103" r="25" fill=
     context.drawImage(image, 0, 0, 960, 640);
     return new Promise((resolve, reject) => { canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("PNG_EXPORT_FAILED")), "image/png"); });
   }
-  return { AVATAR_KEY, ALBUM_KEY, OPTIONS, DEFAULT_AVATAR, STATIONS, normalizeAvatar, randomAvatar, getStation, nightAvailable, createPhoto, normalizePhoto, createFanSession, avatarSVG, starSVG, arenaSVG, photoSVG, photoDate, svgDataURL, exportPNG };
+  return { AVATAR_KEY, ALBUM_KEY, OPTIONS, DEFAULT_AVATAR, STATIONS, normalizeAvatar, randomAvatar, getStation, getStar, validDateKey, taiwanDate, encounterDateConfig, dailyEncounter, nightAvailable, createPhoto, createEncounterPhoto, normalizePhoto, photoInfo, createFanSession, avatarSVG, starSVG, arenaSVG, encounterSVG, photoSVG, photoDate, svgDataURL, exportPNG };
 });

@@ -46,6 +46,7 @@
     return {
       configured:checked.valid,reason:checked.reason||null,
       connect:authenticate,
+      capabilities:()=>rpc("nba_games_capabilities"),
       userId:()=>session?.user?.id||null,
       create:(courtId,name)=>rpc("nba_create_room",{p_court:courtId,p_name:name}),
       join:(courtId,invite,name)=>rpc("nba_join_room",{p_court:courtId,p_invite:invite,p_name:name}),
@@ -53,6 +54,8 @@
       ready:(roomId,ready)=>rpc("nba_set_ready",{p_room:roomId,p_ready:ready}),
       start:(roomId)=>rpc("nba_start_match",{p_room:roomId}),
       submit:(roomId,round,score,attempts)=>rpc("nba_submit_score",{p_room:roomId,p_round:round,p_score:score,p_attempts:attempts}),
+      submitResult:(roomId,round,gameId,seed,result)=>rpc("nba_submit_result",{p_room:roomId,p_round:round,p_game:gameId,p_seed:seed,p_result:result}),
+      choose:(roomId,round,turn,move)=>rpc("nba_choose_move",{p_room:roomId,p_round:round,p_turn:turn,p_move:move}),
       restart:(roomId)=>rpc("nba_restart_match",{p_room:roomId}),
       leave:(roomId)=>rpc("nba_leave_room",{p_room:roomId}),
       activity:()=>rpc("nba_court_activity"),

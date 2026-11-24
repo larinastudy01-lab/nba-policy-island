@@ -11,7 +11,7 @@ const date = "2026-11-24T06:30:00.000Z";
 const photo = (teamId = "warriors", avatar = F.DEFAULT_AVATAR, options = {}) => F.createPhoto(teamId, avatar, { capturedAt: date, ...options });
 function memory(initial = {}) { const records = new Map(Object.entries(initial));return { records, getItem: key => records.get(key) ?? null, setItem: (key, value) => records.set(key, value) }; }
 
-test("avatar options are finite, cover eight jerseys and reject injected option values", () => {
+test("avatar options are finite, cover 16 jerseys and reject injected option values", () => {
   assert.deepEqual(F.OPTIONS.jersey.map(option => option[0]), C.TEAMS.map(team => team.id));
   const avatar = F.normalizeAvatar({ nickname: '<script>&"球迷', hair: '<image href="x"/>', skin: "#ffffff", jersey: "unknown", number: "123" });
   assert.equal(avatar.hair, F.DEFAULT_AVATAR.hair);assert.equal(avatar.skin, F.DEFAULT_AVATAR.skin);assert.equal(avatar.jersey, "warriors");assert.equal(avatar.number, "30");
@@ -39,8 +39,8 @@ test("malformed storage is isolated from valid avatar data and does not block fu
   const session = F.createFanSession(storage);assert.equal(session.getState().saved.nickname, "已儲存");assert.equal(session.getState().storageAvailable, true);
   session.collect(photo());assert.equal(F.createFanSession(storage).getState().collected, 1);
 });
-test("8 unique star stations map to 8 existing NBA arenas and local original assets", () => {
-  assert.equal(F.STATIONS.length, 8);assert.equal(new Set(F.STATIONS.map(station => station.starId)).size, 8);
+test("16 unique star stations map to 16 existing NBA arenas and local original assets", () => {
+  assert.equal(F.STATIONS.length, 16);assert.equal(new Set(F.STATIONS.map(station => station.starId)).size, 16);
   assert.deepEqual(F.STATIONS.map(station => station.teamId).sort(), C.TEAMS.map(team => team.id).sort());
   assert.equal(F.getStation("warriors").starId, "curry");assert.equal(F.getStation("harbor-01"), null);
   for (const station of F.STATIONS) {
@@ -60,12 +60,12 @@ test("Warriors away at Lakers permits only Lakers night lighting; general photos
   assert.throws(() => F.createPhoto("lakers", {}, { background: "night" }, "final"), /Night background unavailable/);
   assert.ok(F.normalizePhoto(night));assert.ok(F.photoSVG(night).includes("夜場燈光"));
 });
-test("one collection per team replaces a retake, eight teams cap progress at eight", () => {
+test("one collection per team replaces a retake, 16 teams cap progress at 16", () => {
   const storage = memory(), session = F.createFanSession(storage);
   session.collect(photo());session.collect(photo("warriors", { ...F.DEFAULT_AVATAR, nickname: "重拍" }, { pose: "ball" }));
   assert.equal(session.getState().collected, 1);assert.equal(session.getState().album.warriors.avatar.nickname, "重拍");
   for (const station of F.STATIONS) session.collect(photo(station.teamId));
-  assert.equal(session.getState().collected, 8);assert.equal(F.createFanSession(storage).getState().collected, 8);
+  assert.equal(session.getState().collected, 16);assert.equal(F.createFanSession(storage).getState().collected, 16);
 });
 test("collection keeps capture-time appearance, pose, background and date after dress-up", () => {
   const session = F.createFanSession(memory());session.edit({ nickname: "拍照時", jersey: "warriors", shoes: "gold" });session.save();

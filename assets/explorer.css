@@ -1,0 +1,56 @@
+/* W08：所有地景共用 1600 × 1000 世界；鏡頭只變換 world，不移動點擊區。 */
+.explorer-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:0 0 12px;padding:12px;border:1px solid #365770;border-radius:10px;background:#10283c}
+.camera-actions,.day-controls{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.explorer-controls button,.explorer-controls select{min-height:44px;background:#17364a;border:1px solid #57758a;color:#e2ecea;border-radius:6px;font:inherit;font-size:11px;padding:9px 12px;cursor:pointer}
+.explorer-controls button[aria-pressed="true"]{border-color:#e8c56b;color:#ffdf8a;background:#273d49}
+.explorer-controls button:disabled{opacity:.4;cursor:default}.camera-actions label{font-size:10px;color:#b0c6cf;margin-left:8px}
+.explorer-controls button:focus-visible,.district-label:focus-visible,.island-encounter-actor:focus-visible{outline:3px solid #fff5c9;outline-offset:3px}
+.map-breadcrumb,.map-travel-status{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 15px;background:#102a3b;color:#c1d8dd;font-size:10px;line-height:1.7}
+.map-breadcrumb strong{font-size:12px;color:#f2dc9d}.map-breadcrumb span,.map-travel-status>span:last-child{color:#91aebc;font-size:9px}
+.island-map-canvas{overflow:hidden;background:#102f45;touch-action:pan-y}
+.island-world{position:absolute;inset:0;transform-origin:0 0;transition:transform 650ms cubic-bezier(.22,.65,.18,1);will-change:transform;isolation:isolate}
+.island-background{position:absolute;inset:0;transition:filter 450ms}
+#road-layer,#district-layer{position:absolute;inset:0;pointer-events:none}
+#road-layer{z-index:1}.island-roads{display:block;width:100%;height:100%}
+#landmark-layer{z-index:2}#district-layer{z-index:3}
+.district-label{position:absolute;transform:translate(-50%,-50%);padding:8px 13px;min-height:34px;white-space:nowrap;border:1px solid #b6c3a2;border-radius:5px;background:#183744e8;box-shadow:0 6px 0 #091e2966;color:#ebebcd;font:600 13px "Microsoft JhengHei",sans-serif;letter-spacing:1px;cursor:pointer;pointer-events:auto}
+.district-label:hover{background:#294d59;border-color:#ffde85}
+.landmark[data-muted="true"]{opacity:.92}
+.landmark[data-label="false"] .landmark-label,.landmark[data-label="false"] .landmark-game-label{visibility:hidden}
+.landmark:focus .landmark-label,.landmark:focus .landmark-game-label{visibility:visible}
+.landmark[data-selected="true"] .selection-ring{stroke:#ffdc78;stroke-width:3;stroke-dasharray:7 3}
+.landmark .arena-live-tag{display:none;text-anchor:middle;font:700 7px ui-monospace,monospace;fill:#ffe8a1;stroke:#182c45;stroke-width:2;paint-order:stroke}
+.landmark[data-glowing="true"] .arena-live-tag{display:block}
+.light-pool{fill:#ffd17a;opacity:0;transition:opacity 400ms}.lamp-bulb{fill:#b8c0a4}
+.road-night-edge{stroke:#91c5d8;opacity:0}.court-floodlight{opacity:.35}
+.bridge-rail{stroke:#d4cbb1;opacity:.65}
+.court-light-pool{fill:#ffe9b1;opacity:0}
+.island-map-canvas[data-theme="night"] .island-background{filter:brightness(.46) saturate(.85) hue-rotate(5deg)}
+.island-map-canvas[data-theme="night"] .light-pool{opacity:.19}
+.island-map-canvas[data-theme="night"] .lamp-bulb{fill:#ffe2a0;filter:drop-shadow(0 0 6px #ffda78)}
+.island-map-canvas[data-theme="night"] .road-night-edge{opacity:.4}
+.island-map-canvas[data-theme="night"] .bridge-rail{stroke:#ffde8b;opacity:.95;filter:drop-shadow(0 0 3px #ffd479)}
+.island-map-canvas[data-theme="night"] .arena-windows{stroke:#ffdf89;filter:drop-shadow(0 0 3px #ffd062);stroke-width:3}
+.island-map-canvas[data-theme="night"] .court-floodlight{opacity:1;stroke:#fff5c6;filter:drop-shadow(0 0 5px #ffe9b1)}
+.island-map-canvas[data-theme="night"] .court-light-pool{opacity:.14}
+.island-map-canvas[data-theme="night"] .roof-text{fill:#fff2c7}
+.island-map-canvas[data-theme="night"] .landmark-label{stroke:#081b2c}
+.fan-map-marker{z-index:4;width:3.75%;transform:translate(-50%,-100%);filter:drop-shadow(0 4px 3px #04172877)}
+.fan-map-marker::after{content:"";position:absolute;left:13%;right:13%;bottom:-3%;height:16%;border:2px solid #ffe8a2;background:#4badbf33;border-radius:50%;z-index:-1}
+.fan-map-marker>span{position:absolute;top:0;left:50%;transform:translate(-50%,-100%);max-width:110px;white-space:nowrap;font-size:8px;overflow:hidden;text-overflow:ellipsis;border:1px solid #f8d27b;box-shadow:0 2px 0 #173045}
+.fan-map-marker[data-moving="true"] #fan-map-avatar{animation:fan-step .42s ease-in-out infinite alternate}
+.island-encounter-actor{position:absolute;z-index:5;transform:translate(-50%,-100%);display:flex;align-items:center;flex-direction:column;width:4%;padding:0;border:0;background:transparent;color:#fff1c4;cursor:pointer}
+.island-encounter-actor .actor-silhouette{order:-1;width:100%;line-height:0;filter:brightness(.3) drop-shadow(0 0 3px #91d1d5)}
+.actor-silhouette svg{display:block;width:100%;height:auto}.island-encounter-actor[data-revealed="true"] .actor-silhouette{filter:drop-shadow(0 0 3px #91d1d5)}
+#island-actor-label{font-size:7px;white-space:nowrap;background:#182f43;border:1px solid #9cc8c2;border-radius:3px;padding:3px 5px}
+.island-encounter-actor[hidden]{display:none}
+@keyframes fan-step{to{transform:translateY(-3px) rotate(2deg)}}
+@media(max-width:700px){
+ .explorer-controls{padding:9px;gap:9px}.camera-actions{flex:1 1 100%}.camera-actions label{margin-left:auto;font-size:9px}.explorer-controls select{flex:1 1 130px;max-width:210px}.explorer-controls button{padding:8px 11px;font-size:11px}.day-controls{margin-left:auto}
+ .district-label{font-size:9px;padding:5px 7px;min-height:28px;letter-spacing:0}
+ /* 小畫面總覽留四個區名避免重疊，完整八區可用上方選單直達。 */
+ #district-desert,#district-highland,#district-lakes,#district-coast{display:none}
+ .map-breadcrumb,.map-travel-status{padding:9px 11px;flex-wrap:wrap;gap:3px}.map-breadcrumb strong{font-size:11px}.map-travel-status>span:last-child{flex-basis:100%}
+ .fan-map-marker{width:3.75%}.fan-map-marker>span{font-size:7px}
+}
+@media(prefers-reduced-motion:reduce){.island-world,.island-background,.light-pool{transition:none}.fan-map-marker[data-moving="true"] #fan-map-avatar{animation:none}.landmark[data-glowing="true"] .arena-halo{animation:none;opacity:1}}

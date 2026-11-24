@@ -3,8 +3,9 @@
 const test=require("node:test");const assert=require("node:assert/strict");const fs=require("node:fs");const path=require("node:path");const vm=require("node:vm");
 const root=path.resolve(__dirname,"..");const html=fs.readFileSync(path.join(root,"index.html"),"utf8");const C=require("../assets/island-core.js");const P=require("../assets/policy-core.js");
 const F=require("../assets/fan-core.js");
+const G=require("../assets/games-core.js");
 function boot(initial={},adapterFixture=null,options={}){
-  const nodes=new Map(),inputs=[],timers=new Map(),records=new Map(Object.entries(initial));let clock=100000,id=0,fetchCalls=0;
+  const nodes=new Map(),inputs=[],timers=new Map(),records=new Map(Object.entries(initial));let clock=options.now??100000,id=0,fetchCalls=0;
   const document={activeElement:null};
   class Element{
     constructor(tag="div"){this.tagName=tag.toUpperCase();this.children=[];this.attributes=new Map();this.listeners=new Map();this.dataset={};this.hidden=false;this.disabled=false;this.checked=false;this.value="";this.textContent="";this.className="";this._html="";this.style={setProperty(name,value){this[name]=value;}};this.classList={add:(...values)=>{this.className=[this.className,...values].join(" ").trim();}};}
@@ -27,19 +28,68 @@ function boot(initial={},adapterFixture=null,options={}){
   }
   document.getElementById=id=>nodes.get(id)||null;document.createElement=tag=>new Element(tag);document.createElementNS=(ns,tag)=>new Element(tag);document.querySelectorAll=selector=>inputs.filter(input=>input.name===selector.match(/name="([^"]+)"/)?.[1]);
   const storage={getItem:key=>{if(options.storageBlocked)throw new Error("Storage blocked");return records.get(key)??null;},setItem:(key,value)=>{if(options.storageBlocked)throw new Error("Storage blocked");records.set(key,value);}};
-  class ClockDate extends Date{static now(){return clock;}}
-  const windowSurface=new Element("window");windowSurface.localStorage=storage;windowSurface.location={href:"file:///project/index.html"};
+  class ClockDate extends Date{constructor(...args){super(...(args.length?args:[clock]));}static now(){return clock;}}
+  const windowSurface=new Element("window");windowSurface.localStorage=storage;windowSurface.location={href:options.url||"file:///project/index.html"};
+  // 舊流程預設測減少動態效果的直接抵達；移動測試明確傳 reducedMotion:false。
+  const motion=new Element("media");motion.matches=options.reducedMotion!==false;windowSurface.matchMedia=()=>motion;
   const downloads=[],revoked=[];class LocalURL extends URL{static createObjectURL(){return "blob:local-test-png";}static revokeObjectURL(value){revoked.push(value);}}
-  const context=vm.createContext({document,window:windowSurface,navigator:{},URL:LocalURL,atob,Date:ClockDate,fetch:async()=>{fetchCalls++;throw new Error("Unexpected network");},setInterval:callback=>{timers.set(++id,callback);return id;},clearInterval:id=>timers.delete(id)});
-  for(const file of ["assets/supabase-config.js","assets/island-core.js","assets/policy-core.js","assets/online.js","assets/fan-core.js","assets/fan-ui.js","script.js"]){if(file==="script.js"&&adapterFixture)context.NBAOnline={createSupabaseAdapter:()=>adapterFixture};vm.runInContext(fs.readFileSync(path.join(root,file),"utf8"),context,{filename:file});}
-  return {get(name){assert.ok(nodes.has(name),`Missing ${name}`);return nodes.get(name);},nodes,document,records,downloads,revoked,setPNGExporter:handler=>{context.NBAFan.exportPNG=handler;},network:()=>fetchCalls,now:()=>clock,timerCount:()=>timers.size,windowEvent:(name,extra)=>windowSurface.emit(name,extra),select(name,value){for(const input of inputs.filter(i=>i.name===name))input.checked=input.value===value;inputs.find(i=>i.name===name&&i.value===value).emit("change");},advance(ms){clock+=ms;for(const cb of [...timers.values()])cb();}};
+  const context=vm.createContext({document,window:windowSurface,navigator:{},URL:LocalURL,atob,Date:ClockDate,fetch:async()=>{fetchCalls++;throw new Error("Unexpected network");},setInterval:(callback,delay)=>{timers.set(++id,{callback,delay});return id;},clearInterval:id=>timers.delete(id)});
+  for(const file of ["assets/supabase-config.js","assets/games-core.js","assets/island-core.js","assets/explorer-core.js","assets/policy-core.js","assets/online.js","assets/fan-core.js","assets/fan-ui.js","assets/games-ui.js","assets/explorer-ui.js","script.js"]){if(file==="script.js"&&adapterFixture)context.NBAOnline={createSupabaseAdapter:()=>adapterFixture};vm.runInContext(fs.readFileSync(path.join(root,file),"utf8"),context,{filename:file});}
+  // timerCount 預設只計 50ms 投籃計時；可另指定 30000ms 檢查每日輪替計時。
+  return {get(name){assert.ok(nodes.has(name),`Missing ${name}`);return nodes.get(name);},nodes,document,records,downloads,revoked,setPNGExporter:handler=>{context.NBAFan.exportPNG=handler;},network:()=>fetchCalls,now:()=>clock,timerCount:(delay=50)=>[...timers.values()].filter(item=>item.delay===delay).length,windowEvent:(name,extra)=>windowSurface.emit(name,extra),reduceMotion(value){motion.matches=value;motion.emit("change");},select(name,value){for(const input of inputs.filter(i=>i.name===name))input.checked=input.value===value;inputs.find(i=>i.name===name&&i.value===value).emit("change");},advance(ms){clock+=ms;for(const timer of [...timers.values()])timer.callback();}};
 }
-test("app builds 23 named keyboard-operable HTML buttons aligned to island coordinates",()=>{
-  const app=boot();assert.equal(app.get("landmark-layer").children.length,23);
-  for(const item of [...C.TEAMS,...C.COURTS]){const node=app.get(`landmark-${item.id}`);assert.equal(node.tagName,"BUTTON");assert.equal(node.getAttribute("role"),"button");assert.equal(node.getAttribute("tabindex"),"0");assert.equal(node.dataset.x,String(item.x));assert.equal(node.dataset.y,String(item.y));const dx=node.dataset.kind==="nba"?80:55;assert.equal(node.style.left,`${(item.x-dx)/1200*100}%`);assert.ok(node.getAttribute("aria-label").includes(item.name));}
-  assert.equal(app.get("station-list").children.filter(n=>!n.hidden).length,8);app.get("filter-court").emit("click");assert.equal(app.get("station-list").children.filter(n=>!n.hidden).length,15);
+test("camera controls cover island, district and venue, returning without moving the saved fan",()=>{
+  const app=boot();assert.equal(app.get("island-map").dataset.view,"island");assert.equal(app.get("district-layer").children.length,8);
+  const origin=app.get("fan-map-marker").style.left;app.get("district-west").emit("click");assert.equal(app.get("island-map").dataset.view,"district");assert.equal(app.get("fan-map-marker").style.left,origin);
+  app.get("landmark-warriors").emit("click");assert.equal(app.get("island-map").dataset.view,"venue");assert.match(app.get("island-world").style.transform,/scale\(3.0769/);
+  app.get("camera-back").emit("click");assert.equal(app.get("island-map").dataset.view,"district");assert.equal(app.get("island-map").dataset.district,"west");
+  app.get("camera-overview").emit("click");assert.equal(app.get("island-map").dataset.view,"island");assert.equal(app.get("fan-map-marker").style.left,origin);assert.equal(app.get("landmark-warriors").getAttribute("aria-pressed"),"true");
 });
-test("all 8 arenas and 15 public courts open the correct distinct panel",()=>{
+test("walking gates encounter reveal until arrival, supports map actor and clears the travel timer",()=>{
+  const app=boot({},null,{url:"file:///project/index.html?encounterDate=2026-01-01",reducedMotion:false});
+  app.get("list-meet-pier").emit("click");assert.equal(app.timerCount(16),1);assert.equal(app.get("fan-map-marker").dataset.moving,"true");assert.equal(app.get("encounter-character").hidden,true);assert.equal(app.get("island-encounter-actor").hidden,true);
+  app.get("encounter-character").emit("click");app.get("encounter-photo").emit("click");assert.equal(Boolean(app.get("star-dialog").open),false);
+  app.advance(200);assert.equal(app.get("fan-map-marker").dataset.location,"");app.advance(5000);
+  assert.equal(app.timerCount(16),0);assert.equal(app.get("fan-map-marker").dataset.location,"meet-pier");assert.equal(app.get("encounter-character").hidden,false);assert.equal(app.get("island-encounter-actor").hidden,false);
+  app.get("island-encounter-actor").emit("click");assert.match(app.get("encounter-star-name").textContent,/柯瑞/);app.get("encounter-photo").emit("click");app.get("capture-photo").emit("click");app.get("collect-photo").emit("click");assert.ok(JSON.parse(app.records.get(F.ALBUM_KEY)).encounters.some(p=>p.starId==="curry"));
+});
+test("latest destination cancels travel; overview during walking stays full-island after arrival",()=>{
+  const app=boot({},null,{reducedMotion:false});app.get("list-heat").emit("click");app.advance(700);const previous=app.get("fan-map-marker").style.left;
+  app.get("list-roof-02").emit("click");assert.equal(app.timerCount(16),1);assert.equal(app.get("fan-map-marker").style.left,previous);
+  app.get("camera-overview").emit("click");assert.equal(app.get("island-map").dataset.view,"island");app.advance(5000);
+  assert.equal(app.get("fan-map-marker").dataset.location,"roof-02");assert.equal(app.get("island-map").dataset.view,"island");assert.equal(app.timerCount(16),0);
+  app.get("list-harbor-01").emit("click");app.windowEvent("pagehide");assert.equal(app.timerCount(16),0);app.advance(5000);app.windowEvent("pageshow",{persisted:true});assert.equal(app.get("fan-map-marker").dataset.location,"harbor-01");assert.equal(app.timerCount(16),0);
+});
+test("day/night lighting stays enabled after final without changing away glow, photo rules or policy",()=>{
+  const app=boot();app.get("map-night").emit("click");assert.equal(app.get("island-map").dataset.theme,"night");assert.equal(app.get("map-night").getAttribute("aria-pressed"),"true");
+  assert.equal(app.get("landmark-lakers").dataset.glowing,"true");assert.equal(app.get("landmark-warriors").dataset.glowing,"false");
+  app.select("game-state","final");assert.equal(app.get("island-map").dataset.theme,"night");assert.equal(app.get("landmark-lakers").dataset.glowing,"false");assert.match(app.get("team-game").innerHTML,/108/);assert.match(app.get("map-light-status").textContent,/照明開啟/);
+  app.get("map-day").emit("click");assert.equal(app.get("island-map").dataset.theme,"day");assert.equal(app.get("landmark-lakers").dataset.glowing,"false");
+});
+test("mobile-compatible roof directory locates the exact venue and starts its dedicated game",()=>{
+  const app=boot();app.get("filter-court").emit("click");app.get("list-roof-02").emit("click");assert.equal(app.get("island-map").dataset.district,"lakes");assert.equal(app.get("fan-map-marker").dataset.location,"roof-02");assert.match(app.get("court-game-name").textContent,/節奏運球/);app.get("practice-start").emit("click");assert.equal(app.get("play-court").hidden,false);assert.equal(app.timerCount(),1);
+  app.get("district-select").value="west";app.get("district-select").emit("change");assert.equal(app.get("fan-map-marker").dataset.location,"roof-02");assert.equal(app.get("island-map").dataset.district,"west");
+});
+test("keyboard landmark focus reveals a clipped destination without moving; reduced motion visits directly",()=>{
+  const app=boot();app.get("landmark-celtics").emit("focus");assert.equal(app.get("island-map").dataset.view,"venue");assert.equal(app.get("island-map").dataset.district,"east");assert.equal(app.get("fan-map-marker").dataset.location,"warriors");
+  app.get("landmark-celtics").emit("keydown",{key:"Enter"});assert.equal(app.get("fan-map-marker").dataset.location,"celtics");assert.equal(app.timerCount(16),0);
+});
+test("saving clothes during travel updates shared avatar without teleporting or restarting the route",()=>{
+  const app=boot({},null,{reducedMotion:false});app.get("list-heat").emit("click");app.advance(500);const x=app.get("fan-map-marker").style.left,y=app.get("fan-map-marker").style.top;
+  app.get("my-fan").emit("click");app.get("fan-nickname").value="路上的島民";app.get("fan-nickname").emit("input");app.get("fan-form").emit("submit");
+  assert.equal(app.get("fan-map-marker").style.left,x);assert.equal(app.get("fan-map-marker").style.top,y);assert.equal(app.get("fan-map-marker").dataset.moving,"true");assert.equal(app.timerCount(16),1);assert.match(app.get("fan-map-name").textContent,/路上的島民/);
+  app.advance(5000);assert.equal(app.get("fan-map-marker").dataset.location,"heat");assert.match(app.get("fan-map-avatar").innerHTML,/路上的島民/);
+});
+test("enabling reduced motion during a trip snaps to the target and clears travel animation timer",()=>{
+  const app=boot({},null,{reducedMotion:false});app.get("list-roof-03").emit("click");app.advance(200);assert.equal(app.timerCount(16),1);
+  app.reduceMotion(true);assert.equal(app.timerCount(16),0);assert.equal(app.get("fan-map-marker").dataset.location,"roof-03");assert.equal(app.get("fan-map-marker").dataset.moving,"false");assert.match(app.get("island-world").style.transform,/scale\(3.0769/);
+});
+test("app builds 34 named keyboard-operable HTML buttons aligned to island coordinates",()=>{
+  const app=boot();assert.equal(app.get("landmark-layer").children.length,34);
+  for(const item of [...C.TEAMS,...C.COURTS,...C.ENCOUNTERS]){const node=app.get(`landmark-${item.id}`);assert.equal(node.tagName,"BUTTON");assert.equal(node.getAttribute("role"),"button");assert.equal(node.getAttribute("tabindex"),"0");assert.equal(node.dataset.x,String(item.x));assert.equal(node.dataset.y,String(item.y));const dx=node.dataset.kind==="nba"?80:node.dataset.kind==="court"?55:45;assert.equal(node.style.left,`${(item.x-dx)/C.MAP.width*100}%`);assert.ok(node.getAttribute("aria-label").includes(item.name));}
+  assert.equal(app.get("station-list").children.filter(n=>!n.hidden).length,16);app.get("filter-court").emit("click");assert.equal(app.get("station-list").children.filter(n=>!n.hidden).length,15);
+});
+test("all 16 arenas and 15 public courts open the correct distinct panel",()=>{
   const app=boot();
   for(const team of C.TEAMS){app.get(`landmark-${team.id}`).emit("click");assert.equal(app.get("nba-panel").hidden,false);assert.equal(app.get("court-panel").hidden,true);assert.equal(app.get("panel-title").textContent,team.name);}
   for(const court of C.COURTS){app.get(`list-${court.id}`).emit("click");assert.equal(app.get("court-panel").hidden,false);assert.equal(app.get("nba-panel").hidden,true);assert.equal(app.get("panel-title").textContent,court.name);}
@@ -99,7 +149,8 @@ test("unconfigured multiplayer has disabled invitation actions, no room and zero
 });
 test("all 15 courts can start the shared practice, with time limit and restart",()=>{
   const app=boot();
-  for(const court of C.COURTS){app.get(`list-${court.id}`).emit("click");app.get("practice-start").emit("click");assert.match(app.get("shooting-title").textContent,new RegExp(court.name));assert.match(app.get("game-mode-label").textContent,/非真人/);assert.equal(app.get("game-hits").textContent,"0");}
+  for(const court of C.COURTS){app.get(`list-${court.id}`).emit("click");assert.equal(app.get("court-game-name").textContent,court.gameName);assert.match(app.get(`list-${court.id}`).innerHTML,new RegExp(court.gameName));app.get("practice-start").emit("click");assert.match(app.get("shooting-title").textContent,new RegExp(court.name));assert.match(app.get("game-mode-label").textContent,/非真人/);assert.equal(app.get("game-hits").textContent,"0");app.advance(G.getGame(court.gameId).durationMs+1000);assert.equal(app.get("round-result").hidden,false);assert.equal(app.timerCount(),0);app.get("practice-restart").emit("click");assert.equal(app.get("game-timer").textContent,(G.getGame(court.gameId).durationMs/1000).toFixed(1));}
+  app.get("list-harbor-01").emit("click");app.get("practice-start").emit("click");
   app.advance(1300);app.get("game-stage").emit("keydown",{code:"Space",key:" "});assert.equal(app.get("game-hits").textContent,"1");
   app.advance(30000);assert.equal(app.get("shoot-button").disabled,true);assert.equal(app.get("game-timer").textContent,"0.0");assert.match(app.get("round-result-content").textContent,/沒有真人或模擬對手/);
   app.get("practice-restart").emit("click");assert.equal(app.get("game-hits").textContent,"0");assert.equal(app.get("game-attempts").textContent,"0");assert.equal(app.get("game-timer").textContent,"30.0");assert.equal(app.get("round-result").hidden,true);assert.equal(app.network(),0);
@@ -119,7 +170,7 @@ test("leaving practice, changing landmark and hiding the page clear the active t
   app.get("practice-leave").emit("click");assert.equal(app.timerCount(),0);assert.equal(app.get("play-court").hidden,true);
   app.get("practice-start").emit("click");app.get("landmark-harbor-02").emit("click");assert.equal(app.timerCount(),0);assert.equal(app.get("play-court").hidden,true);
   app.get("practice-start").emit("click");assert.equal(app.get("game-stage").dataset.scene,"harbor");app.windowEvent("pagehide");assert.equal(app.timerCount(),0);
-  app.windowEvent("pageshow",{persisted:true});assert.equal(app.timerCount(),1);app.advance(32000);assert.equal(app.get("game-timer").textContent,"0.0");assert.equal(app.timerCount(),0);
+  app.windowEvent("pageshow",{persisted:true});assert.equal(app.timerCount(),1);app.advance(62000);assert.equal(app.get("game-timer").textContent,"0.0");assert.equal(app.timerCount(),0);
 });
 test("an audio playback rejection preserves the hit score and visual feedback",async()=>{
   const app=boot();app.get("quick-courts").emit("click");app.get("practice-start").emit("click");
@@ -143,8 +194,8 @@ test("wardrobe previews drafts but applies the shared map avatar only after savi
   const submit=app.get("fan-form").emit("submit");assert.equal(submit.defaultPrevented,true);assert.match(app.get("fan-map-avatar").innerHTML,/海風球迷/);
   const saved=app.records.get(F.AVATAR_KEY);const restored=boot({[F.AVATAR_KEY]:saved});assert.equal(restored.get("fan-nickname").value,"海風球迷");assert.match(restored.get("fan-map-avatar").innerHTML,/海風球迷/);
   app.get("fan-form").emit("reset");assert.equal(app.get("fan-nickname").value,F.DEFAULT_AVATAR.nickname);assert.match(app.get("fan-map-avatar").innerHTML,/海風球迷/);
-  app.get("fan-random").emit("click");assert.match(app.get("fan-map-avatar").innerHTML,/海風球迷/);assert.equal(app.get("fan-jersey").children.length,8);
-  for(const item of [...C.TEAMS,...C.COURTS]){app.get(`landmark-${item.id}`).emit("click");assert.equal(app.get("fan-map-marker").dataset.location,item.id);assert.equal(app.get("fan-map-marker").style.left,`${(item.x+48)/1200*100}%`);}
+  app.get("fan-random").emit("click");assert.match(app.get("fan-map-avatar").innerHTML,/海風球迷/);assert.equal(app.get("fan-jersey").children.length,16);
+  for(const item of [...C.TEAMS,...C.COURTS]){app.get(`landmark-${item.id}`).emit("click");assert.equal(app.get("fan-map-marker").dataset.location,item.id);assert.equal(app.get("fan-map-marker").style.left,`${(item.x+48)/C.MAP.width*100}%`);}
 });
 test("each NBA arena opens its real station data and point before photo mode; public courts do not",()=>{
   const app=boot();
@@ -159,8 +210,8 @@ test("dress up, find Curry, capture, collect, download fixture and review unchan
   const app=boot();app.get("my-fan").emit("click");app.get("fan-nickname").value="拍照小島民";app.get("fan-nickname").emit("input");app.get("fan-form").emit("submit");app.get("fan-close").emit("click");
   app.get("landmark-warriors").emit("click");app.get("find-star").emit("click");assert.equal(app.get("photo-studio").hidden,true);app.get("star-landmark").emit("click");assert.match(app.get("photo-star-name").textContent,/柯瑞/);
   app.get("photo-pose").value="ball";app.get("photo-pose").emit("change");app.get("capture-photo").emit("click");const frozen=app.get("photo-image").src;assert.equal(app.get("photo-pose").disabled,true);app.get("collect-photo").emit("click");
-  assert.equal(app.get("fan-album-count").textContent,"已收集 1／8");app.get("collect-photo").emit("click");assert.equal(app.get("fan-album-count").textContent,"已收集 1／8");
-  const restored=boot(Object.fromEntries(app.records));assert.equal(restored.get("fan-album-count").textContent,"已收集 1／8");assert.equal(restored.get("landmark-warriors").children[0].children.at(-2).getAttribute("visibility"),"visible");
+  assert.equal(app.get("fan-album-count").textContent,"已收集 1／16");app.get("collect-photo").emit("click");assert.equal(app.get("fan-album-count").textContent,"已收集 1／16");
+  const restored=boot(Object.fromEntries(app.records));assert.equal(restored.get("fan-album-count").textContent,"已收集 1／16");assert.equal(restored.get("landmark-warriors").children[0].children.at(-2).getAttribute("visibility"),"visible");
   let exported;app.setPNGExporter(async record=>{exported=record;return new Blob(["test fixture, not rasterized"],{type:"image/png"});});app.get("download-photo").emit("click");await new Promise(resolve=>setImmediate(resolve));
   assert.equal(exported.avatar.nickname,"拍照小島民");assert.equal(exported.pose,"ball");assert.equal(app.downloads.length,1);assert.match(app.downloads[0].download,/nba-policy-island-warriors-.*\.png/);assert.equal(app.get("photo-png-link").hidden,false);
   app.get("star-close").emit("click");assert.equal(app.revoked.length,1);app.get("my-fan").emit("click");app.get("fan-nickname").value="換裝後球迷";app.get("fan-nickname").emit("input");app.get("fan-jersey").value="bulls";app.get("fan-jersey").emit("change");app.get("fan-form").emit("submit");
@@ -184,12 +235,46 @@ test("photo camera badge, Warriors policy badge and home-game glow remain indepe
 test("blocked localStorage shows a notice while this-page avatar, photos and collection still work",()=>{
   const app=boot({},null,{storageBlocked:true});assert.equal(app.get("fan-storage-notice").hidden,false);
   app.get("fan-nickname").value="本次島民";app.get("fan-nickname").emit("input");app.get("fan-form").emit("submit");assert.match(app.get("fan-map-avatar").innerHTML,/本次島民/);
-  app.get("find-star").emit("click");app.get("star-landmark").emit("click");app.get("capture-photo").emit("click");app.get("collect-photo").emit("click");assert.equal(app.get("fan-album-count").textContent,"已收集 1／8");assert.equal(app.get("photo-storage-notice").hidden,false);assert.equal(app.get("download-photo").disabled,false);assert.equal(app.network(),0);
+  app.get("find-star").emit("click");app.get("star-landmark").emit("click");app.get("capture-photo").emit("click");app.get("collect-photo").emit("click");assert.equal(app.get("fan-album-count").textContent,"已收集 1／16");assert.equal(app.get("photo-storage-notice").hidden,false);assert.equal(app.get("download-photo").disabled,false);assert.equal(app.network(),0);
 });
 test("practice result uses the same saved avatar and nickname, ignores unsaved clothing",()=>{
   const app=boot();app.get("fan-nickname").value="結算球迷";app.get("fan-nickname").emit("input");app.get("fan-form").emit("submit");
   app.get("fan-nickname").value="未儲存";app.get("fan-nickname").emit("input");app.get("quick-courts").emit("click");app.get("practice-start").emit("click");app.advance(31000);
   assert.equal(app.get("practice-fan-result").hidden,false);assert.match(app.get("practice-fan-caption").textContent,/結算球迷/);assert.doesNotMatch(app.get("practice-fan-avatar").innerHTML,/未儲存/);assert.equal(app.get("game-timer").textContent,"0.0");
+});
+
+test("encounter map and mobile directory route to a third panel, revealing identity only after visiting and clicking",()=>{
+  const app=boot({},null,{url:"file:///project/index.html?encounterDate=2026-01-01"});
+  app.get("filter-encounter").emit("click");assert.equal(app.get("station-list").children.filter(node=>!node.hidden).length,3);
+  app.get("list-meet-garden").emit("click");assert.equal(app.get("encounter-panel").hidden,false);assert.equal(app.get("court-panel").hidden,true);assert.equal(app.get("nba-panel").hidden,true);assert.equal(app.get("encounter-character").hidden,true);
+  app.get("landmark-meet-pier").emit("click");assert.match(app.get("encounter-presence").textContent,/熟悉的身影/);assert.equal(app.get("encounter-reveal").hidden,true);assert.doesNotMatch(app.get("encounter-character").getAttribute("aria-label"),/柯瑞/);
+  app.get("encounter-photo").emit("click");assert.equal(Boolean(app.get("star-dialog").open),false);
+  app.get("encounter-character").emit("click");assert.match(app.get("encounter-star-name").textContent,/柯瑞/);assert.equal(app.get("fan-map-marker").dataset.location,"meet-pier");assert.equal(app.get("encounter-character").dataset.revealed,"true");
+  for(const state of C.GAME_STATES){app.select("game-state",state);assert.match(app.get("encounter-star-name").textContent,/柯瑞/);}
+  const refresh=boot({},null,{url:"file:///project/index.html?encounterDate=2026-01-01"});refresh.get("list-meet-pier").emit("click");assert.equal(refresh.get("encounter-portrait").src,app.get("encounter-portrait").src);
+});
+test("legacy home collection and a new encounter coexist through download, next-day rotation and reload",async()=>{
+  const home=F.createPhoto("warriors",{...F.DEFAULT_AVATAR,nickname:"舊版角色"},{capturedAt:"2026-01-01T01:00:00Z"});
+  const app=boot({[F.ALBUM_KEY]:JSON.stringify({version:1,photos:[home]})},null,{url:"file:///project/index.html?encounterDate=2026-01-01"});
+  app.get("list-meet-pier").emit("click");app.get("encounter-character").emit("click");app.get("encounter-photo").emit("click");assert.equal(app.get("photo-home-options").hidden,true);assert.equal(app.get("photo-venue-name").textContent,"西岸碼頭步道");
+  app.get("photo-pose").value="ball";app.get("photo-pose").emit("change");app.get("capture-photo").emit("click");const frozen=app.get("photo-image").src;app.get("collect-photo").emit("click");
+  assert.equal(app.get("album-tab-home-count").textContent,"1／16");assert.equal(app.get("album-tab-encounter-count").textContent,"1／16");
+  let exported;app.setPNGExporter(async record=>{exported=record;return new Blob(["PNG protocol fixture"],{type:"image/png"});});app.get("download-photo").emit("click");await new Promise(resolve=>setImmediate(resolve));assert.equal(exported.kind,"encounter");assert.equal(exported.locationId,"meet-pier");assert.match(app.downloads[0].download,/encounter-curry/);
+  app.get("star-close").emit("click");app.get("encounter-test-date").value="2026-01-02";app.get("encounter-test-controls").emit("submit");assert.equal(app.get("encounter-character").hidden,true);
+  app.get("my-fan").emit("click");app.get("fan-nickname").value="隔日換裝";app.get("fan-nickname").emit("input");app.get("fan-form").emit("submit");app.get("fan-tab-album").emit("click");app.get("album-tab-encounter").emit("click");app.get("fan-album-grid").children.find(node=>node.dataset.starId==="curry").emit("click");assert.equal(app.get("photo-image").src,frozen);assert.equal(app.get("download-photo").disabled,false);
+  const restored=boot(Object.fromEntries(app.records));assert.equal(restored.get("album-tab-home-count").textContent,"1／16");assert.equal(restored.get("album-tab-encounter-count").textContent,"1／16");assert.equal(JSON.parse(app.records.get(F.ALBUM_KEY)).photos[0].avatar.nickname,"舊版角色");
+});
+test("Taiwan midnight updates the visited place and invalidates an uncaptured yesterday encounter",()=>{
+  const now=Date.parse("2026-11-24T15:59:30Z"), schedule=F.dailyEncounter("2026-11-24");
+  const app=boot({},null,{now,url:"https://example.github.io/nba-policy-island/?encounterDate=2026-01-01"});assert.equal(app.get("encounter-test-controls").hidden,true);
+  app.get(`list-${schedule.locationId}`).emit("click");app.get("encounter-character").emit("click");app.get("encounter-photo").emit("click");assert.equal(app.get("capture-photo").disabled,false);
+  app.advance(60000);assert.match(app.get("encounter-date").textContent,/2026-11-25/);assert.equal(app.get("encounter-reveal").hidden,true);assert.equal(app.get("capture-photo").disabled,true);assert.match(app.get("photo-status").textContent,/日期已更新/);
+  assert.equal(app.timerCount(30000),1);app.windowEvent("pagehide");assert.equal(app.timerCount(30000),0);app.windowEvent("pageshow",{persisted:true});assert.equal(app.timerCount(30000),1);
+});
+test("local date form cycles star and location, while public date controls cannot override today",()=>{
+  const app=boot({},null,{url:"file:///project/index.html?encounterDate=2026-01-01"});app.get("list-meet-pier").emit("click");assert.equal(app.get("encounter-test-controls").hidden,false);
+  app.get("encounter-test-date").value="2026-01-02";const submit=app.get("encounter-test-controls").emit("submit");assert.equal(submit.defaultPrevented,true);app.get("list-meet-plaza").emit("click");app.get("encounter-character").emit("click");assert.match(app.get("encounter-star-name").textContent,/魔術強森/);
+  const online=boot({},null,{now:Date.parse("2026-11-24T06:00:00Z"),url:"https://example.github.io/nba-policy-island/"});online.get("list-meet-pier").emit("click");const before=online.get("encounter-date").textContent;online.get("encounter-test-date").value="2026-01-01";online.get("encounter-test-controls").emit("submit");assert.equal(online.get("encounter-date").textContent,before);
 });
 
 test("friend-room UI flow with a backend fixture: create, duplicate, ready, timed result and rematch",async()=>{
@@ -217,4 +302,53 @@ test("friend-room UI flow with a backend fixture: create, duplicate, ready, time
   players[1].score=2;players[1].attempts=3;app.advance(30000);await settle();assert.equal(submissions,1);assert.equal(app.get("round-result").hidden,false);assert.match(app.get("round-result-title").textContent,/測試朋友.*獲勝/);assert.match(app.get("round-result-content").innerHTML,/2 球/);
   app.get("game-stage").emit("keydown",{key:" ",code:"Space"});assert.equal(submissions,1);assert.equal(app.get("shoot-button").disabled,true);
   app.get("room-restart").emit("click");await settle();assert.equal(room.round,2);assert.equal(players.every(p=>!p.ready&&p.score===null),true);assert.equal(app.get("room-start").disabled,true);assert.match(app.get("room-state").textContent,/第 2 局/);assert.equal(app.network(),0);
+});
+
+test("court controls route keyboard, range drag and touch/button actions to the selected dedicated game",()=>{
+  const app=boot();
+  for(const c of C.COURTS)assert.ok(app.get(`landmark-${c.id}`).children[0].innerHTML.includes(c.gameName));
+  app.get("list-harbor-03").emit("click");app.get("practice-start").emit("click");app.advance(1000);
+  assert.equal(app.get("mini-wind").hidden,false);assert.equal(app.get("aim-meter").hidden,true);
+  const wind=Math.round((G.randomAt(1,0,2)*140-70)/10)*10;app.get("mini-wind-aim").value=String(-wind);app.get("mini-wind-aim").emit("input");app.get("shoot-button").emit("click");assert.equal(app.get("game-hits").textContent,"1");
+  app.get("list-harbor-04").emit("click");assert.equal(app.timerCount(),0);app.get("practice-start").emit("click");app.advance(1000);const zone=2-G.pick(1,0,3);app.get("game-stage").emit("keydown",{key:String(zone+1)});assert.equal(app.get("game-hits").textContent,"1");
+  app.get("list-roof-04").emit("click");app.get("practice-start").emit("click");app.advance(1000);assert.equal(app.get("mini-up").hidden,false);app.get("mini-up").emit("click");assert.equal(app.get("game-attempts").textContent,"1");app.get("practice-leave").emit("click");const before=app.get("game-attempts").textContent;app.get("mini-up").emit("click");assert.equal(app.get("game-attempts").textContent,before);assert.equal(app.timerCount(),0);
+});
+test("dribble, rhythm and computer duel expose distinct controls; held keys never multiply actions",()=>{
+  const app=boot();app.get("list-park-01").emit("click");app.get("practice-start").emit("click");app.advance(1000);assert.equal(app.get("mini-arrows").hidden,false);assert.equal(app.get("shoot-button").hidden,true);
+  app.get("game-stage").emit("keydown",{key:"ArrowRight"});assert.match(app.get("mini-scene").innerHTML,/cx="450"/);const scene=app.get("mini-scene").innerHTML;app.get("game-stage").emit("keydown",{key:"ArrowRight",repeat:true});assert.equal(app.get("mini-scene").innerHTML,scene);
+  app.get("list-roof-02").emit("click");app.get("practice-start").emit("click");app.advance(1600);app.get("mini-left").emit("click");assert.equal(app.get("game-hits").textContent,"10");app.get("game-stage").emit("keydown",{key:"ArrowLeft",repeat:true});assert.equal(app.get("game-attempts").textContent,"1");app.advance(600);app.get("game-stage").emit("keydown",{key:"ArrowRight"});assert.equal(app.get("game-hits").textContent,"20");
+  app.get("list-park-04").emit("click");app.get("practice-start").emit("click");assert.match(app.get("game-context").textContent,/電腦，非真人/);app.advance(1000);app.get("mini-choice-0").emit("click");assert.match(app.get("shot-feedback").textContent,/電腦/);assert.equal(app.get("mini-choice-1").disabled,true);app.advance(7000);assert.equal(app.get("mini-choice-1").disabled,false);app.advance(70000);assert.match(app.get("round-result-content").textContent,/電腦/);
+  assert.equal(app.get("mini-left").listeners.get("click").length,1);assert.equal(app.get("game-stage").listeners.get("keydown").length,1);assert.equal(app.network(),0);
+});
+test("memory input is disabled during demonstration and allround changes active control families",()=>{
+  const app=boot();app.get("list-park-05").emit("click");app.get("practice-start").emit("click");app.advance(1000);assert.equal(app.get("mini-choice-0").disabled,true);app.advance(2200);assert.equal(app.get("mini-choice-0").disabled,false);
+  const seq=[0,1,2].map(i=>G.pick(1,i,9));for(const n of seq){app.get(`mini-choice-${n}`).emit("click");app.advance(200);}assert.equal(app.get("game-hits").textContent,"3");
+  app.get("list-roof-05").emit("click");app.get("practice-start").emit("click");app.advance(1000);assert.equal(app.get("mini-choices").hidden,true);assert.equal(app.get("shoot-button").hidden,false);app.advance(15000);assert.equal(app.get("mini-choices").hidden,false);assert.equal(app.get("shoot-button").hidden,true);app.advance(10000);assert.equal(app.get("mini-choices").hidden,true);assert.equal(app.get("shoot-label").textContent,"封阻");app.advance(15000);assert.equal(app.get("round-result").hidden,false);assert.match(app.get("round-result-content").textContent,/投籃 0／傳球 0／封阻 0/);
+});
+test("new room submits game ID, common seed and structured result; rematch cannot use prior round",async()=>{
+  let app,payload;
+  const room={id:"wind-room",court_id:"harbor-03",game_id:"wind",game_seed:987,invite_code:"0123456789abcdef01234567",host_id:"a",status:"waiting",round:3,starts_at:null,ends_at:null};
+  const players=[{user_id:"a",slot:1,display_name:"甲",score:null,attempts:null,result:null,ready:true},{user_id:"b",slot:2,display_name:"乙",score:null,attempts:null,result:null,ready:true}];
+  const snap=()=>JSON.parse(JSON.stringify({room,players,server_now:new Date(app?.now()??100000).toISOString()}));
+  const adapter={configured:true,connect:async()=>({id:"a"}),userId:()=>"a",activity:async()=>[],myRooms:async()=>[],create:async()=>snap(),get:async()=>snap(),start:async()=>{room.status="countdown";room.starts_at=new Date(app.now()+5000).toISOString();room.ends_at=new Date(app.now()+50000).toISOString();return snap();},submitResult:async(...args)=>{payload=args;players[0].result=args[4];players[0].score=args[4].score;return snap();},restart:async()=>{room.round++;room.game_seed=988;room.status="waiting";players.forEach(p=>{p.ready=false;p.score=null;p.result=null;});return snap();}};
+  const settle=()=>new Promise(r=>setImmediate(r));app=boot({},adapter);await settle();app.get("list-harbor-03").emit("click");app.get("player-name").value="甲";app.get("room-form").emit("submit");await settle();app.get("room-start").emit("click");await settle();app.advance(5000);await settle();assert.match(app.get("game-context").textContent,/種子 987/);
+  app.advance(45000);await settle();assert.equal(payload[0],room.id);assert.equal(payload[1],3);assert.equal(payload[2],"wind");assert.equal(payload[3],987);assert.equal(payload[4].gameId,"wind");assert.equal(payload.length,5);
+  room.status="finished";app.advance(2000);await settle();app.get("room-restart").emit("click");await settle();assert.equal(room.round,4);assert.equal(app.get("room-start").disabled,true);assert.equal(app.get("play-court").hidden,true);
+});
+
+test("friend duel UI never invents opponent choices and reveals only backend-provided completed turns",async()=>{
+  // 記憶體後端形狀替身；不是 SQL 執行或兩裝置連線測試。
+  let app;const moves=new Map();const room={id:"duel-room",court_id:"park-04",game_id:"duel",game_seed:42,invite_code:"0123456789abcdef01234567",host_id:"a",status:"waiting",round:1,starts_at:null,ends_at:null};
+  const players=[{user_id:"a",slot:1,display_name:"甲",score:null,result:null,ready:true},{user_id:"b",slot:2,display_name:"乙",score:null,result:null,ready:true}];
+  const snap=()=>{const turn=room.starts_at?Math.max(0,Math.min(9,Math.floor((app.now()-Date.parse(room.starts_at))/7000))):0;const history=[];for(let n=0;n<10;n++){const a=moves.get(`${n}:a`),b=moves.get(`${n}:b`);if(a!==undefined&&b!==undefined)history.push({turn:n,attack:a,defense:b,scored:a!==b});}return JSON.parse(JSON.stringify({room,players,duel:{turn,submitted:moves.has(`${turn}:a`),history,scores:[history.filter(x=>x.scored).length*2,0]},server_now:new Date(app?.now()??100000).toISOString()}));};
+  const adapter={configured:true,connect:async()=>({id:"a"}),userId:()=>"a",activity:async()=>[],myRooms:async()=>[],create:async()=>snap(),get:async()=>snap(),start:async()=>{room.status="countdown";room.starts_at=new Date(app.now()+5000).toISOString();room.ends_at=new Date(app.now()+75000).toISOString();return snap();},choose:async(id,round,turn,move)=>{assert.equal(id,room.id);assert.equal(round,1);if(moves.has(`${turn}:a`))throw new Error("MOVE_ALREADY_SUBMITTED");moves.set(`${turn}:a`,move);return snap();}};
+  const settle=()=>new Promise(r=>setImmediate(r));app=boot({},adapter);await settle();app.get("list-park-04").emit("click");app.get("player-name").value="甲";app.get("room-form").emit("submit");await settle();app.get("room-start").emit("click");await settle();app.advance(5000);await settle();assert.match(app.get("mini-prompt").textContent,/好友 PK/);assert.doesNotMatch(app.get("mini-scene").innerHTML,/電腦/);
+  app.get("mini-choice-1").emit("click");await settle();assert.equal(moves.size,1);assert.equal(app.get("mini-choice-0").disabled,true);assert.doesNotMatch(app.get("mini-prompt").textContent,/上回合進攻/);
+  app.advance(1000);await settle();assert.doesNotMatch(app.get("mini-prompt").textContent,/上回合進攻/);assert.equal(moves.size,1);
+  moves.set("0:b",2);app.advance(500);await settle();assert.match(app.get("mini-prompt").textContent,/進攻 2／防守 3/);assert.equal(app.get("game-hits").textContent,"2");
+  app.get("landmark-warriors").emit("click");assert.equal(app.timerCount(),0);assert.equal(app.get("play-court").hidden,true);app.get("mini-choice-2").emit("click");assert.equal(moves.size,2);
+});
+test("configured rooms remain disabled until backend confirms the games-v2 capability",async()=>{
+  const adapter={configured:true,connect:async()=>({id:"a"}),userId:()=>"a",capabilities:async()=>({version:1}),activity:async()=>{throw new Error("must not read rooms before capability");}};
+  const app=boot({},adapter);await new Promise(r=>setImmediate(r));app.get("quick-courts").emit("click");assert.equal(app.get("create-room").disabled,true);assert.equal(app.get("join-room").disabled,true);assert.match(app.get("lobby-notice").textContent,/games-v2.sql/);assert.equal(app.get("room-panel").hidden,true);
 });

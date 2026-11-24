@@ -1,59 +1,55 @@
 # 九週課堂功能與展示
 
-角色、主場尋星與合影冊的 W03／W05／W08／W11／W12 增補請見 [FAN_GUIDE.md](./FAN_GUIDE.md)。加入本次功能後，整體 Node 測試為 62 項通過；下方 43 項是前一版的驗收紀錄。
+目前是 16 主場、16 主場合影點、3 偶遇點、15 球場／15 遊戲的原生 HTML／CSS／JavaScript 專案。可直接開啟 index.html，使用相對路徑並支援 `/nba-policy-island/`。本次未開啟瀏覽器、push、部署、套用 SQL 或修改 Supabase。
 
-直接用瀏覽器開啟專案 `index.html` 即可離線使用。所有執行素材均為相對路徑，支援 GitHub Pages `/nba-policy-island/`。本次未操作瀏覽器、推送、部署、執行遠端 SQL 或變更服務設定。
-
-| 週次 | 對應功能 | 檔案位置 | 如何操作展示 |
+| 週次 | 對應功能 | 檔案位置 | 展示方式 |
 | --- | --- | --- | --- |
-| W02 CH03 | `<a>` 區內導航、`<dl>` 球隊城市／縮寫／區域、`<time>` 開賽時間、`<ol>` 投籃步驟 | `index.html`；`script.js` 的 `renderScoreboard`、`renderPanel` | 點探索島嶼；選湖人，切待開打看 11:00 台灣時間；進公共球場查看三步驟 |
-| W03 CH04 | `<figure>`、背景圖片 `alt`、`<figcaption>`；政策 `<table>`、`<caption>`、`<th scope>` | `index.html`；`assets/island-map.svg`；`script.js` 的 `renderComparison`；`assets/policy.css` | 看島圖圖例；勇士試算後比較三方案，手機看逐方案卡片 |
-| W04 CH05 | 本地 `<audio>` 進球／終場聲，`<noscript>` 簡版 23 站指南 | `index.html`；`assets/shot-hit.wav`、`round-end.wav`、`generate_audio.py`；`script.js` 的 `playSound` | 開始單機，勾音效後命中並等終場；關閉 JavaScript 查看簡版場地資訊 |
-| W05 CH06 | 政策 radio 表單、`fieldset`／`legend`、重設；暱稱開房表單；三組球場 `select`／`optgroup` | `index.html`；`script.js`；`assets/policy-core.js` | 換售票方案後重新試算、重設；公共球場下拉切港邊／公園／屋頂；連線後輸入暱稱開房 |
-| W07 CH08 | 隊色、主客標籤、圖例、LIVE／模擬、等寬數字比分 | `style.css`；`assets/island-core.js`；`assets/policy.css` | 比較湖人紫金與勇士藍金；切四種賽況，閱讀主客分數及狀態 |
-| W08 CH09 | 島圖 relative、地標 absolute 百分比座標、地圖／地標／記分板 z-index；面板 padding／border／max-width | `style.css`；`script.js` 的 `buildLandmarks` | 改變視窗大小與縮放，確認建築與點擊區對齊；桌機側欄、手機下方面板 |
-| W09 CH12 | 常數、算術與邏輯判斷：票房、兩目標、命中區、勝負／平手 | `assets/policy-core.js`；`assets/island-core.js` | 學生保留席算出 2,400 點、兩目標通過；投籃命中加分，好友局同分平手 |
-| W11 CH13 | 隊伍／比賽／球場／房間物件，共用 DOM 面板及 `textContent` 更新 | `assets/island-core.js`；`assets/online.js`；`script.js` | 在勇士／湖人切換看同一場比分，透過地圖、清單與 select 選同一球場 |
-| W12 CH14 | `addEventListener` 的 click／change／submit／keydown；`preventDefault`；`setInterval`／`clearInterval` | `script.js`；`tests/ui.test.cjs` | 送出政策不換頁；按空白鍵／觸控投籃；按住不連發，終場停止，重開或離場清理計時 |
+| W02 CH03 | a 區內導航、dl 球隊資訊、time 開賽時間、ol 遊戲步驟 | index.html、script.js | 選湖人看台灣開賽時間；從好友 PK 區內連結到開房表單 |
+| W03 CH04 | figure／alt／figcaption、原創 SVG、政策 table／caption／th | index.html、island-map.svg、fan-core.js、policy.css | 看五大湖與球館；試算三方案；查看主場／偶遇照片 |
+| W04 CH05 | audio 本地進球／終場聲、noscript 簡版指南 | index.html、shot-hit.wav、round-end.wav、script.js | 勾音效，完成一球與結算；關閉後仍有文字回饋 |
+| W05 CH06 | label／fieldset／legend、政策 radio、場地 select／optgroup、range、暱稱開房 | index.html、games-ui.js、script.js | 下拉切三區場地，逆風拋投拖滑桿；輸入暱稱邀戰 |
+| W07 CH08 | 隊色、LIVE／模擬標籤、圖例、等寬比分與倒數 | style.css、games.css、island-core.js | 切四賽況、看主客比分；看遊戲命中區與節拍提示 |
+| W08 CH09 | 共用 world、relative 島圖、absolute 熱區、三層鏡頭、z-index、側欄／手機面板 | island-map.svg、explorer.css、explorer-ui.js、fan.css | 全島→西岸→勇士→回街區；地景／角色／熱區一起縮放 |
+| W09 CH12 | 算術／比較／邏輯：座標換算、道路距離、票房、命中、競速與平手 | explorer-core.js、policy-core.js、games-core.js | 途中改目的地；勇士保留席 2,400；繞樁罰秒；全能賽逐項 1／0.5 |
+| W11 CH13 | 球隊／鏡頭／行走／球星／照片／遊戲／房間物件，共用 DOM | explorer-core.js、explorer-ui.js、island-core.js、fan-core.js、games-core.js | 角色抵達才揭曉；清單與地圖同站；舊照維持造型 |
+| W12 CH14 | addEventListener、preventDefault、行走／遊戲 setInterval／clearInterval | explorer-ui.js、script.js、fan-ui.js、games-ui.js | 點區名、日夜切換、取消舊行程；重玩／離場清理；途中啟用減少動態效果 |
 
-## 三段展示動線
+表格中的檔案除 index.html、script.js、style.css 外均位於 assets。完整球迷／照片動線見 [FAN_GUIDE.md](./FAN_GUIDE.md)，15 款規則見 [README](../README.md)，好友設定與兩裝置步驟見 [MULTIPLAYER.md](./MULTIPLAYER.md)。
 
-1. **湖人球館 → 模擬賽況。** 預設進行中，點湖人，應看到主隊湖人 74、客隊勇士 78，第 3 節與「模擬賽事」。本場只有湖人球館脈動，勇士不亮。切無賽事／待開打／進行中／已完賽，完賽為湖人 101：108 勇士且無脈動。其他三場的主隊依各場狀態亮燈。切回進行中再到下一站。
-2. **勇士站 → 2,400 點。** 點勇士「門票怎麼分？」→「學生保留席」→「試算」，應為學生 20 人、一般球迷 40 人、總入場 60 人、收入 2,400 點，兩目標通過。表格標出本次方案；比較原價 0／60／2,700，抽籤期望值 15／45／1,800。換方案提示重算，重設清空本次選項與結果。重新試算保留席並確認，島圖出現完成勾號與 1／1；重整應保留。
-3. **潮汐一號 → 命中一球 → 終場。** 點「找人 PK」或港邊潮汐一號 → 開始單機練習 → 倒數後在金色區出手（點按鈕或聚焦投籃區按空白鍵）。命中 +1，等 30 秒結束，應看到自己的結算及明確單機標示。開啟／關閉音效、長按空白鍵、終場後出手、重開及離場各測一次。
+本版的四條地圖／角色／日夜／手機驗收，以 [EXPLORER.md](./EXPLORER.md) 為準；下方原有政策、合影、遊戲示範也持續可用。
+
+## 建議展示動線
+
+1. 湖人看模擬 LIVE（勇士客隊不亮），切完賽保留 101：108 並關燈。
+2. 勇士「門票怎麼分？」選學生保留席，試算 20／40 人、2,400 點，確認進度保留。其他兩方案仍為 0／60／2,700 與期望值 15／45／1,800。
+3. 我的球迷儲存造型 → 勇士找柯瑞 → 主場合影收藏／下載 PNG。指定本機 2026-01-01 → 西岸碼頭步道揭曉柯瑞 → 偶遇合影收藏／下載。換裝、改日期後從兩個分頁看舊照。
+4. 潮汐投籃 → 榕樹繞樁 → 中央草地電腦猜招 → 霓虹節奏，示範四種操作。再依 README 場地表進入其餘十一款，最後展示星光屋頂的三項全能賽。
+5. 每場先讀操作／勝負／上限，再單人練習、有效操作、結算、重玩、回球場。單人猜招標「電腦」，其他場沒有假對手。
 
 ## 終端機實測
 
 ```powershell
-node --test tests/policy.test.cjs tests/island.test.cjs tests/ui.test.cjs
 node --check script.js
 Get-ChildItem assets -Filter *.js | ForEach-Object { node --check $_.FullName }
+node --check assets/generate_fan_assets.cjs
+node --test tests/*.test.cjs
 python tests/check-static.py
 git diff --check
 ```
 
-2026-11-24 實際結果：Node 共 **43 項通過、0 項失敗**；5 個執行用 JavaScript 語法通過；104 個 HTML ID 唯一，區內錨點與本地資產路徑可解析，符合 `/nba-policy-island/` 子路徑。SVG XML／viewBox／引用、兩份 CSS 括號、課堂標籤與三個 optgroup 通過。兩個 WAV 為有效單聲道 PCM16／22,050 Hz，分別 0.36 與 0.68 秒，沒有 autoplay。`git diff --check` 通過。
+本次最終結果：**131 項 Node 測試通過，0 失敗**。11 個執行用 JS 與素材產生器語法通過。241 個靜態 HTML ID 唯一，錨點與素材支援本機／Pages 子路徑；35 個素材 SVG、20 種合影 XML、5 份 CSS 括號與兩個本地 PCM WAV 通過。
 
-測試範圍：8 個唯一球隊 ID、15 個唯一公共球場 ID、三區各 5 場、23 站分流、三種選場方式同步、四賽況主客比分與亮燈、舊進度保留、政策三方案與重設、投籃命中／時間限制／重開／清理、音效開關與拒播後回饋，以及重複／第三人加入的模型與 SQL 契約。
+範圍包括城市相對方位、34 熱區矩形在 viewBox 內且不互相覆蓋；16 主場合影點／15 遊戲／3 偶遇點；台灣跨日、同日一致、舊照讀取與兩類並存；15 款開始、有效操作、計分、勝負／平手、截止與重開；單次事件綁定、換場／離場清理；原有角色、政策、賽況及主場亮燈。
 
-`tests/ui.test.cjs` 使用 Node 元素替身與虛擬時鐘，沒有啟動瀏覽器。好友房間測試使用後端資料形狀的測試替身，**不是兩台真人裝置同步實測**。SQL 僅檢查 RPC 與權限結構，沒有執行資料庫。音效格式測試不代表已聽過聲音。
+房間測試使用 Node 的資料形狀替身，驗證局數／共同種子／結構化成績、v2 能力檢查、猜招不產生假對手且只揭曉後端已完成回合。SQL 僅做 RPC／權限與封存條件的結構契約，**沒有 PostgreSQL 執行、RLS／並行交易或兩台真人裝置實測**。
 
-## 手動預覽待驗
+PNG 測試用 Image／Canvas／DOM 替身驗證自包含 SVG、匯出尺寸及按鈕協定，**沒有實際瀏覽器光柵化／下載或手機存檔測試**。
 
-- 島圖立體地景、23 建築名稱與點擊區；200% 縮放，320／375／768／1440 像素附近的面板、表格／卡片與比分可讀性。
-- Tab／Enter／Space、radio 方向鍵、select 方向鍵、焦點輪廓、觸控；三個選場入口是否一致。
-- 四賽況、主場脈動、完賽關燈；系統「減少動態效果」啟用後保留靜態光圈。
-- 音效實際聽感與播放許可，關閉後仍保留畫面提示；時間截止、重開與離場是否符合操作直覺。
-- 關閉 JavaScript 時簡版指南仍可讀；舊版完成紀錄在重新整理後可讀取。
-- Supabase 設定、SQL 執行、RLS、並行入房、實際網路延遲與雙裝置勝負／平手均待驗。
+## 由你手動確認
 
-## 兩台裝置好友邀戰
-
-完整步驟與安全驗證在 [MULTIPLAYER.md](./MULTIPLAYER.md)。目前公開設定留空，開房／加入停用且不發出網路請求。
-
-1. 由你手動啟用 Supabase 匿名登入、套用 `supabase/schema.sql`，填入 `assets/supabase-config.js` 的公開 Project URL／publishable 或 anon key；不要填服務端金鑰。
-2. 由你提供兩台裝置都能讀取的相同新版網站；本機 file 連結不能跨裝置分享。A、B 使用獨立匿名身分，兩邊都確認「已連線」。
-3. A 選潮汐一號、輸入暱稱開房並分享完整加入連結。B 開連結定位同球場、輸入暱稱加入；雙方看見相同兩名真人。
-4. 同一人再加入應拒絕；第三個獨立身分加入應顯示已滿。只一人就緒不能開始；兩人就緒後由房主開始。
-5. 等 5 秒倒數，各投 30 秒，測不同命中數的勝負，以及雙方不投球的 0：0 平手。終場後不得計分，房主重開須雙方重新就緒。
-6. 驗證只能提交自己的成績、重送不能覆寫、錯誤局數被拒絕；測第三人同時加入、斷線、15 秒提交寬限，以及同球場多房互不干擾。
+- 地圖四面環海、立體球館與露天球場可辨識，西岸／沙漠／高地／五大湖／東岸與南端的相對方位清楚；34 地標的名稱、熱區及建築在桌機、手機、200% 縮放下對齊。矩形檢查不能取代實際排版。
+- 手機清單選站、Tab／Enter／Space、方向鍵、1／2／3、range 拖曳及所有按鈕觸控。記憶播放期不能輸入，猜招選定後鎖定，節拍／真出手提示可讀。
+- 15 款逐一完成、重玩與回場，檢查音效、罰秒、倒數、截止、連擊、同分與全能賽各項分數；切場後舊操作不再計分。
+- 勇士三方案、既有政策勾號、角色／照片儲存、湖人夜場／完賽關燈與減少動態效果。
+- 主場與偶遇實際拍照、PNG 的人物／背景／中文字／日期，手機下載或「另存 PNG」；換裝／隔日後舊照維持原樣。
+- 由你手動套用原始＋增量 SQL 並配置公開金鑰後，依 MULTIPLAYER.md 驗證兩裝置同題、封存猜招、重複／第三人、舊局重送、權限及斷線。

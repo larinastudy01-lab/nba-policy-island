@@ -1,7 +1,7 @@
 /* 原創球迷卡、球館探索與合影。沿用島嶼的藍、金及海灣綠。 */
 .fan-entry{color:var(--gold);border-color:#a48a51;background:#142b40}
 .quick-links{flex-wrap:wrap;justify-content:flex-end}.map-toolbar{flex-wrap:wrap}
-.fan-map-marker{position:absolute;z-index:2;width:5%;transform:translate(-50%,-85%);pointer-events:none;text-align:center}
+.fan-map-marker{position:absolute;z-index:2;width:3.75%;transform:translate(-50%,-85%);pointer-events:none;text-align:center}
 .fan-map-marker>div{width:100%;filter:drop-shadow(0 2px 3px #041828)}
 .fan-map-marker svg{width:100%;height:auto}.fan-map-marker>span{display:inline-block;background:var(--gold);color:#10283e;border:1px solid #fff0c5;border-radius:12px;font-size:10px;font-weight:700;padding:1px 7px;white-space:nowrap}
 .legend-photo{border:1px solid #99dcdf;border-radius:2px;background:#4c929c}
@@ -60,8 +60,13 @@
   .fan-dialog,.star-dialog{position:fixed;inset:0;width:100%;max-width:100%;height:100dvh;max-height:100dvh;margin:0;border:0;border-radius:0;padding:21px 18px;padding-bottom:max(24px,env(safe-area-inset-bottom));overflow:auto}
   .fan-panel-header h2{font-size:23px}.fan-field-grid{gap:16px 12px}.fan-fields{margin-top:25px}.fan-form-actions .button{min-height:48px}
   .fan-panel-header{position:sticky;top:-21px;background:#17364e;padding:10px 0;border-bottom:1px solid #4b687c}
-  .fan-map-marker{width:6%}.fan-map-marker>span{font-size:8px;padding:0 5px}.star-landmark{width:28%}.star-landmark span{font-size:9px;padding:6px 8px;bottom:-23px}
+  .fan-map-marker{width:4.5%}.fan-map-marker>span{font-size:8px;padding:0 5px}.star-landmark{width:28%}.star-landmark span{font-size:9px;padding:6px 8px;bottom:-23px}
   .arena-clue{font-size:12px}.arena-wayfinding{letter-spacing:1px;font-size:7px}.photo-console{grid-template-columns:minmax(0,1fr)}.photo-details{grid-template-columns:1fr 1fr;gap:10px}
   .photo-actions .button{flex:1 1 calc(50% - 9px)}.photo-actions .text-button{width:100%;margin-left:0}.star-era-label{font-size:10px}.practice-fan-result figcaption{font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){.fan-map-marker{transition:none}.star-landmark{animation:none}}
+.album-kind-tabs{display:flex;gap:8px;margin:16px 0}.album-kind-tabs button{flex:1;min-height:44px;border:1px solid #54718a;border-radius:6px;background:#10283c;color:#b7cddd;font-size:12px}.album-kind-tabs button[aria-pressed="true"]{color:var(--gold);border-color:#b3995c;background:#f3c45b13}.album-kind-tabs span{font-variant-numeric:tabular-nums;margin-left:5px;font-size:10px}
+.encounter-presence{font-size:16px;line-height:1.8;color:#e5d49d}.encounter-figure{margin:18px 0}.encounter-scene{position:relative;aspect-ratio:3/2;isolation:isolate;border:1px solid #4e7b83;border-radius:8px;overflow:hidden;background:#19445a}.encounter-scene>img{display:block;width:100%;height:100%;object-fit:contain}
+.encounter-character{position:absolute;left:66%;top:74%;transform:translate(-50%,-100%);width:32%;border:0;border-radius:40%;background:none;padding:0}.encounter-character img{width:100%;height:auto;filter:brightness(.12) saturate(.2);pointer-events:none}.encounter-character[data-revealed="true"] img{filter:none}.encounter-character span{display:block;font-size:10px;color:#f4d37e;background:#0c2539;border:1px solid #c3ad73;border-radius:20px;padding:5px;white-space:nowrap;position:absolute;bottom:-20px;left:50%;transform:translateX(-50%)}
+.encounter-figure figcaption{display:block;font-size:11px;line-height:1.8;color:#aec8d7;margin-top:10px}.encounter-test-controls{margin:22px 0 0}.encounter-test-controls fieldset{min-width:0;border:1px dashed #718fa1;border-radius:6px;padding:13px}.encounter-test-controls legend,.encounter-test-controls label{font-size:11px;color:#b5ccda}.encounter-test-controls label{display:block;margin:6px 0}.encounter-test-controls input{display:block;width:100%;min-height:44px;margin-bottom:9px;background:#0d2436;color:var(--text);border:1px solid #56738b;border-radius:5px;padding:8px;font:inherit}
+.directory-filters{flex-wrap:wrap}.island-stamp b{font:inherit}#encounter-greeting{font-size:13px;line-height:1.9;color:#c4d9e3}
