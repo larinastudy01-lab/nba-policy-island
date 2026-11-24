@@ -5,9 +5,9 @@ const C = require("../assets/island-core.js"), F = require("../assets/fan-core.j
 const day = "2026-01-01", timestamp = "2026-01-01T04:30:00Z";
 function memory(initial = {}) { const values = new Map(Object.entries(initial));return { values, getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) }; }
 
-test("16 teams, 15 courts, 16 unique arena photo points and 3 separate encounter IDs", () => {
-  assert.equal(C.TEAMS.length,16);assert.equal(C.COURTS.length,15);assert.equal(F.STATIONS.length,16);assert.equal(C.ENCOUNTERS.length,3);
-  const all=[...C.TEAMS,...C.COURTS,...C.ENCOUNTERS];assert.equal(new Set(all.map(item=>item.id)).size,34);
+test("30 teams, 15 courts, 16 unique arena photo points and 3 separate encounter IDs", () => {
+  assert.equal(C.TEAMS.length,30);assert.equal(C.COURTS.length,15);assert.equal(F.STATIONS.length,16);assert.equal(C.ENCOUNTERS.length,3);
+  const all=[...C.TEAMS,...C.COURTS,...C.ENCOUNTERS];assert.equal(new Set(all.map(item=>item.id)).size,48);
   assert.equal(new Set(F.STATIONS.map(station=>station.id)).size,16);assert.equal(new Set(F.STATIONS.map(station=>station.arenaId)).size,16);
   for(const station of F.STATIONS){assert.equal(station.arenaId,C.getLandmark("nba",station.teamId).arenaId);assert.equal(station.historical,true);assert.match(station.label,/代表球星.*隊史/);}
   for(const item of all){assert.ok(item.x>80&&item.x<C.MAP.width-80);assert.ok(item.y>70&&item.y<C.MAP.height-70);}

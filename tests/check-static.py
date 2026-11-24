@@ -40,7 +40,7 @@ page = Page()
 page.feed((ROOT / "index.html").read_text(encoding="utf-8-sig"))
 assert len(page.ids) == len(set(page.ids)), "Duplicate HTML IDs"
 assert not page.errors, page.errors
-for layer in ("landmark-layer", "road-layer", "district-layer", "fan-map-marker", "island-encounter-actor", "npc-layer", "scenery-layer", "traffic-layer"):
+for layer in ("landmark-layer", "road-layer", "district-layer", "fan-map-marker", "island-encounter-actor", "npc-layer", "scenery-layer", "traffic-layer", "memory-layer", "city-layer", "region-layer", "shop-layer"):
     assert "island-world" in page.ancestors[layer], f"Layer outside shared world: {layer}"
 assert "island-world" not in page.ancestors["map-scoreboard"], "Scoreboard must stay outside zoomed world"
 print("Map: terrain/layers use one world; scoreboard stays outside camera transform")
@@ -61,7 +61,7 @@ for node in svg.iter():
     for attr in ("href", "{http://www.w3.org/1999/xlink}href"):
         if attr in node.attrib:
             assert node.attrib[attr].startswith("#") and node.attrib[attr][1:] in svg_ids
-for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css", ROOT / "assets/bay.css", ROOT / "assets/scenery.css", ROOT / "assets/pixel.css"):
+for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css", ROOT / "assets/bay.css", ROOT / "assets/scenery.css", ROOT / "assets/pixel.css", ROOT / "assets/archipelago.css", ROOT / "assets/memory.css", ROOT / "assets/shop.css"):
     css = file.read_text(encoding="utf-8-sig")
     css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
     css = re.sub(r'''"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*' ''', "", css, flags=re.X)
@@ -191,8 +191,11 @@ print("Scenery XML: 20 day/night landmarks, 6 cars x 3 views, 2 traffic lanes, 8
 import struct
 import zlib
 manifest = json.loads((ROOT / "assets/pixel/manifest.json").read_text(encoding="utf-8"))
-assert len(manifest["files"]) == 130
-assert set(manifest["arenaModels"]) == {p.stem for p in (ROOT / "assets/arenas").glob("*.svg")}
+assert len(manifest["files"]) == 186
+assert set(manifest["arenaModels"]) == {p.stem for p in (ROOT / "assets/pixel/arenas").glob("*.svg") if not p.stem.endswith("-night")}
+assert {p.stem for p in (ROOT / "assets/arenas").glob("*.svg")} <= set(manifest["arenaModels"]), "All 16 old photo venues retained"
+assert len(manifest["arenaModels"]) == 30
+assert len(list((ROOT / "assets/pixel/cities").glob("*.svg"))) == 28
 assert len(set(manifest["arenaModels"].values())) == 6
 assert len(manifest["people"]) == 8 and len(manifest["props"]) == 9
 for item in manifest["files"]:
@@ -217,4 +220,30 @@ for item in manifest["files"]:
             assert float(rect.attrib.get(key,0)).is_integer()
 for image in (ROOT/"docs/pixel-preview").glob("*.png"):
     assert image.read_bytes().startswith(b"\x89PNG")
-print("Pixel: 130 PNG/SVG pairs; valid native grids/CRC/pixels; 6 arena, 3 court, 6 car, 8 pedestrian, 9 prop models")
+print("Pixel: 186 PNG/SVG pairs; valid native grids/CRC/pixels; 6 arena, 3 court, 6 car, 8 pedestrian, 9 prop models")
+
+memory_files = list((ROOT / "assets/memories").glob("*.svg"))
+assert len(memory_files) == 10, "5 memory scenes + 5 physical props required"
+for file in memory_files:
+    tree = ET.parse(file).getroot()
+    assert tree.attrib["shape-rendering"] == "crispEdges"
+    assert tree.find("{http://www.w3.org/2000/svg}title") is not None
+    for node in tree.iter():
+        assert node.tag not in {"{http://www.w3.org/2000/svg}script", "{http://www.w3.org/2000/svg}image"}
+        for key in ("x", "y", "width", "height"):
+            if key in node.attrib:
+                assert float(node.attrib[key]).is_integer()
+print("Memories: 5 original local pixel scenes + 5 map props, XML/alt titles/integer grid valid")
+
+shop_files = list((ROOT / "assets/shops").glob("*.svg"))
+assert len(shop_files) == 12, "2 stores x day/night + 8 merchandise images required"
+for file in shop_files:
+    tree = ET.parse(file).getroot()
+    assert tree.attrib["shape-rendering"] == "crispEdges"
+    assert tree.find("{http://www.w3.org/2000/svg}title") is not None
+    for node in tree.iter():
+        assert node.tag not in {"{http://www.w3.org/2000/svg}script", "{http://www.w3.org/2000/svg}image"}
+        for key in ("x", "y", "width", "height"):
+            if key in node.attrib:
+                assert float(node.attrib[key]).is_integer()
+print("Shops: 2 day/night storefronts + 8 original pixel products, XML and integer grid valid")

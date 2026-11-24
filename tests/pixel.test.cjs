@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const P=require('../assets/pixel-core.js'),C=require('../assets/island-core.js'),E=require('../assets/explorer-core.js'),B=require('../assets/bay-scene.js'),F=require('../assets/fan-core.js'),S=require('../assets/sights-core.js');
 const root=path.join(__dirname,'..'),hash=v=>crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex');
 function mask(t){return hash(t.pixels.map(Boolean));}
-test('six genuinely different stadium silhouettes cover all 16 unchanged arena IDs',()=>{
+test('six genuinely different stadium silhouettes cover all 30 arena IDs',()=>{
   assert.equal(P.MODELS.length,6);assert.deepEqual(Object.keys(P.ARENAS).sort(),C.TEAMS.map(t=>t.id).sort());assert.equal(new Set(Object.values(P.ARENAS)).size,6);
   const shapes=P.MODELS.map(model=>P.arena(C.TEAMS.find(t=>P.ARENAS[t.id]===model)));assert.equal(new Set(shapes.map(mask)).size,6);
   for(const team of C.TEAMS){assert.notEqual(hash(P.arena(team).pixels),hash(P.arena(team,true).pixels));assert.equal(P.arena(team).width,80);assert.match(P.arenaMarkup(team),/arena-halo/);}
@@ -38,6 +38,6 @@ test('pixel walk frames follow the existing graph, snap only display and stop on
   const w=E.createWalker();E.walk(w,'meet-pier',0);E.tick(w,320);assert.ok(P.SPEC.directions.includes(w.direction));assert.ok(w.frame>=0&&w.frame<4);assert.equal(w.moving,true);const location={...w.position};assert.ok(Number.isFinite(location.x)&&Number.isFinite(location.y));E.tick(w,10000);assert.equal(w.frame,0);assert.ok(E.hasArrived(w,'meet-pier'));E.walk(w,'harbor-01',11000,true);assert.equal(w.frame,0);assert.ok(E.hasArrived(w,'harbor-01'));
 });
 test('all 20 pixel landmarks, 18 car views and manifest asset pairs resolve with exact native grid sizes',()=>{
-  const manifest=JSON.parse(fs.readFileSync(path.join(root,'assets/pixel/manifest.json')));assert.equal(manifest.files.length,130);assert.equal(manifest.props.length,9);const dirs={};for(const item of manifest.files){for(const ext of ['png','svg'])assert.ok(fs.existsSync(path.join(root,'assets/pixel',item.name+'.'+ext)));if(item.name.startsWith('cars/'))assert.deepEqual([item.width,item.height],[26,20]);dirs[item.name]=true;}
+  const manifest=JSON.parse(fs.readFileSync(path.join(root,'assets/pixel/manifest.json')));assert.equal(manifest.files.length,186);assert.equal(manifest.props.length,9);const dirs={};for(const item of manifest.files){for(const ext of ['png','svg'])assert.ok(fs.existsSync(path.join(root,'assets/pixel',item.name+'.'+ext)));if(item.name.startsWith('cars/'))assert.deepEqual([item.width,item.height],[26,20]);dirs[item.name]=true;}
   assert.equal(manifest.files.filter(i=>i.name.startsWith('sights/')).length,40);assert.equal(manifest.files.filter(i=>i.name.startsWith('cars/')).length,18);for(const s of S.SIGHTS)for(const p of [s.pixelAsset,s.pixelNightAsset])assert.ok(fs.existsSync(path.join(root,p)));
 });

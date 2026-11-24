@@ -1,19 +1,19 @@
 /* 六款獨立原創車身；車道不加入玩家路網。封閉曲線連續行駛，共用地圖動畫時鐘。 */
 (function(root,factory){const api=factory();if(typeof module==="object"&&module.exports)module.exports=api;else root.NBATraffic=api;})(globalThis,function(){
   "use strict";
+  const A=typeof module==="object"&&module.exports?require("./archipelago-core.js"):globalThis.NBAArchipelago;
   const CARS=[
-    {id:"car-f40",name:"Ferrari F40",color:"#d8493d",district:"west",x:320,y:265,view:"rear",parked:true,feature:"方正車尾、大尾翼、楔形車頭"},
-    {id:"car-488",name:"Ferrari 488 Spider",color:"#e75040",district:"west",x:185,y:575,view:"front",parked:true,feature:"開放式座艙、側進氣口"},
+    {id:"car-f40",name:"Ferrari F40",color:"#d8493d",district:"west",view:"rear",parked:true,feature:"方正車尾、大尾翼、楔形車頭"},
+    {id:"car-488",name:"Ferrari 488 Spider",color:"#e75040",district:"west",view:"front",parked:true,feature:"開放式座艙、側進氣口"},
     {id:"car-720s",name:"McLaren 720S",color:"#f49836",district:"west",routeId:"bay-cruise",parked:false,feature:"流線座艙、眼窩式頭燈"},
-    {id:"car-p1",name:"McLaren P1",color:"#b8c7cc",district:"west",x:208,y:630,view:"rear",parked:true,feature:"水滴座艙、弧形車尾燈"},
+    {id:"car-p1",name:"McLaren P1",color:"#b8c7cc",district:"west",view:"rear",parked:true,feature:"水滴座艙、弧形車尾燈"},
     {id:"car-aventador",name:"Lamborghini Aventador",color:"#e1c846",district:"desert",routeId:"vegas-cruise",parked:false,feature:"銳利折線、Y 字頭燈"},
-    {id:"car-911",name:"Porsche 911 GT3 RS",color:"#e1e7df",district:"highland",x:710,y:365,view:"side",parked:true,feature:"圓燈、弧形車尾、高尾翼"}
+    {id:"car-911",name:"Porsche 911 GT3 RS",color:"#e1e7df",district:"highland",view:"side",parked:true,feature:"圓燈、弧形車尾、高尾翼"}
   ];
-  // 金門橋車道 (118,274) → (343,173)，行人另走往南偏移的橋側步道。
-  const ROUTES=[
-    {id:"bay-cruise",district:"west",speed:29,points:[{x:118,y:274},{x:343,y:173},{x:405,y:150},{x:478,y:195},{x:463,y:300},{x:463,y:410},{x:356,y:455},{x:175,y:429},{x:115,y:345}]},
-    {id:"vegas-cruise",district:"desert",speed:25,points:[{x:555,y:730},{x:677,y:692},{x:710,y:753},{x:679,y:829},{x:563,y:852},{x:531,y:794}]}
-  ];
+  // 金門橋車道／橋側步道均由群島布局配置；兩條路線分流。
+  const ROUTES=A.CAR_ROUTES;
+  const parking={"car-f40":["warriors",-110,-70],"car-488":["lakers",-110,95],"car-p1":["warriors",-55,90],"car-911":["nuggets",-125,60]};
+  CARS.forEach(c=>{const p=parking[c.id];if(p){const i=A.getIsland(p[0]);c.x=i.x+p[1];c.y=i.y+p[2];c.islandId=i.id;}else c.islandId=c.id==="car-720s"?"island-warriors":"island-suns";});
   const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),lerp=(a,b,t)=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
   function roundedRoute(points){const out=[];for(let i=0;i<points.length;i++){const p=points[i],before=points[(i+points.length-1)%points.length],after=points[(i+1)%points.length],radius=Math.min(14,distance(p,before)/5,distance(p,after)/5),a=lerp(p,before,radius/distance(p,before)),b=lerp(p,after,radius/distance(p,after));for(let j=0;j<=8;j++){const t=j/8;out.push({...lerp(lerp(a,p,t),lerp(p,b,t),t),corner:true});}out.push({...b,corner:false});}return out;}
   const tracks=new Map(ROUTES.map(route=>{const points=roundedRoute(route.points),segments=points.map((a,i)=>{const b=points[(i+1)%points.length];return {a,b,length:distance(a,b),corner:a.corner&&b.corner};}).filter(s=>s.length>.001);return [route.id,{...route,segments,length:segments.reduce((n,s)=>n+s.length,0)}];}));

@@ -1,5 +1,7 @@
 # NBA 政策島素材
 
+現行首頁為 3600 × 2250 的 30 座球隊群島。`archipelago-core.js` 是島岸／入口／路網的共同座標來源；`archipelago-art.cjs` 產生像素地形與海上道路；`city-art.cjs` 原創繪製新增十四島的不同城市模型，日夜共 28 組；新增球館日夜再增 28 組，全專案共 186 組 PNG／SVG。沒有使用外部素材。重建使用 `python assets/generate_pixels.py`，再跑 `node assets/generate_fan_assets.cjs` 同步偶遇衍生 SVG。操作與範圍見 [THIRTY_ISLANDS.md](../docs/THIRTY_ISLANDS.md)。下方舊版向量地圖／灣區素材與計數為歷史說明，首頁已由新群島圖層取代。
+
 目前首頁使用 `pixel/island-map.png` 及像素分層素材，原本的 `island-map.svg` 保留為來源。全部為本專案原創，無外部圖片、字型或 CDN 依賴。它包含海洋、海岸、岩壁、湖岸、橋梁、中央廣場、道路、碼頭、樹木與街區；不沿用其他遊戲的島形或素材。
 
 ## 等距像素版

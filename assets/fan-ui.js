@@ -38,7 +38,7 @@
       marker.style.zIndex=String(Math.round(position.y));
       marker.dataset.location = position.moving?"":position.locationId;
       marker.dataset.x=String(position.x);marker.dataset.y=String(position.y);
-      marker.setAttribute("aria-label",`${saved.nickname}，${position.moving?"沿道路移動中":"目前在"+([...Island.TEAMS,...Island.COURTS,...Island.ENCOUNTERS,...root.NBASights.SIGHTS].find(p=>p.id===position.locationId)?.name||item.name)}`);
+      marker.setAttribute("aria-label",`${saved.nickname}，${position.moving?"沿道路移動中":"目前在"+([...Island.TEAMS,...Island.COURTS,...Island.ENCOUNTERS,...root.NBASights.SIGHTS,...root.NBAMemory.ENTRANCES,...root.NBAShop.SHOPS].find(p=>p.id===position.locationId)?.name||item.name)}`);
       $("fan-map-name").textContent=`我・${Array.from(saved.nickname).slice(0,6).join("")}`;
       // 移動時只更新位置；換裝儲存後才重新產生角色圖層。
       const avatar=JSON.stringify(saved)+`:${position.direction||"se"}:${position.frame||0}:${position.moving}`;

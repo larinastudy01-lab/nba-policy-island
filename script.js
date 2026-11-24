@@ -15,6 +15,9 @@ function initializeIsland() {
   const state = C.createIslandState();
   let fanUI = null;
   let explorer = null;
+  let memoryUI = null;
+  let shopUI = null;
+  let teamQuery = "";
   let bayFixture="away",panelRequested=false,pendingPanelFocus=false;
   const practicedGames=new Set();let tutorialContinuation=null;
   const matchForTeam=id=>C.gameForTeam(id,state.gameState,bayFixture);
@@ -102,10 +105,14 @@ function initializeIsland() {
         $("station-list").append(button);
         listNodes.set(item.id,{button,kind,item});
         if(kind==="court"){
-          const option=document.createElement("option");option.value=item.id;option.textContent=item.name;
+          const option=document.createElement("option");option.value=item.id;option.textContent=item.name+" · "+C.TEAMS.find(t=>t.id===item.teamIslandId).shortName+"島";
           $(`court-group-${item.type}`).append(option);
         }
       }
+    }
+    for(const team of C.TEAMS.filter(t=>t.expansion)){
+      const image=document.createElement("img");image.id=`city-${team.id}`;image.className="city-scene";image.src=`./assets/pixel/cities/${team.id}.svg`;image.alt=`${team.city}城市印象：${team.cityScene}，原創像素場景`;
+      image.style.left=`${(globalThis.NBAArchipelago.owner(team.id).x-155)/C.MAP.width*100}%`;image.style.top=`${(globalThis.NBAArchipelago.owner(team.id).y-65)/C.MAP.height*100}%`;image.style.width=`${110/C.MAP.width*100}%`;image.style.zIndex=String(Math.round(team.y)-40);$("city-layer").append(image);
     }
   }
   function courtStatus(id) {
@@ -127,6 +134,8 @@ function initializeIsland() {
     }
   }
   function renderMapAndDirectory() {
+    const matches=C.searchTeams(teamQuery),matching=new Set(matches.map(t=>t.id));
+    $("team-search-controls").hidden=state.filter!=="nba";$("team-search-status").textContent=`找到 ${matches.length}／${C.TEAMS.length} 支球隊${matches.length?"":"，請更換關鍵字。"}`;
     const complete = policySession.getState().completedPlanId !== null;
     const album = fanUI?.getState().homeAlbum || {};
     $("open-team-count").textContent=`${C.TEAMS.length}／30`;
@@ -155,7 +164,7 @@ function initializeIsland() {
       }
       node.setAttribute("aria-label",`${item.name}${kind==="court"?"，"+item.gameName:""}，${item.region}，${status}`);
       const entry=listNodes.get(id);
-      entry.button.hidden=kind!==state.filter;
+      entry.button.hidden=kind!==state.filter||(kind==="nba"&&!matching.has(id));
       entry.button.setAttribute("aria-pressed",String(selected));
       entry.button.setAttribute("aria-label",`${item.name}${kind==="court"?"，"+item.gameName:""}，${status}`);
       entry.button.innerHTML=`<span class="list-symbol" aria-hidden="true">${kind==="nba"?item.abbr:kind==="encounter"?"偶遇":item.type==="harbor"?"港邊":item.type==="park"?"公園":"屋頂"}</span><span class="list-copy"><strong>${escapeHTML(item.name)}${done?" ✓":""}</strong><small>${escapeHTML(kind==="nba"?item.region:kind==="court"?item.gameName+"・"+status:status)}${photographed?"・合影已收藏":""}</small></span>`;
@@ -191,14 +200,17 @@ function initializeIsland() {
   }
   function renderPanel() {
     updatePanelVisibility();
+    if(state.kind==="memory"){$("map-scoreboard").hidden=true;$("tour-map").dataset.policyOpen="false";return;}
     const item=C.getLandmark(state.kind,state.id);
     $("tour-map").dataset.policyOpen=String(state.kind==="nba"&&state.id==="warriors"&&policyOpen);
     $("panel-title").textContent=item.name;
-    $("panel-category").textContent=`${item.region} / ${state.kind==="nba"?"NBA ARENA":state.kind==="court"?"PUBLIC COURT":state.kind==="sight"?"SCENIC VIEW":"ISLAND ENCOUNTER"}`;
+    $("panel-category").textContent=`${C.TEAMS.find(t=>t.id===item.teamIslandId)?.shortName||item.region}島 / ${state.kind==="nba"?"NBA ARENA":state.kind==="court"?"PUBLIC COURT":state.kind==="sight"?"SCENIC VIEW":"ISLAND ENCOUNTER"}`;
     $("nba-panel").hidden=state.kind!=="nba";
     $("court-panel").hidden=state.kind!=="court";
     $("encounter-panel").hidden=state.kind!=="encounter";
     $("sight-panel").hidden=state.kind!=="sight";
+    $("shop-panel").hidden=state.kind!=="shop";
+    if(state.kind==="shop"){$("panel-category").textContent="球隊周邊 / TEAM SHOP";$("map-scoreboard").hidden=true;shopUI?.refreshEntrance();renderPolicyProgress();return;}
     if(state.kind==="nba"){
       const match=matchForTeam(item.id);
       $("team-badge").textContent=item.abbr;
@@ -206,7 +218,10 @@ function initializeIsland() {
       $("team-badge").style.setProperty("--team-accent",item.accent);
       $("team-english").textContent=item.englishName;
       $("team-city").textContent=item.city||"待補";$("team-abbr").textContent=item.abbr;$("team-region").textContent=item.region;
-      const station=F.getStation(item.id);$("team-venue").textContent=station?.venue||"場館規劃中";$("team-representative").textContent=station?`${station.starName}（隊史球星）`:"待公布";
+      $("team-scene").textContent=item.cityScene;
+      const station=F.getStation(item.id);$("team-venue").textContent=station?.venue||item.venue;$("team-representative").textContent=station?`${station.starName}（隊史球星）`:"本島先開放主場探索；球星合影尚未開放";
+      $("find-star").disabled=!station;$("find-star").textContent=station?"進館找球星 ↗":"球星合影尚未開放";
+      $("nba-shop-launch").hidden=!globalThis.NBAShop.getShop("shop-"+item.id);
       $("team-side").textContent=`${item.region}・${match.isHome?"本場主隊":"本場客隊（主場球館本場不亮燈）"}`;
       renderScoreboard($("team-game"),match);renderScoreboard($("map-scoreboard"),match);
       $("map-scoreboard").hidden=false;
@@ -233,9 +248,11 @@ function initializeIsland() {
     renderPolicyProgress();
   }
   function openLandmark(kind,id,focus=true) {
+    if(kind!=="memory")memoryUI?.cancelNavigation();
     if(["practice","tutorial"].includes(gameMode)&&(kind!=="court"||id!==gameCourtId))leavePractice(false);
     if(gameMode==="online"&&(kind!=="court"||id!==gameCourtId)){stopGameTimer();stopSounds();$("play-court").hidden=true;}
     C.selectLandmark(state,kind,id);
+    if(kind==="memory"){panelRequested=false;pendingPanelFocus=false;setDirectory(false);explorer?.visit(id);renderMapAndDirectory();renderPanel();return;}
     panelRequested=true;pendingPanelFocus=focus;setDirectory(false);
     const scenery=kind==="sight"&& !S.get(id).photo;
     if(scenery)explorer?.inspect(id);else explorer?.visit(id);
@@ -250,18 +267,22 @@ function initializeIsland() {
   function setDirectory(open){$("station-directory").hidden=!open;$("toggle-directory").setAttribute("aria-expanded",String(open));}
   $("station-close").addEventListener("click",()=>{closeStationPanel();$("camera-back").focus();});
   $("toggle-directory").addEventListener("click",()=>{const open=$("station-directory").hidden;setDirectory(open);if(open)$("station-directory").scrollIntoView?.({block:"start",behavior:"auto"});});
-  $("bay-fixture").addEventListener("change",()=>{bayFixture=$("bay-fixture").value==="home"?"home":"away";$("fixture-description").textContent=bayFixture==="home"?"勇士主場迎戰湖人；只有勇士在 LIVE 時脈動。八場示範，非 NBA 即時賽況。":"勇士客場打湖人；只有湖人在 LIVE 時脈動。八場示範，非 NBA 即時賽況。";renderMapAndDirectory();renderPanel();});
+  $("bay-fixture").addEventListener("change",()=>{bayFixture=$("bay-fixture").value==="home"?"home":"away";$("fixture-description").textContent=bayFixture==="home"?"勇士主場迎戰湖人；只有勇士在 LIVE 時脈動。十五場示範，非 NBA 即時賽況。":"勇士客場打湖人；只有湖人在 LIVE 時脈動。十五場示範，非 NBA 即時賽況。";renderMapAndDirectory();renderPanel();});
   function setFilter(kind) {state.filter=kind;renderMapAndDirectory();}
   $("filter-nba").addEventListener("click",()=>setFilter("nba"));
   $("filter-court").addEventListener("click",()=>setFilter("court"));
   $("filter-encounter").addEventListener("click",()=>setFilter("encounter"));
   $("filter-sight").addEventListener("click",()=>setFilter("sight"));
+  $("team-search").addEventListener("input",()=>{teamQuery=$("team-search").value;renderMapAndDirectory();});
+  $("team-search-form").addEventListener("submit",event=>{event.preventDefault();teamQuery=$("team-search").value;renderMapAndDirectory();});
+  $("team-search-clear").addEventListener("click",()=>{teamQuery="";$("team-search").value="";renderMapAndDirectory();$("team-search").focus();});
   $("sight-photo").addEventListener("click",()=>{if(state.kind==="sight"&&explorer?.hasArrived(state.id))fanUI.openSight(state.id,$("island-map").dataset.theme);});
   $("quick-nba").addEventListener("click",()=>openLandmark("nba","warriors"));
   $("quick-courts").addEventListener("click",()=>openLandmark("court",C.COURTS[0].id));
   $("court-select").addEventListener("change",()=>openLandmark("court",$("court-select").value,false));
   document.querySelectorAll('input[name="game-state"]').forEach(input=>input.addEventListener("change",()=>{if(!input.checked)return;C.setGameState(state,input.value);renderMapAndDirectory();renderPanel();announce("模擬賽況已更新；政策與真人房間不受影響。");}));
   $("policy-launch").addEventListener("click",()=>{policyOpen=!policyOpen;renderPanel();if(policyOpen)$("policy-title").focus();});
+  $("nba-shop-launch").addEventListener("click",()=>{const id="shop-"+state.id;if(state.kind==="nba"&&globalThis.NBAShop.getShop(id))openLandmark("shop",id);});
   $("policy-title").setAttribute("tabindex","-1");
 
   const policyElements = {
@@ -615,13 +636,15 @@ function initializeIsland() {
 
   buildLandmarks();
   buildSights();
+  memoryUI=globalThis.NBAMemoryUI.initialize({storage,onNavigate:id=>openLandmark("memory",id),onFocus:id=>explorer?.focusOnly(id),onAnnounce:announce});
+  shopUI=globalThis.NBAShopUI.initialize({storage,config:globalThis.NBA_SHOP_CONFIG,getSelection:()=>state,hasArrived:id=>Boolean(explorer?.hasArrived(id)),onVisit:id=>openLandmark("shop",id),onFocus:id=>explorer?.focusOnly(id),onAnnounce:announce});
   fanUI=globalThis.NBAFanUI.initializeFan({storage,getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,getBayFixture:()=>bayFixture,onContinue:()=>closeStationPanel(),
     getPlayerPosition:()=>explorer?.position(),hasArrived:id=>explorer?explorer.hasArrived(id):state.id===id,
     onReveal:()=>explorer?.refreshEncounter(),
     onVisit:(id,kind="nba")=>openLandmark(kind,id),onChange:()=>{renderMapAndDirectory();renderPracticeFan();}});
   let lastArrivalContext="";
-  explorer=globalThis.NBAExplorerUI.initialize({getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,getBayFixture:()=>bayFixture,onView:camera=>{if(camera.level!=="venue")closeStationPanel(false);},
-    onPosition:()=>{fanUI.updateLocation();const key=`${state.kind}:${state.id}:${explorer?.hasArrived(state.id)}`;
+  explorer=globalThis.NBAExplorerUI.initialize({getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,getBayFixture:()=>bayFixture,onView:camera=>{memoryUI.observeView(camera);shopUI.observeView(camera);if(camera.level!=="venue")closeStationPanel(false);},
+    onPosition:(position,walker)=>{memoryUI.observePosition(position,walker);shopUI.refreshEntrance();fanUI.updateLocation();const key=`${state.kind}:${state.id}:${explorer?.hasArrived(state.id)}`;
       if(key!==lastArrivalContext){if(state.kind==="encounter")fanUI.renderEncounterPanel(state.id);if(explorer?.hasArrived(state.id)&&panelRequested){renderPanel();if(pendingPanelFocus){pendingPanelFocus=false;$("panel-title").focus();}}}lastArrivalContext=key;},onAnnounce:announce});
   // 初始化期間 explorer 尚未賦值；再以行走模型的初始座標渲染一次。
   fanUI.updateLocation();

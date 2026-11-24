@@ -4,8 +4,8 @@ const G=require("../assets/games-core.js"),C=require("../assets/island-core.js")
 const seed=2026;
 function make(id,options={}){const game=G.createGame(id,{seed,...options});game.start(0);return game;}
 const nextAim=after=>{for(let t=after;t<after+1200;t++)if(Math.abs(G.aimAt(t)-.5)<.005)return t;throw new Error("No aim window");};
-test("16 arena/point IDs, 3 encounters, 15 distinct court/game pairs and geographic relations",()=>{
-  assert.equal(new Set(C.TEAMS.map(t=>t.arenaId)).size,16);assert.equal(F.STATIONS.length,16);assert.equal(C.ENCOUNTERS.length,3);
+test("30 arena IDs, 16 photo points, 3 encounters, 15 distinct court/game pairs and geographic relations",()=>{
+  assert.equal(new Set(C.TEAMS.map(t=>t.arenaId)).size,30);assert.equal(F.STATIONS.length,16);assert.equal(C.ENCOUNTERS.length,3);
   assert.equal(new Set(C.COURTS.map(c=>c.gameId)).size,15);assert.equal(G.GAMES.length,15);
   for(const c of C.COURTS){assert.equal(G.forCourt(c.id).id,c.gameId);assert.equal(G.getGame(c.gameId).name,c.gameName);}
   const t=Object.fromEntries(C.TEAMS.map(t=>[t.id,t]));

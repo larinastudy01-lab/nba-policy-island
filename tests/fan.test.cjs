@@ -41,7 +41,7 @@ test("malformed storage is isolated from valid avatar data and does not block fu
 });
 test("16 unique star stations map to 16 existing NBA arenas and local original assets", () => {
   assert.equal(F.STATIONS.length, 16);assert.equal(new Set(F.STATIONS.map(station => station.starId)).size, 16);
-  assert.deepEqual(F.STATIONS.map(station => station.teamId).sort(), C.TEAMS.map(team => team.id).sort());
+  assert.deepEqual(F.STATIONS.map(station => station.teamId).sort(), C.TEAMS.filter(team=>!team.expansion).map(team => team.id).sort());
   assert.equal(F.getStation("warriors").starId, "curry");assert.equal(F.getStation("harbor-01"), null);
   for (const station of F.STATIONS) {
     assert.ok(station.point && station.venue);assert.ok(station.x > 0 && station.x < 100 && station.y > 0 && station.y < 100);assert.match(station.label, /非現役名單/);

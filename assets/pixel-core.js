@@ -3,6 +3,7 @@
   "use strict";
   const SPEC={version:"pixel-v1",worldPixel:2,projection:[2,1],light:"north-west",shadow:[4,3],frame:[16,24],foot:[8,22],topAnchor:[4,10],topBounds:[4,10,9,7],chest:[8,13],directions:["e","se","s","sw","w","nw","n","ne"],columns:["idle","walk-0","walk-1","walk-2","walk-3"],frameMs:150,sheet:[80,192]};
   const ARENAS={warriors:"low-oval",lakers:"dome",clippers:"glass",nuggets:"sawtooth",mavericks:"steps",bulls:"brick",celtics:"dome",knicks:"glass",spurs:"low-oval",thunder:"sawtooth",suns:"steps",timberwolves:"sawtooth",bucks:"brick",sixers:"steps",heat:"glass",raptors:"brick"};
+  Object.assign(ARENAS,{nets:'brick',cavaliers:'glass',jazz:'sawtooth',rockets:'low-oval',blazers:'steps',kings:'dome',grizzlies:'brick',pelicans:'steps',pistons:'sawtooth',pacers:'low-oval',wizards:'steps',hawks:'brick',hornets:'glass',magic:'dome'});
   const MODELS=["low-oval","dome","glass","sawtooth","steps","brick"];
   const PEOPLE=["short-cap","tall-curls","backpack","ponytail","hoodie","senior","ball-fan","seated"];
   const xml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"})[c]);
@@ -20,7 +21,7 @@
   function shade(c,n){return '#'+[1,3,5].map(i=>Math.max(0,Math.min(255,parseInt(c.slice(i,i+2),16)+n)).toString(16).padStart(2,'0')).join('');}
   function block(t,x,y,w,d,h,color){const roof=[[x,y-h],[x+w,y+d/2-h],[x+w-d,y+d-h],[x-d,y+d/2-h]];t.polygon([[x-d,y+d/2-h],[x+w-d,y+d-h],[x+w-d,y+d],[x-d,y+d/2]],shade(color,-30));t.polygon([[x+w-d,y+d-h],[x+w,y+d/2-h],[x+w,y+d/2],[x+w-d,y+d]],shade(color,-55));t.polygon(roof,color);}
   function arena(team,night=false){
-    const model=ARENAS[team.id];if(!model)throw new RangeError("Unknown pixel arena");const t=new Tile(80,66),c=team.color,a=team.accent,glass=night?"#f5d998":"#93c6cf",dark="#263c50";
+    const model=ARENAS[team.id];if(!model)throw new RangeError("Unknown pixel arena");const t=new Tile(80,66),c=team.expansion?'#718c96':team.color,a=team.expansion?'#b8b9a5':team.accent,glass=night?"#f5d998":"#93c6cf",dark="#263c50";
     t.ellipse(42,48,33,12,"#24404a");t.polygon([[6,38],[39,21],[73,38],[40,55]],"#a7b3a0");t.line(9,40,40,55,"#d4c89e");
     if(model==="low-oval"){t.ellipse(40,33,32,14,shade(c,-48));t.rect(8,29,65,7,shade(c,-28));t.ellipse(40,27,32,14,a);t.ellipse(40,25,30,13,c);t.ellipse(37,22,25,10,shade(c,25));for(let x=17;x<64;x+=6)t.rect(x,34,3,7,glass);t.polygon([[50,35],[65,29],[65,40],[50,47]],glass);}
     if(model==="dome"){block(t,38,26,31,27,12,shade(c,-8));t.ellipse(40,23,29,18,a);t.ellipse(40,21,27,17,c);t.ellipse(36,15,20,10,shade(c,30));for(let x=18;x<65;x+=7)t.line(x,32,x,37,glass,2);for(let x=25;x<60;x+=8)t.line(x,7,x-5,22,shade(c,45));}
@@ -30,6 +31,7 @@
     if(model==="brick"){block(t,34,20,39,28,15,"#a57565");t.polygon([[6,18],[34,4],[73,23],[45,37]],c);for(let row=0;row<4;row++)for(let col=0;col<5;col++)t.line(9+col*6+(row%2?2:0),25+row*3+col*3,12+col*6+(row%2?2:0),26+row*3+col*3,"#cfaa8c");for(let i=0;i<4;i++)t.rect(19+i*7,28+i*3,3,6,glass);t.rect(50,34,4,10,dark);}
     // 每館的入口、售票窗、排隊欄和招牌有實體像素，與互動終點接近。
     t.rect(57,39,5,7,dark);t.rect(57,38,5,1,a);for(let i=0;i<3;i++)t.line(57+i*2,47+i,67+i*2,42+i,"#d5cfaf");t.rect(17,38,8,4,dark);t.rect(18,38,6,2,glass);t.line(40,49,48,53,"#718d91");t.line(40,47,40,50,"#d8cfab");t.line(48,51,48,54,"#d8cfab");
+    if(team.expansion){const variant=Object.keys(ARENAS).indexOf(team.id)%4;t.rect(25,29,17,5,team.color);t.line(26,29,41,29,team.accent);t.line(69,31,69,44,'#7c8e8d');t.polygon([[69,31],[76,34],[69,36]],team.color);if(variant===0){t.rect(52,35,12,2,team.color);t.line(54,35,54,44,team.accent);t.line(63,35,63,40,team.accent);}if(variant===1){t.line(49,46,64,39,team.color,2);t.line(49,49,66,41,'#d4cbb5',2);}if(variant===2){t.rect(56,32,10,2,team.color);t.rect(57,34,2,8,'#a4b5b0');t.rect(64,34,2,6,'#a4b5b0');}if(variant===3){t.polygon([[50,37],[62,31],[68,35],[56,41]],team.color);t.line(53,40,65,34,team.accent);}}
     if(night){t.polygon([[57,44],[63,41],[73,47],[63,52]],"#c5ba86");for(let x=16;x<53;x+=8)t.rect(x,33,2,3,"#e9ce8b");}
     return t;
   }

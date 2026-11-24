@@ -1,6 +1,7 @@
 /* 原創灣區的共同視角／材質與純資料路人模型。所有座標均為島圖世界座標。 */
 (function(root,factory){const api=factory(typeof module==="object"&&module.exports?require("./pixel-core.js"):root.NBAPixel);if(typeof module==="object"&&module.exports)module.exports=api;else root.NBABay=api;})(globalThis,function(P){
   "use strict";
+  const A=typeof module==="object"&&module.exports?require("./archipelago-core.js"):globalThis.NBAArchipelago;
   const STYLE={lightDirection:"upper-left",personWidth:25,playerWidth:29,shadow:{x:8,y:5},waterLevel:0,pierLevel:8,plazaLevel:18};
   const BAY_IDS=["warriors","meet-pier","harbor-01"];
   const svg=(title,body)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img"><title>${title}</title>${body}</svg>`;
@@ -67,6 +68,20 @@
     {id:"court-seat-a",area:"court",look:"sit",jersey:"heat",route:[[311,722]],speed:0,wait:0,delay:0},
     {id:"court-seat-b",area:"court",look:"sit",jersey:"bucks",route:[[324,729]],speed:0,wait:0,delay:0}
   ].map((p,i)=>({...p,pixelModel:["ball-fan","short-cap","backpack","tall-curls","ponytail","seated","hoodie","ball-fan","senior","seated"][i]}));
+  for(const p of PEOPLE){
+    if(p.area==='arena')p.route=p.route.map(([x,y])=>[x-2,y+133]);
+    else if(p.area==='pier')p.route=p.route.map(([x,y])=>[x+59,y-77]);
+    else p.route=p.route.map(([x,y])=>[x+32,y-200]);
+  }
+  PEOPLE.find(p=>p.id==='fan-ticket').route=[[300,552],[285,540],[280,524],[285,540]];
+  PEOPLE.find(p=>p.id==='fan-cap').route=[[260,555],[288,542],[308,535],[288,542]];
+  PEOPLE.find(p=>p.id==='fan-bag').route=[[345,570],[328,550],[308,535],[328,550]];
+  PEOPLE.find(p=>p.id==='court-seat-a').route=[[424,491]];
+  PEOPLE.find(p=>p.id==='court-seat-b').route=[[430,503]];
+  PEOPLE.find(p=>p.id==='court-dribble').route=[[385,500]];
+  PEOPLE.find(p=>p.id==='court-ball').route=[[404,557],[403,548],[390,537],[382,520],[390,537],[403,548]];
+  const bridgeVisitor=PEOPLE.find(p=>p.id==='pier-bag');const names=['bridge-east-walk','sight-golden-gate','bridge-west-walk','bay-north-walk','warriors','bay-junction','bay-shore','pier-approach','meet-pier'];
+  bridgeVisitor.route=[...names,...names.slice(1,-1).reverse()].map(id=>[A.ROAD_NODES[id].x,A.ROAD_NODES[id].y]);
   const modeFor=match=>!match?.isHome?"ambient":({scheduled:"enter",live:"live",final:"exit"}[match.state]||"ambient");
   const near=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   function createCrowd(){return {mode:"ambient",elapsed:0,people:PEOPLE.map(p=>({...p,position:{x:p.route[0][0],y:p.route[0][1]},path:p.route.map(([x,y])=>({x,y})),index:1%p.route.length,pause:p.delay,walking:false,facing:1,direction:"se"}))};}

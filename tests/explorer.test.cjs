@@ -4,16 +4,16 @@ const E=require("../assets/explorer-core.js"),C=require("../assets/island-core.j
 const all=[...C.TEAMS,...C.COURTS,...C.ENCOUNTERS];
 const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-7,`${a} != ${b}`);
 function roadDistance(point){return Math.min(...E.ROAD_EDGES.map(edge=>{const a=E.ROAD_NODES[edge.from],b=E.ROAD_NODES[edge.to],dx=b.x-a.x,dy=b.y-a.y,t=Math.max(0,Math.min(1,((point.x-a.x)*dx+(point.y-a.y)*dy)/(dx*dx+dy*dy)));return Math.hypot(point.x-a.x-t*dx,point.y-a.y-t*dy);}));}
-test("8 districts partition 16 NBA arenas, 15 unchanged court/game IDs and 3 encounters",()=>{
-  const ids=E.DISTRICTS.flatMap(d=>d.ids);assert.equal(ids.length,34);assert.equal(new Set(ids).size,34);
-  assert.deepEqual([...ids].sort(),all.map(p=>p.id).sort());assert.equal(C.TEAMS.length,16);assert.equal(F.STATIONS.length,16);
+test("8 districts partition 30 NBA arenas, 15 unchanged court/game IDs and 3 encounters",()=>{
+  const ids=E.DISTRICTS.flatMap(d=>d.ids);assert.equal(ids.length,48);assert.equal(new Set(ids).size,48);
+  assert.deepEqual([...ids].sort(),all.map(p=>p.id).sort());assert.equal(C.TEAMS.length,30);assert.equal(F.STATIONS.length,16);
   assert.equal(new Set(C.COURTS.map(c=>c.gameId)).size,15);for(const court of C.COURTS)assert.equal(G.forCourt(court.id).id,court.gameId);
-  for(const item of all){assert.equal(E.districtFor(item.id).ids.includes(item.id),true);assert.deepEqual(E.entrance(item.id),{x:item.x+48,y:item.y+26});}
+  for(const item of all){assert.equal(E.districtFor(item.id).ids.includes(item.id),true);assert.deepEqual(E.entrance(item.id),item.entrance);}
 });
 test("island -> west district -> Warriors venue -> original district -> island retains selection",()=>{
-  const camera=E.createCamera();assert.equal(camera.level,"island");assert.deepEqual(camera.view,{x:0,y:0,width:1600,height:1000});
-  E.focusDistrict(camera,"west");assert.equal(camera.level,"district");assert.ok(camera.view.width<1600);
-  E.focusVenue(camera,"warriors");assert.equal(camera.level,"venue");assert.equal(camera.districtId,"west");assert.equal(camera.view.width,520);
+  const camera=E.createCamera();assert.equal(camera.level,"island");assert.deepEqual(camera.view,{x:0,y:0,width:C.MAP.width,height:C.MAP.height});
+  E.focusDistrict(camera,"west");assert.equal(camera.level,"district");assert.ok(camera.view.width<C.MAP.width);
+  E.focusVenue(camera,"warriors");assert.equal(camera.level,"venue");assert.equal(camera.districtId,"west");assert.equal(camera.view.width,560);
   E.back(camera);assert.equal(camera.level,"district");assert.equal(camera.districtId,"west");assert.equal(camera.selectedId,"warriors");
   E.back(camera);assert.equal(camera.level,"island");assert.equal(camera.selectedId,"warriors");
   assert.throws(()=>E.focusDistrict(camera,"missing"));assert.throws(()=>E.focusVenue(camera,"missing"));
@@ -22,14 +22,14 @@ test("all district/venue camera frames are bounded, preserve aspect and round-tr
   const camera=E.createCamera();const frames=[camera.view];
   for(const district of E.DISTRICTS){E.focusDistrict(camera,district.id);frames.push(camera.view);}
   for(const item of all){E.focusVenue(camera,item.id);frames.push(camera.view);const p=E.worldToViewport(E.entrance(item.id),camera.view);assert.ok(p.x>0&&p.x<1&&p.y>0&&p.y<1);}
-  for(const view of frames){assert.ok(view.x>=0&&view.y>=0&&view.x+view.width<=1600&&view.y+view.height<=1000);near(view.width/view.height,1.6);
+  for(const view of frames){assert.ok(view.x>=0&&view.y>=0&&view.x+view.width<=C.MAP.width&&view.y+view.height<=C.MAP.height);near(view.width/view.height,1.6);
     for(const item of all){const point=E.viewportToWorld(E.worldToViewport(item,view),view);near(point.x,item.x);near(point.y,item.y);}
   }
 });
 test("overview labels are sparse; district names open up, selected label always has priority",()=>{
   const camera=E.createCamera();const glowing=C.TEAMS.filter(t=>C.gameForTeam(t.id,"live").glowing).map(t=>t.id);
-  assert.equal(E.visibleLabels(camera,glowing).length,6);assert.ok(E.visibleLabels(camera,glowing).includes("sight-golden-gate"));assert.ok(E.visibleLabels(camera,glowing).includes("sight-liberty"));assert.equal(E.labelVisible(camera,"harbor-01"),false);
-  E.focusDistrict(camera,"west");assert.equal(E.labelVisible(camera,"harbor-01"),true);assert.equal(E.labelVisible(camera,"knicks"),false);
+  assert.deepEqual(E.visibleLabels(camera,glowing),[]);assert.equal(E.ISLANDS.length,30);assert.equal(E.labelVisible(camera,"harbor-01"),false);
+  E.focusIsland(camera,"warriors");assert.equal(E.labelVisible(camera,"harbor-01"),true);assert.equal(E.labelVisible(camera,"knicks"),false);
   for(const item of all){E.focusVenue(camera,item.id);assert.deepEqual(E.visibleLabels(camera,glowing),[item.id]);}
 });
 test("district framing contains every assigned landmark including its full building/button bounds",()=>{
@@ -45,7 +45,7 @@ test("all destinations are connected by the visible road graph including bridge 
   for(const from of all)for(const to of all){const route=E.roadPath(E.entrance(from.id),to.id);assert.deepEqual(route[0],E.entrance(from.id));assert.deepEqual(route.at(-1),E.entrance(to.id));
     for(const point of route)near(roadDistance(point),0);
   }
-  const route=E.roadPath(E.entrance("meet-plaza"),"park-05");assert.equal(route.length,2);
+  const route=E.roadPath(E.entrance("meet-plaza"),"park-05");assert.ok(route.length>2);
 });
 test("walker follows roads, arrives exactly and stops; camera overview never changes player position",()=>{
   const walker=E.createWalker(),camera=E.createCamera();E.walk(walker,"heat",1000);assert.equal(walker.moving,true);assert.equal(E.hasArrived(walker,"heat"),false);

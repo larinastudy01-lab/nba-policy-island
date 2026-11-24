@@ -73,7 +73,21 @@
     "bucks": "brick",
     "sixers": "steps",
     "heat": "glass",
-    "raptors": "brick"
+    "raptors": "brick",
+    "nets": "brick",
+    "cavaliers": "glass",
+    "jazz": "sawtooth",
+    "rockets": "low-oval",
+    "blazers": "steps",
+    "kings": "dome",
+    "grizzlies": "brick",
+    "pelicans": "steps",
+    "pistons": "sawtooth",
+    "pacers": "low-oval",
+    "wizards": "steps",
+    "hawks": "brick",
+    "hornets": "glass",
+    "magic": "dome"
   },
   "people": [
     "short-cap",
@@ -258,6 +272,286 @@
       "height": 66
     },
     {
+      "name": "arenas/nets",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/nets-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/cavaliers",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/cavaliers-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/jazz",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/jazz-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/rockets",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/rockets-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/blazers",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/blazers-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/kings",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/kings-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/grizzlies",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/grizzlies-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/pelicans",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/pelicans-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/pistons",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/pistons-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/pacers",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/pacers-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/wizards",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/wizards-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/hawks",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/hawks-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/hornets",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/hornets-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/magic",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/magic-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "cities/nets",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/nets-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/cavaliers",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/cavaliers-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/jazz",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/jazz-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/rockets",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/rockets-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/blazers",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/blazers-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/kings",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/kings-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/grizzlies",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/grizzlies-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/pelicans",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/pelicans-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/pistons",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/pistons-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/pacers",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/pacers-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/wizards",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/wizards-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/hawks",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/hawks-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/hornets",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/hornets-night",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/magic",
+      "width": 55,
+      "height": 45
+    },
+    {
+      "name": "cities/magic-night",
+      "width": 55,
+      "height": 45
+    },
+    {
       "name": "courts/harbor",
       "width": 55,
       "height": 64
@@ -343,14 +637,54 @@
       "height": 16
     },
     {
+      "name": "island-map",
+      "width": 1800,
+      "height": 1125
+    },
+    {
+      "name": "bay-ground",
+      "width": 1800,
+      "height": 1125
+    },
+    {
+      "name": "scenery-ground",
+      "width": 1800,
+      "height": 1125
+    },
+    {
+      "name": "bay-lights",
+      "width": 1800,
+      "height": 1125
+    },
+    {
+      "name": "bay-foreground-arena",
+      "width": 1800,
+      "height": 1125
+    },
+    {
+      "name": "bay-foreground-pier",
+      "width": 1800,
+      "height": 1125
+    },
+    {
+      "name": "bay-foreground-court",
+      "width": 1800,
+      "height": 1125
+    },
+    {
       "name": "roads",
-      "width": 800,
-      "height": 500
+      "width": 1800,
+      "height": 1125
     },
     {
       "name": "roads-night",
-      "width": 800,
-      "height": 500
+      "width": 1800,
+      "height": 1125
+    },
+    {
+      "name": "traffic-roads",
+      "width": 1800,
+      "height": 1125
     },
     {
       "name": "props/lifering",
@@ -399,248 +733,208 @@
     },
     {
       "name": "props-world",
-      "width": 800,
-      "height": 500
-    },
-    {
-      "name": "island-map",
-      "width": 800,
-      "height": 500
-    },
-    {
-      "name": "bay-ground",
-      "width": 800,
-      "height": 500
-    },
-    {
-      "name": "bay-lights",
-      "width": 800,
-      "height": 500
-    },
-    {
-      "name": "bay-foreground-arena",
-      "width": 800,
-      "height": 500
-    },
-    {
-      "name": "bay-foreground-pier",
-      "width": 800,
-      "height": 500
-    },
-    {
-      "name": "bay-foreground-court",
-      "width": 800,
-      "height": 500
-    },
-    {
-      "name": "scenery-ground",
-      "width": 800,
-      "height": 500
-    },
-    {
-      "name": "traffic-roads",
-      "width": 800,
-      "height": 500
+      "width": 1800,
+      "height": 1125
     },
     {
       "name": "sights/golden-gate",
-      "width": 133,
-      "height": 95
+      "width": 120,
+      "height": 90
     },
     {
       "name": "sights/golden-gate-night",
-      "width": 133,
-      "height": 95
+      "width": 120,
+      "height": 90
     },
     {
       "name": "sights/alcatraz",
-      "width": 65,
-      "height": 58
+      "width": 53,
+      "height": 46
     },
     {
       "name": "sights/alcatraz-night",
-      "width": 65,
-      "height": 58
+      "width": 53,
+      "height": 46
     },
     {
       "name": "sights/lombard",
-      "width": 55,
-      "height": 63
+      "width": 40,
+      "height": 45
     },
     {
       "name": "sights/lombard-night",
-      "width": 55,
-      "height": 63
+      "width": 40,
+      "height": 45
     },
     {
       "name": "sights/hollywood",
-      "width": 65,
-      "height": 40
+      "width": 55,
+      "height": 34
     },
     {
       "name": "sights/hollywood-night",
-      "width": 65,
-      "height": 40
+      "width": 55,
+      "height": 34
     },
     {
       "name": "sights/griffith",
-      "width": 53,
-      "height": 50
+      "width": 46,
+      "height": 44
     },
     {
       "name": "sights/griffith-night",
-      "width": 53,
-      "height": 50
+      "width": 46,
+      "height": 44
     },
     {
       "name": "sights/santa-monica",
-      "width": 78,
-      "height": 63
+      "width": 56,
+      "height": 45
     },
     {
       "name": "sights/santa-monica-night",
-      "width": 78,
-      "height": 63
+      "width": 56,
+      "height": 45
     },
     {
       "name": "sights/grand-canyon",
-      "width": 75,
-      "height": 48
+      "width": 61,
+      "height": 39
     },
     {
       "name": "sights/grand-canyon-night",
-      "width": 75,
-      "height": 48
+      "width": 61,
+      "height": 39
     },
     {
       "name": "sights/vegas",
-      "width": 53,
-      "height": 58
+      "width": 40,
+      "height": 45
     },
     {
       "name": "sights/vegas-night",
-      "width": 53,
-      "height": 58
+      "width": 40,
+      "height": 45
     },
     {
       "name": "sights/red-rocks",
-      "width": 63,
-      "height": 50
+      "width": 52,
+      "height": 42
     },
     {
       "name": "sights/red-rocks-night",
-      "width": 63,
-      "height": 50
+      "width": 52,
+      "height": 42
     },
     {
       "name": "sights/reunion",
-      "width": 45,
-      "height": 68
+      "width": 36,
+      "height": 55
     },
     {
       "name": "sights/reunion-night",
-      "width": 45,
-      "height": 68
+      "width": 36,
+      "height": 55
     },
     {
       "name": "sights/alamo",
-      "width": 53,
-      "height": 48
+      "width": 48,
+      "height": 44
     },
     {
       "name": "sights/alamo-night",
-      "width": 53,
-      "height": 48
+      "width": 48,
+      "height": 44
     },
     {
       "name": "sights/gateway-arch",
-      "width": 53,
-      "height": 68
+      "width": 42,
+      "height": 56
     },
     {
       "name": "sights/gateway-arch-night",
-      "width": 53,
-      "height": 68
+      "width": 42,
+      "height": 56
     },
     {
       "name": "sights/cloud-gate",
-      "width": 50,
-      "height": 38
+      "width": 43,
+      "height": 33
     },
     {
       "name": "sights/cloud-gate-night",
-      "width": 50,
-      "height": 38
+      "width": 43,
+      "height": 33
     },
     {
       "name": "sights/willis",
-      "width": 38,
-      "height": 73
+      "width": 31,
+      "height": 58
     },
     {
       "name": "sights/willis-night",
-      "width": 38,
-      "height": 73
+      "width": 31,
+      "height": 58
     },
     {
       "name": "sights/navy-pier",
-      "width": 55,
-      "height": 63
+      "width": 49,
+      "height": 55
     },
     {
       "name": "sights/navy-pier-night",
-      "width": 55,
-      "height": 63
+      "width": 49,
+      "height": 55
     },
     {
       "name": "sights/liberty",
-      "width": 55,
-      "height": 73
+      "width": 45,
+      "height": 60
     },
     {
       "name": "sights/liberty-night",
-      "width": 55,
-      "height": 73
+      "width": 45,
+      "height": 60
     },
     {
       "name": "sights/brooklyn",
-      "width": 70,
-      "height": 53
+      "width": 63,
+      "height": 48
     },
     {
       "name": "sights/brooklyn-night",
-      "width": 70,
-      "height": 53
+      "width": 63,
+      "height": 48
     },
     {
       "name": "sights/times-square",
-      "width": 53,
-      "height": 60
+      "width": 41,
+      "height": 50
     },
     {
       "name": "sights/times-square-night",
-      "width": 53,
-      "height": 60
+      "width": 41,
+      "height": 50
     },
     {
       "name": "sights/faneuil",
-      "width": 55,
-      "height": 53
+      "width": 53,
+      "height": 51
     },
     {
       "name": "sights/faneuil-night",
-      "width": 55,
-      "height": 53
+      "width": 53,
+      "height": 51
     },
     {
       "name": "sights/south-beach",
-      "width": 55,
-      "height": 48
+      "width": 49,
+      "height": 42
     },
     {
       "name": "sights/south-beach-night",
-      "width": 55,
-      "height": 48
+      "width": 49,
+      "height": 42
     },
     {
       "name": "cars/car-f40-front",

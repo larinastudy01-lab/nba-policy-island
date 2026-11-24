@@ -1,6 +1,16 @@
 # 九週課堂功能與展示
 
-目前是 16 主場、16 主場合影點、3 偶遇點、15 球場／15 遊戲的原生 HTML／CSS／JavaScript 專案。可直接開啟 index.html，使用相對路徑並支援 `/nba-policy-island/`。本次未開啟瀏覽器、push、部署、套用 SQL 或修改 Supabase。
+最新加入 [W12 球隊商店與共用購物車](./SHOPPING.md)：勇士店加入帽子 → 跨橋到湖人店加迷你籃球 → 總額 280 → 事件委派刪除／改數量 → submit 驗證不足餘額 → 成功後收藏、餘額 920 與清車 → 重新整理仍保留。每店四商品，預設首次 1,200 測試島幣；本版不自動裝備，球衣素材由使用者後續製作。動態購物列只在容器綁一次事件，檔案為 `assets/shop-ui.js`，交易運算／本機快照為 `assets/shop-core.js`。
+
+目前工作區已開放 **30／30 座球隊島**，以分區總覽、區內隊名、可搜尋清單、短橋與跨海主幹道探索。新增 14 套城市像素場景與主場，完整路線／範圍見 [30 隊群島](./THIRTY_ISLANDS.md)。原 16 個固定球星合影點與合影冊、15 款遊戲、造型／政策儲存不變；新增 14 隊合影入口明確標為尚未開放。可用 W05 搜尋表單、W08 地圖分層、W09 路徑與搜尋、W11 球隊／共用事件資料、W12 導覽與抵達作展示。以下保留原版本課堂說明，舊測試數量是該版紀錄，本版以新指南為準。
+
+本次商店版終端機結果為 **240 項測試通過、0 失敗**，含新增 12 項購物交易測試與 7 項 DOM 事件測試；32 份專案 JavaScript／CJS 語法、344 個唯一 HTML ID、11 份 CSS、186 組像素 PNG／SVG、12 份商店 SVG 與相對路徑通過。跨島購物、刪除、數量驗證、餘額不足、成功結帳、儲存失敗不扣幣與重新載入已測試。先前 30 島版為 221 項測試；尼克短橋到籃網、勇士跨區到火箭及回總覽保留位置的路網與 DOM 事件替身測試亦保留。實際手機、商店排版、鍵盤走訪與 PNG 下載仍待手動預覽。
+
+最新加入 [球迷記憶簿](./MEMORIES.md)：五個原創像素歷史展點、官方史料連結、自主標記／回看與獨立儲存。湖人用靜態紀念牆、公牛用可選投籃點，沿原跨島路網探索。可展示 W02 導覽／time／來源清單、W03 圖說、W05 靜態瞄準滑桿、W08 接近提示與原生 dialog、W09 命中判斷、W11 事件資料／DOM／localStorage、W12 抵達／鍵盤／計時清理。新測試見 `tests/memory.test.cjs` 及 `tests/ui.test.cjs`；畫面、觸控與真人連線仍須手動驗證。
+
+布局為「一支球隊一座島」：30 座獨立島岸、跨海主幹道、島內入口路網與分級熱區。資料在 `assets/archipelago-core.js`，像素地景生成在 `assets/archipelago-art.cjs`；新版本入口與跨島驗收見 [THIRTY_ISLANDS.md](./THIRTY_ISLANDS.md)。可接在 W08 定位／圖層、W09 路徑運算、W11 資料與 DOM、W12 導覽／動畫事件展示。
+
+目前是 30 主場、16 個已開放球星合影點、3 偶遇點、15 球場／15 遊戲的原生 HTML／CSS／JavaScript 專案。可直接開啟 index.html，使用相對路徑並支援 `/nba-policy-island/`。本次未開啟瀏覽器、push、部署、套用 SQL 或修改 Supabase。
 
 目前為等距像素版：6 種球館、3 套球場、20 景點、6 款跑車、8 種路人、9 種小物與八方向中性球迷。保留 4 個觀景拍照點、兩條巡遊線及全部互動 ID。188 項測試與球衣圖格規格、離線日夜比對圖見 [PIXEL_ART.md](./PIXEL_ART.md)；景點位置與車款見 [SCENERY.md](./SCENERY.md)。
 
@@ -9,12 +19,12 @@
 | W02 CH03 | a 導覽、分類清單、dl 球隊、time 開賽時間、ol 步驟 | index.html、script.js | 常駐清單到西岸；選站抵達後看球隊／開賽資訊 |
 | W03 CH04 | figure／alt／figcaption、原創像素 PNG／SVG、60 席比較表 | index.html、pixel/、pixel-core.js、policy-core.js | 比較六種球館與三類球場；拍景點照；保留席 2,400 點 |
 | W04 CH05 | audio 本地進球／終場聲、noscript 簡版指南 | index.html、shot-hit.wav、round-end.wav、script.js | 勾音效，完成一球與結算；關閉後仍有文字回饋 |
-| W05 CH06 | 政策 radio、場地 select／optgroup、造型／暱稱表單 | index.html、fan-ui.js、games-ui.js | 更改暱稱／膚色後儲存；玩家穿中性上衣，球衣僅預留 |
+| W05 CH06 | 30 隊搜尋、政策 radio、場地 select／optgroup、造型表單 | index.html、script.js、fan-ui.js、games-ui.js | 搜尋 BKN／Houston；更改暱稱後儲存；球衣僅預留 |
 | W07 CH08 | 隊色、像素材質、窗光／路燈／車燈、LIVE 與等寬比分 | pixel.css、pixel-core.js、island-core.js | 全島日夜比對；完賽停止脈動但保留街道照明 |
 | W08 CH09 | 共用 world、像素格、absolute、人物分層與鏡頭熱區 | pixel.css、explorer-ui.js、pixel/player/ | 拉近場館入口；換街區與回全島保持人物原位 |
 | W09 CH12 | 整數格繪圖、方向判斷、插值、政策／遊戲運算 | pixel-core.js、explorer-core.js、policy-core.js、games-core.js | 人物八方向走路；學生保留席 2,400；不同遊戲結算 |
-| W11 CH13 | 16 隊模型對應、身體／上衣、相片版本及 DOM | pixel-core.js、fan-core.js、fan-ui.js、script.js | 舊相片維持原畫風，新照片為像素快照 |
-| W12 CH14 | 事件、150ms 精靈幀、共用動畫 interval、清理 | explorer-ui.js、bay-scene.js、script.js | 移動停止回 idle；背景暫停；減少動態直接抵達 |
+| W11 CH13 | 30 隊／14 城市模型、16 球星、共用事件／多入口、DOM | city-art.cjs、memory-core.js、fan-core.js、script.js | 搜尋新島；原合影不變；同事件多入口只算一筆閱讀 |
+| W12 CH14 | 購物車事件委派、submit／preventDefault、動畫／計時清理 | shop-ui.js、shop-core.js、explorer-ui.js、script.js | 點動態刪除按鈕內文字；修改數量；不足與成功結帳；跨島及重整保留 |
 
 表格中的檔案除 index.html、script.js、style.css 外均位於 assets。完整球迷／照片動線見 [FAN_GUIDE.md](./FAN_GUIDE.md)，15 款規則見 [README](../README.md)，好友設定與兩裝置步驟見 [MULTIPLAYER.md](./MULTIPLAYER.md)。
 
@@ -40,7 +50,7 @@ python tests/check-static.py
 git diff --check
 ```
 
-本次最終結果：**188 項 Node 測試通過，0 失敗**。21 份 JavaScript 與兩支 Python 語法通過。270 個 HTML ID 唯一、8 份 CSS 及所有相對路徑通過；130 組像素 PNG／SVG 檢查原始尺寸、PNG CRC／解壓資料及整數格；另含 16 位像素球星與 16 場館室內 SVG。六種球館、六款車、八種路人的輪廓有實際差異，八方向各四個走路幀。完整路網及原有 34 站 ID／座標／球場遊戲配對與 Git 上一版相同。
+先前像素版的測試紀錄為 **188 項通過**，不是本版結果。30 島版的測試與手動項目統一列於 [THIRTY_ISLANDS.md](./THIRTY_ISLANDS.md)：素材現為 186 組 PNG／SVG；原 16 位像素球星與 16 場館室內 SVG 保留。原站點 ID／球場遊戲配對保留，東岸部分座標隨擴建更新。
 
 範圍包括城市相對方位、34 熱區矩形在 viewBox 內且不互相覆蓋；16 主場合影點／15 遊戲／3 偶遇點；台灣跨日、同日一致、舊照讀取與兩類並存；15 款開始、有效操作、計分、勝負／平手、截止與重開；單次事件綁定、換場／離場清理；原有角色、政策、賽況及主場亮燈。
 
