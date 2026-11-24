@@ -90,6 +90,21 @@ test("retry preserves the confirmed decision and does not write a new save", () 
   assert.equal(storage.writes, 1);
 });
 
+test("reset clears this trial and choice, preserves saved completion, and requires a new choice", () => {
+  const storage = memoryStorage();
+  const session = createPolicySession(storage);
+  session.selectPlan("reserved");session.simulate();session.confirm();
+  const saved = storage.getItem(key);
+  session.reset();
+  assert.equal(session.getState().selectedPlan, null);
+  assert.equal(session.getState().result, null);
+  assert.equal(session.getState().comparisonVisible, false);
+  assert.equal(session.getState().completedPlanId, "reserved");
+  assert.equal(session.simulate(), null);assert.equal(session.confirm(), false);
+  assert.equal(storage.getItem(key), saved);assert.equal(storage.writes, 1);
+  session.selectPlan("lottery");assert.equal(session.simulate().revenue, 1800);
+});
+
 test("reload restores a confirmed decision; completion remains distinct from passing goals", () => {
   for (const row of expected) {
     const storage = memoryStorage({ unrelated: "keep me" });

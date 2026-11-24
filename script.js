@@ -30,6 +30,8 @@ function initializeIsland() {
   let pendingScore = null;
   let scoreSubmitting = false;
   let lastResultToken = null;
+  let onlineTimer = null;
+  let audioUnlocked = false;
   const ns = "http://www.w3.org/2000/svg";
 
   function arenaGraphic(team) {
@@ -42,21 +44,32 @@ function initializeIsland() {
   function buildLandmarks() {
     for (const [kind,items] of [["nba",C.TEAMS],["court",C.COURTS]]) {
       for (const item of items) {
-        const node = document.createElementNS(ns,"g");
+        const node = document.createElement("button");
+        node.type = "button";
         node.id = `landmark-${item.id}`;
         node.classList.add("landmark");
         node.dataset.kind = kind;
-        node.setAttribute("transform",`translate(${item.x} ${item.y})`);
+        // 和 1200×800 島圖共用座標：建築、標籤、按鈕命中範圍一起縮放。
+        const frame=kind==="nba"?{x:80,y:68,w:160,h:132}:{x:55,y:52,w:110,h:114};
+        node.style.left=`${(item.x-frame.x)/1200*100}%`;
+        node.style.top=`${(item.y-frame.y)/800*100}%`;
+        node.style.width=`${frame.w/1200*100}%`;
+        node.style.height=`${frame.h/800*100}%`;
+        node.style.zIndex=String(Math.round(item.y));
+        node.dataset.x=String(item.x);node.dataset.y=String(item.y);
         node.setAttribute("tabindex","0");
         node.setAttribute("role","button");
         node.setAttribute("aria-controls","station-panel");
         node.style.setProperty("--team-accent",item.accent || "#f3c45b");
-        node.innerHTML = kind === "nba" ? arenaGraphic(item) : courtGraphic(item);
+        const graphic=document.createElementNS(ns,"svg");
+        graphic.setAttribute("viewBox",`${-frame.x} ${-frame.y} ${frame.w} ${frame.h}`);
+        graphic.setAttribute("aria-hidden","true");
+        graphic.innerHTML = kind === "nba" ? arenaGraphic(item) : courtGraphic(item);
         const badge = document.createElementNS(ns,"text");
         badge.classList.add("complete-label");
         badge.setAttribute("x","52"); badge.setAttribute("y","-43");
         badge.setAttribute("aria-hidden","true");badge.textContent="✓";
-        node.append(badge);
+        graphic.append(badge);node.append(graphic);
         node.addEventListener("click",()=>openLandmark(kind,item.id));
         node.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();if(!event.repeat)openLandmark(kind,item.id);}});
         $("landmark-layer").append(node);
@@ -69,13 +82,17 @@ function initializeIsland() {
         button.addEventListener("click",()=>openLandmark(kind,item.id));
         $("station-list").append(button);
         listNodes.set(item.id,{button,kind,item});
+        if(kind==="court"){
+          const option=document.createElement("option");option.value=item.id;option.textContent=item.name;
+          $(`court-group-${item.type}`).append(option);
+        }
       }
     }
   }
   function courtStatus(id) {
     const activity = C.courtActivity(activityRows,id);
     if(activity === null)return adapter.configured ? "狀態待連線確認" : "真人連線未配置";
-    return activity.waiting || activity.preparing || activity.playing ? `等待對手 ${activity.waiting} 房 · 對戰中 ${activity.playing} 房` : "目前無等待或對戰中的房間";
+    return activity.waiting || activity.preparing || activity.playing ? `等待對手 ${activity.waiting} 房 · 準備中 ${activity.preparing} 房 · 對戰中 ${activity.playing} 房` : "目前無等待或對戰中的房間";
   }
   function renderMapAndDirectory() {
     const complete = policySession.getState().completedPlanId !== null;
@@ -104,15 +121,36 @@ function initializeIsland() {
       entry.button.innerHTML=`<span class="list-symbol" aria-hidden="true">${kind==="nba"?item.abbr:item.type==="harbor"?"港邊":item.type==="park"?"公園":"屋頂"}</span><span class="list-copy"><strong>${escapeHTML(item.name)}${done?" ✓":""}</strong><small>${escapeHTML(kind==="nba"?item.region:status)}</small></span>`;
     }
   }
-  function scoreboardHTML(match) {
+  function element(tag,className,text) {
+    const node=document.createElement(tag);node.className=className;
+    if(text!==undefined)node.textContent=String(text);
+    return node;
+  }
+  function renderScoreboard(container,match) {
     const labels={idle:"今日無賽事",scheduled:"待開打",live:"LIVE",final:"完賽"};
-    const top=`<div class="scoreboard-top"><span class="${match.state==="live"?"live-label":""}">${labels[match.state]} <span class="demo-tag">模擬賽事</span></span><span>${match.period|| (match.state==="final"?"最終比分":"台灣時間")}</span></div>`;
-    if(match.state==="idle")return top+'<div class="scoreboard-idle">今日無賽事，先逛逛這座島。</div>';
-    const rows=[["主隊",match.home,match.homeScore],["客隊",match.away,match.awayScore]].map(([side,team,score])=>`<div class="scoreboard-row"><span class="side-label">${side}</span><strong>${escapeHTML(team.shortName)} <small>${team.abbr}</small></strong><b>${score===null?"—":score}</b></div>`).join("");
-    return `${top}<div class="scoreboard-rows">${rows}</div><div class="scoreboard-footer">${match.state==="scheduled"?`${match.startTime} 開打（台灣時間 UTC+8）`:match.state==="live"?`${match.period}・主隊球館亮燈中`:"比賽結束・最終比分保留"}</div>`;
+    container.replaceChildren();container.dataset.state=match.state;
+    const top=element("div","scoreboard-top");
+    const status=element("span",match.state==="live"?"live-label":"",labels[match.state]+" ");
+    status.append(element("span","demo-tag","模擬賽事"));
+    top.append(status);top.append(element("span","",match.period||(match.state==="final"?"最終比分":"台灣時間")));
+    container.append(top);
+    if(match.state==="idle"){container.append(element("div","scoreboard-idle","今日無賽事，先逛逛這座島。"));return;}
+    const rows=element("div","scoreboard-rows");
+    for(const [side,team,score] of [["主隊",match.home,match.homeScore],["客隊",match.away,match.awayScore]]){
+      const row=element("div","scoreboard-row");const name=element("strong","",team.shortName+" ");
+      name.append(element("small","",team.abbr));row.append(element("span","side-label",side));row.append(name);row.append(element("b","",score===null?"—":score));rows.append(row);
+    }
+    container.append(rows);
+    const footer=element("div","scoreboard-footer");
+    if(match.state==="scheduled"){
+      const time=element("time","",match.startTime);time.setAttribute("datetime",match.startTime);
+      footer.append(time);footer.append(element("span",""," 開打（台灣時間 UTC+8）"));
+    }else footer.textContent=match.state==="live"?`${match.period}・${match.home.shortName}主場亮燈中`:"比賽結束・最終比分保留";
+    container.append(footer);
   }
   function renderPanel() {
     const item=C.getLandmark(state.kind,state.id);
+    $("tour-map").dataset.policyOpen=String(state.kind==="nba"&&state.id==="warriors"&&policyOpen);
     $("panel-title").textContent=item.name;
     $("panel-category").textContent=`${item.region} / ${state.kind==="nba"?"NBA ARENA":"PUBLIC COURT"}`;
     $("nba-panel").hidden=state.kind!=="nba";
@@ -123,21 +161,25 @@ function initializeIsland() {
       $("team-badge").style.setProperty("--team-color",item.color);
       $("team-badge").style.setProperty("--team-accent",item.accent);
       $("team-english").textContent=item.englishName;
+      $("team-city").textContent=item.city||"待補";$("team-abbr").textContent=item.abbr;$("team-region").textContent=item.region;
       $("team-side").textContent=`${item.region}・${match.isHome?"本場主隊":"本場客隊（主場球館本場不亮燈）"}`;
-      $("team-game").dataset.state=match.state;
-      $("team-game").innerHTML=scoreboardHTML(match);
+      renderScoreboard($("team-game"),match);renderScoreboard($("map-scoreboard"),match);
+      $("map-scoreboard").hidden=false;
       $("policy-launch").hidden=item.id!=="warriors";
       $("team-policy-status").hidden=item.id!=="warriors";
       $("other-team-note").hidden=item.id==="warriors";
       $("policy-challenge").hidden=item.id!=="warriors"||!policyOpen;
+      $("policy-launch").setAttribute("aria-expanded",String(item.id==="warriors"&&policyOpen));
     }else{
-      $("court-description").textContent=`${item.region}球場・${item.name}。這座露天球場和其他 14 座球場共用 30 秒投籃規則；好友房間只在指定球場內加入。`;
+      $("map-scoreboard").hidden=true;$("court-select").value=item.id;
+      $("court-description").textContent=`${item.region}球場・${item.name}。${item.scene}；和其他 14 座球場共用 30 秒投籃規則。好友房間只在指定球場內加入。`;
       $("court-activity").textContent=`真人房間：${courtStatus(item.id)}`;
       renderRoom();
     }
     renderPolicyProgress();
   }
   function openLandmark(kind,id,focus=true) {
+    if(gameMode==="practice"&&(kind!=="court"||id!==gameCourtId))leavePractice(false);
     C.selectLandmark(state,kind,id);
     renderMapAndDirectory();renderPanel();
     if(focus)$("panel-title").focus();
@@ -149,36 +191,53 @@ function initializeIsland() {
   $("filter-court").addEventListener("click",()=>setFilter("court"));
   $("quick-nba").addEventListener("click",()=>openLandmark("nba","warriors"));
   $("quick-courts").addEventListener("click",()=>openLandmark("court",C.COURTS[0].id));
+  $("court-select").addEventListener("change",()=>openLandmark("court",$("court-select").value,false));
   document.querySelectorAll('input[name="game-state"]').forEach(input=>input.addEventListener("change",()=>{if(!input.checked)return;C.setGameState(state,input.value);renderMapAndDirectory();renderPanel();announce("模擬賽況已更新；政策與真人房間不受影響。");}));
-  $("policy-launch").addEventListener("click",()=>{policyOpen=!policyOpen;$("policy-challenge").hidden=!policyOpen;$("policy-launch").setAttribute("aria-expanded",String(policyOpen));if(policyOpen)$("policy-title").focus();});
+  $("policy-launch").addEventListener("click",()=>{policyOpen=!policyOpen;renderPanel();if(policyOpen)$("policy-title").focus();});
   $("policy-title").setAttribute("tabindex","-1");
 
   const policyElements = {
-    form:$("policy-form"),options:document.querySelectorAll('input[name="policy-plan"]'),results:$("policy-results"),resultTitle:$("policy-result-title"),resultContent:$("policy-result-content"),confirm:$("confirm-policy"),retry:$("retry-policy"),comparison:$("policy-comparison"),comparisonCards:$("policy-comparison-cards"),completion:$("policy-completion-message"),storageMessage:$("policy-storage-message"),hint:$("policy-trial-hint"),announcement:$("policy-announcement")
+    form:$("policy-form"),options:document.querySelectorAll('input[name="policy-plan"]'),results:$("policy-results"),resultTitle:$("policy-result-title"),resultContent:$("policy-result-content"),confirm:$("confirm-policy"),retry:$("retry-policy"),comparison:$("policy-comparison"),comparisonRows:$("policy-comparison-rows"),completion:$("policy-completion-message"),storageMessage:$("policy-storage-message"),hint:$("policy-trial-hint"),announcement:$("policy-announcement")
   };
   function number(value) {
     return value.toLocaleString("zh-TW", { maximumFractionDigits: 2 });
   }
 
-  function goalResultsHTML(result) {
-    const studentVerdict = result.studentGoalMet ? (result.isExpected ? "期望值達到，單次不保證" : "通過") : "未通過";
-    return `<ul class="policy-goal-results"><li data-met="${result.studentGoalMet}">${result.studentGoalMet ? "✓" : "✕"} 學生至少 ${POLICY_CHALLENGE.goals.students} 人：${studentVerdict}</li><li data-met="${result.revenueGoalMet}">${result.revenueGoalMet ? "✓" : "✕"} 收入至少 ${number(POLICY_CHALLENGE.goals.revenue)} 點：${result.revenueGoalMet ? "通過" : "未通過"}</li></ul>`;
-  }
-
-  function policyResultHTML(result) {
+  function renderPolicyResult(result) {
+    const container=policyElements.resultContent;container.replaceChildren();
     const expected = result.isExpected ? "（期望值）" : "";
-    const prefix = result.isExpected ? '<span class="expected-prefix">平均</span>' : "";
-    const expectedNote = result.isExpected ? `<p class="policy-expected-note">這是入場期望值，不是一次隨機抽籤的結果。學生 ${POLICY_CHALLENGE.students.registered} × ${number(result.lotteryChance * 100)}% = ${number(result.students)} 人，一般球迷 ${POLICY_CHALLENGE.generalFans.registered} × ${number(result.lotteryChance * 100)}% = ${number(result.generalFans)} 人；單次學生人數可能高於或低於 ${number(result.students)} 人。總共仍售出 ${number(result.total)} 張票，收入固定 ${number(result.revenue)} 點。</p>` : "";
-    return `<p class="policy-outcome" data-passed="${result.passed}">${result.passed ? "✓ 兩項目標皆通過" : "✕ 尚未同時達到兩項目標"}</p><dl class="policy-metrics"><div><dt>學生入場${expected}</dt><dd>${prefix}${number(result.students)}<span>人</span></dd></div><div><dt>一般球迷入場${expected}</dt><dd>${prefix}${number(result.generalFans)}<span>人</span></dd></div><div><dt>總入場人數</dt><dd>${number(result.total)}<span>人</span></dd></div><div><dt>票房收入</dt><dd>${number(result.revenue)}<span>點</span></dd></div></dl>${goalResultsHTML(result)}<p class="policy-calculation">計算：${escapeHTML(result.formula)}</p><p class="policy-tradeoff">取捨：${escapeHTML(result.tradeoff)}</p>${expectedNote}`;
+    const outcome=element("p","policy-outcome",result.passed?"✓ 兩項目標皆通過":"✕ 尚未同時達到兩項目標");outcome.dataset.passed=String(result.passed);container.append(outcome);
+    const metrics=element("dl","policy-metrics");
+    for(const [label,value,unit,isExpected] of [[`學生入場${expected}`,result.students,"人",result.isExpected],[`一般球迷入場${expected}`,result.generalFans,"人",result.isExpected],["總入場人數",result.total,"人",false],["票房收入",result.revenue,"點",false]]){
+      const group=element("div","");group.append(element("dt","",label));const amount=element("dd","");
+      if(isExpected)amount.append(element("span","expected-prefix","平均"));
+      amount.append(element("b","metric-number",number(value)));amount.append(element("span","",unit));group.append(amount);metrics.append(group);
+    }
+    container.append(metrics);
+    const goals=element("ul","policy-goal-results");
+    const studentVerdict=result.studentGoalMet?(result.isExpected?"期望值達到，單次不保證":"通過"):"未通過";
+    for(const [met,text] of [[result.studentGoalMet,`學生至少 ${POLICY_CHALLENGE.goals.students} 人：${studentVerdict}`],[result.revenueGoalMet,`收入至少 ${number(POLICY_CHALLENGE.goals.revenue)} 點：${result.revenueGoalMet?"通過":"未通過"}`]]){
+      const item=element("li","",`${met?"✓":"✕"} ${text}`);item.dataset.met=String(met);goals.append(item);
+    }
+    container.append(goals);container.append(element("p","policy-calculation",`計算：${result.formula}`));container.append(element("p","policy-tradeoff",`取捨：${result.tradeoff}`));
+    if(result.isExpected)container.append(element("p","policy-expected-note",`這是入場期望值，不是一次隨機抽籤的結果。學生 ${POLICY_CHALLENGE.students.registered} × ${number(result.lotteryChance*100)}% = ${number(result.students)} 人，一般球迷 ${POLICY_CHALLENGE.generalFans.registered} × ${number(result.lotteryChance*100)}% = ${number(result.generalFans)} 人；單次學生人數可能高於或低於 ${number(result.students)} 人。總共仍售出 ${number(result.total)} 張票，收入固定 ${number(result.revenue)} 點。`));
   }
 
-  function comparisonHTML(selectedPlan) {
-    return POLICY_CHALLENGE.plans.map((plan) => {
+  function renderComparison(selectedPlan) {
+    policyElements.comparisonRows.replaceChildren();
+    for(const plan of POLICY_CHALLENGE.plans){
       const result = calculatePolicy(plan.id);
       const average = result.isExpected ? "平均 " : "";
       const expected = result.isExpected ? "（期望值）" : "";
-      return `<article class="comparison-card" data-current="${plan.id === selectedPlan}"><h4>${escapeHTML(plan.name)}${plan.id === selectedPlan ? '<span class="comparison-current">目前選擇</span>' : ""}</h4><dl><div><dt>學生${expected}</dt><dd>${average}${number(result.students)} 人</dd></div><div><dt>一般球迷${expected}</dt><dd>${average}${number(result.generalFans)} 人</dd></div><div><dt>總入場</dt><dd>${number(result.total)} 人</dd></div><div><dt>票房</dt><dd>${number(result.revenue)} 點</dd></div></dl>${goalResultsHTML(result)}<p class="comparison-verdict" data-passed="${result.passed}">${result.passed ? "兩項目標皆通過" : "未同時達到兩項目標"}</p><p class="policy-tradeoff">${escapeHTML(result.tradeoff)}</p></article>`;
-    }).join("");
+      const row=element("tr","");row.dataset.current=String(plan.id===selectedPlan);
+      const heading=element("th","",plan.name);heading.setAttribute("scope","row");
+      if(plan.id===selectedPlan)heading.append(element("span","comparison-current","本次試算"));
+      row.append(heading);
+      for(const [label,text] of [["學生入場",`${average}${number(result.students)} 人${expected}`],["一般球迷入場",`${average}${number(result.generalFans)} 人${expected}`],["票房收入",`${number(result.revenue)} 點`],["是否達標",`${result.passed?"✓ 兩項通過":"✕ 未同時達標"}；學生${result.studentGoalMet?"✓":"✕"}／收入${result.revenueGoalMet?"✓":"✕"}`]]){
+        const cell=element("td","",text);cell.dataset.label=label;row.append(cell);
+      }
+      policyElements.comparisonRows.append(row);
+    }
   }
 
 
@@ -197,7 +256,7 @@ function initializeIsland() {
     policyElements.results.hidden = !state.result;
     if (state.result) {
       policyElements.resultTitle.textContent = `${state.result.name}｜試算結果`;
-      policyElements.resultContent.innerHTML = policyResultHTML(state.result);
+      renderPolicyResult(state.result);
     } else {
       policyElements.resultContent.innerHTML = "";
     }
@@ -205,9 +264,10 @@ function initializeIsland() {
     policyElements.confirm.disabled = !state.result || alreadyConfirmed;
     policyElements.confirm.textContent = alreadyConfirmed ? "此決策已確認" : "確認決策";
     policyElements.comparison.hidden = !state.comparisonVisible;
-    if (state.comparisonVisible) policyElements.comparisonCards.innerHTML = comparisonHTML(state.selectedPlan);
-    const selectedName = POLICY_CHALLENGE.plans.find((plan) => plan.id === state.selectedPlan).name;
-    policyElements.hint.textContent = state.result ? "可比較三方案後確認決策，或重新試算。" : `已選擇「${selectedName}」，請按「試算」查看結果。`;
+    if (state.comparisonVisible) renderComparison(state.result?.planId);
+    else policyElements.comparisonRows.replaceChildren();
+    const selectedName = POLICY_CHALLENGE.plans.find((plan) => plan.id === state.selectedPlan)?.name;
+    policyElements.hint.textContent = state.result ? "可比較三方案後確認決策，或重新試算。" : selectedName?`已選擇「${selectedName}」，請重新按「試算」查看結果。`:"本次選項與結果已清空。請選擇一個方案後試算；完成紀錄保留。";
     policyElements.completion.hidden = state.completedPlanId === null;
     if (state.completedPlanId !== null) {
       const confirmed = calculatePolicy(state.completedPlanId);
@@ -230,6 +290,7 @@ function initializeIsland() {
   policyElements.form.addEventListener("submit", (event) => {
     event.preventDefault();
     const result = policySession.simulate();
+    if(!result){policyElements.hint.textContent="請先選擇一個售票方案。";policyElements.options[0].focus();return;}
     renderPolicy();
     policyElements.announcement.textContent = `${result.name}：學生${result.isExpected ? "平均" : ""}${result.students}人，一般球迷${result.isExpected ? "平均" : ""}${result.generalFans}人，收入${result.revenue}點，${result.passed ? "兩項目標皆通過" : "未同時達到兩項目標"}。`;
     policyElements.resultTitle.focus();
@@ -247,7 +308,12 @@ function initializeIsland() {
     renderPolicy();
     policyElements.announcement.textContent = "可重新選擇方案並試算；已完成進度不受影響。";
     const selected = Array.from(policyElements.options).find((input) => input.checked);
-    selected.focus();
+    (selected||policyElements.options[0]).focus();
+  });
+  policyElements.form.addEventListener("reset",event=>{
+    event.preventDefault();policySession.reset();renderPolicy();
+    policyElements.announcement.textContent="已重設本次選擇與結果，既有完成紀錄保留。";
+    policyElements.options[0].focus();
   });
 
 
@@ -335,21 +401,46 @@ function initializeIsland() {
   function playerName(){const name=$("player-name").value.trim();if(!name||Array.from(name).length>24){$("lobby-notice").textContent="請先輸入 1–24 個字的暱稱。";$("player-name").focus();return null;}return name;}
   $("room-form").addEventListener("submit",event=>{event.preventDefault();if(state.kind!=="court"||onlineRoundRunning())return;const name=playerName();if(name)runRoomAction(()=>adapter.create(state.id,name));});
   $("join-room").addEventListener("click",()=>{if(state.kind!=="court"||onlineRoundRunning())return;const name=playerName();const invite=$("invite-code").value.trim().toLowerCase();if(!/^[a-f0-9]{24}$/.test(invite)){$("lobby-notice").textContent="請輸入完整的 24 碼邀請碼。";return;}if(name)runRoomAction(()=>adapter.join(state.id,invite,name));});
-  $("ready-toggle").addEventListener("click",()=>{if(!roomSnapshot)return;const own=roomSnapshot.players.find(p=>p.user_id===adapter.userId());runRoomAction(()=>adapter.ready(roomSnapshot.room.id,!own?.ready));});
-  $("room-start").addEventListener("click",()=>roomSnapshot&&runRoomAction(()=>adapter.start(roomSnapshot.room.id)));
+  $("ready-toggle").addEventListener("click",()=>{audioUnlocked=true;if(!roomSnapshot)return;const own=roomSnapshot.players.find(p=>p.user_id===adapter.userId());runRoomAction(()=>adapter.ready(roomSnapshot.room.id,!own?.ready));});
+  $("room-start").addEventListener("click",()=>{audioUnlocked=true;if(roomSnapshot)runRoomAction(()=>adapter.start(roomSnapshot.room.id));});
   $("room-restart").addEventListener("click",()=>roomSnapshot&&runRoomAction(()=>adapter.restart(roomSnapshot.room.id)));
-  $("room-leave").addEventListener("click",()=>roomSnapshot&&runRoomAction(async()=>{await adapter.leave(roomSnapshot.room.id);roomSnapshot=null;pendingScore=null;stopGameTimer();if(gameMode==="online"){game=null;gameMode=null;$("play-court").hidden=true;}$("room-panel").hidden=true;return null;}));
+  $("room-leave").addEventListener("click",()=>roomSnapshot&&runRoomAction(async()=>{await adapter.leave(roomSnapshot.room.id);roomSnapshot=null;pendingScore=null;if(gameMode==="online"){stopGameTimer();stopSounds();game=null;gameMode=null;$("play-court").hidden=true;}$("room-panel").hidden=true;return null;}));
   $("copy-invite").addEventListener("click",async()=>{try{if(!navigator.clipboard)throw new Error();await navigator.clipboard.writeText($("room-invite-value").value);$("lobby-notice").textContent="加入連結已複製，請自行分享給朋友。";}catch{$("room-invite-value").focus();$("room-invite-value").select();$("lobby-notice").textContent="請手動複製已選取的加入連結。";}});
   $("connection-retry").addEventListener("click",syncOnline);
 
+  function stopSounds(){
+    for(const id of ["sound-hit","sound-end"]){const audio=$(id);audio.pause();audio.currentTime=0;}
+  }
+  function playSound(id){
+    if(!audioUnlocked||!$("sound-enabled").checked)return;
+    const audio=$(id);
+    audio.currentTime=0;
+    const blocked=()=>{$("sound-status").textContent="音效未能播放，請切換音效開關再試；畫面回饋與計分仍有效。";};
+    try{const playing=audio.play();if(playing?.catch)playing.catch(blocked);}catch{blocked();}
+  }
+  $("sound-enabled").addEventListener("change",()=>{
+    audioUnlocked=true;
+    $("sound-status").textContent=$("sound-enabled").checked?"音效開啟：命中與終場時播放。":"音效關閉，仍會顯示命中與終場文字。";
+    if(!$("sound-enabled").checked)stopSounds();
+  });
   function stopGameTimer(){if(gameTimer!==null){clearInterval(gameTimer);gameTimer=null;}}
+  function leavePractice(focus=true){
+    if(gameMode!=="practice")return;
+    stopGameTimer();stopSounds();game=null;gameMode=null;gameFinished=false;
+    $("shoot-button").disabled=true;$("play-court").hidden=true;
+    if(focus)$("panel-title").focus();
+  }
   function startGame(mode,courtId,startsAt,roomId=null,round=null){
-    stopGameTimer();game=C.createShootingGame();game.start(startsAt);gameMode=mode;gameCourtId=courtId;gameRoomId=roomId;gameRound=round;gameFinished=false;pendingScore=null;
+    stopGameTimer();stopSounds();game=C.createShootingGame();game.start(startsAt);gameMode=mode;gameCourtId=courtId;gameRoomId=roomId;gameRound=round;gameFinished=false;pendingScore=null;
+    const court=C.getLandmark("court",courtId);
+    $("game-stage").dataset.scene=court.type;
+    $("game-stage").setAttribute("aria-label",`${court.name}，${court.scene}；按空白鍵出手`);
     $("play-court").hidden=false;$("round-result").hidden=true;
     $("game-mode-label").textContent=mode==="practice"?"單機練習・非真人連線":"好友 1 對 1・真人房間";
     $("shooting-title").textContent=`${C.getLandmark("court",courtId).name}｜投籃挑戰`;
     $("game-context").textContent=mode==="practice"?"一秒後開始。每次出手間隔至少 0.5 秒；沒有對手，也不會建立房間。":"以伺服器開始時間同步，倒數後雙方各投 30 秒；對手成績會在結算時顯示。";
     $("practice-restart").hidden=mode!=="practice";
+    $("practice-leave").hidden=mode!=="practice";
     $("shot-feedback").textContent="準備好，找到你的投籃節奏。";
     gameTimer=setInterval(tickGame,50);tickGame();$("game-stage").focus();
   }
@@ -362,13 +453,14 @@ function initializeIsland() {
     $("aim-cursor").style.left=`${snapshot.aim*100}%`;
     $("shoot-button").disabled=snapshot.phase!=="playing";
     $("aim-description").textContent=snapshot.phase==="countdown"?`倒數 ${Math.ceil((snapshot.startsAt-now)/1000)} 秒`:`瞄準 ${Math.round(snapshot.aim*100)}%・金色命中區為 36%–64%`;
-    if(snapshot.phase==="finished"&&!gameFinished){gameFinished=true;stopGameTimer();$("shoot-button").disabled=true;$("shot-feedback").textContent="時間到！停止出手。";if(gameMode==="practice"){$("round-result").hidden=false;$("round-result-title").textContent="單機練習結果";$("round-result-content").textContent=`你命中 ${snapshot.hits} 球，出手 ${snapshot.attempts} 次。這是單機練習，沒有真人或模擬對手。`;announce("單機練習時間到，結果已顯示。");}else{pendingScore={roomId:gameRoomId,round:gameRound,score:snapshot.hits,attempts:snapshot.attempts};submitLocalScore();}}
+    if(snapshot.phase==="finished"&&!gameFinished){gameFinished=true;stopGameTimer();playSound("sound-end");$("shoot-button").disabled=true;$("shot-feedback").textContent="時間到！停止出手。";if(gameMode==="practice"){$("round-result").hidden=false;$("round-result-title").textContent="單機練習結果";$("round-result-content").textContent=`你命中 ${snapshot.hits} 球，出手 ${snapshot.attempts} 次。這是單機練習，沒有真人或模擬對手。`;announce("單機練習時間到，結果已顯示。");}else{pendingScore={roomId:gameRoomId,round:gameRound,score:snapshot.hits,attempts:snapshot.attempts};submitLocalScore();}}
   }
-  function shoot(){if(!game)return;const result=game.shoot(Date.now()+(gameMode==="online"?serverOffset:0));if(result.accepted)$("shot-feedback").textContent=result.hit?"命中！＋1":"差一點，再抓準節奏。";tickGame();}
+  function shoot(){audioUnlocked=true;if(!game)return;const result=game.shoot(Date.now()+(gameMode==="online"?serverOffset:0));if(result.accepted){$("shot-feedback").textContent=result.hit?"命中！＋1":"差一點，再抓準節奏。";if(result.hit)playSound("sound-hit");}tickGame();}
   $("shoot-button").addEventListener("click",shoot);
   $("game-stage").addEventListener("keydown",event=>{if((event.code==="Space"||event.key===" ")&&event.target===$("game-stage")){event.preventDefault();if(!event.repeat)shoot();}});
-  $("practice-start").addEventListener("click",()=>{if(state.kind!=="court")return;if(roomSnapshot&&["countdown","playing"].includes(roomSnapshot.room.status)){$("lobby-notice").textContent="真人對局進行中，請先完成對局。";return;}startGame("practice",state.id,Date.now()+1000);});
-  $("practice-restart").addEventListener("click",()=>{if(gameMode==="practice")startGame("practice",gameCourtId,Date.now()+1000);});
+  $("practice-start").addEventListener("click",()=>{audioUnlocked=true;if(state.kind!=="court")return;if(roomSnapshot&&["countdown","playing"].includes(roomSnapshot.room.status)){$("lobby-notice").textContent="真人對局進行中，請先完成對局。";return;}startGame("practice",state.id,Date.now()+1000);});
+  $("practice-restart").addEventListener("click",()=>{audioUnlocked=true;if(gameMode==="practice")startGame("practice",gameCourtId,Date.now()+1000);});
+  $("practice-leave").addEventListener("click",()=>leavePractice());
   async function submitLocalScore(){
     if(!pendingScore||scoreSubmitting)return;
     scoreSubmitting=true;renderRoom();
@@ -388,13 +480,16 @@ function initializeIsland() {
     $("game-mode-label").textContent="好友 1 對 1・真人對局結果";
     $("shooting-title").textContent=`${C.getLandmark("court",snapshot.room.court_id).name}｜第 ${snapshot.room.round} 局`;
     $("shoot-button").disabled=true;$("practice-restart").hidden=true;
+    $("practice-leave").hidden=true;
     stopGameTimer();pendingScore=null;
   }
 
   buildLandmarks();renderMapAndDirectory();renderPanel();renderPolicy();renderConnection();
   const invitation=C.parseInvite(window.location.href);
   if(invitation){openLandmark("court",invitation.courtId,false);$("invite-code").value=invitation.invite;$("lobby-notice").textContent="已定位朋友指定的球場；連線後輸入暱稱，按加入朋友房間。";}
-  if(adapter.configured){syncOnline();setInterval(syncOnline,2000);}
+  if(adapter.configured){syncOnline();onlineTimer=setInterval(syncOnline,2000);}
+  window.addEventListener("pagehide",()=>{stopGameTimer();stopSounds();if(onlineTimer!==null){clearInterval(onlineTimer);onlineTimer=null;}});
+  window.addEventListener("pageshow",event=>{if(event.persisted){if(game&&!gameFinished){gameTimer=setInterval(tickGame,50);tickGame();}if(adapter.configured&&onlineTimer===null){syncOnline();onlineTimer=setInterval(syncOnline,2000);}}});
 }
 
 if(typeof module!=="undefined"&&module.exports){module.exports={...require("./assets/island-core.js"),...require("./assets/policy-core.js")};}

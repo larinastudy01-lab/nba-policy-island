@@ -37,9 +37,11 @@ test("both team panels share home/away scores in all four states; only home aren
   }
   assert.equal(C.TEAMS.filter(t=>C.gameForTeam(t.id,"live").glowing).length,4);
   assert.equal(C.TEAMS.filter(t=>C.gameForTeam(t.id,"final").glowing).length,0);
-  assert.equal(C.gameForTeam("warriors","live").homeScore,78);
-  assert.equal(C.gameForTeam("lakers","final").homeScore,108);
-  assert.equal(C.gameForTeam("lakers","final").awayScore,101);
+  const warriors=C.gameForTeam("warriors","live");
+  assert.equal(warriors.homeId,"lakers");assert.equal(warriors.awayId,"warriors");
+  assert.equal(warriors.homeScore,74);assert.equal(warriors.awayScore,78);assert.equal(warriors.glowing,false);
+  assert.equal(C.gameForTeam("lakers","final").homeScore,101);
+  assert.equal(C.gameForTeam("lakers","final").awayScore,108);
 });
 test("game state changes do not mutate independent policy state",()=>{
   const {createPolicySession}=require("../assets/policy-core.js");const policy=createPolicySession(null);policy.selectPlan("reserved");policy.simulate();policy.confirm();

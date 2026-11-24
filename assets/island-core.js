@@ -15,9 +15,12 @@
     {prefix:"park",region:"公園",color:"#478668",names:["榕樹球場","綠丘半場","溪畔球場","中央草地","環島花園"],positions:[[450,340],[550,390],[655,330],[505,500],[660,525]]},
     {prefix:"roof",region:"屋頂",color:"#856299",names:["天際一號","霓虹天台","雲端半場","東城高台","星光屋頂"],positions:[[775,175],[890,220],[1010,290],[1000,505],[930,595]]}
   ];
-  const COURTS = courtGroups.flatMap(group=>group.names.map((name,i)=>({id:`${group.prefix}-${String(i+1).padStart(2,"0")}`,name,region:group.region,type:group.prefix,color:group.color,x:group.positions[i][0],y:group.positions[i][1]})));
+  const cities={warriors:"舊金山",lakers:"洛杉磯",clippers:"洛杉磯",nuggets:"丹佛",mavericks:"達拉斯",bulls:"芝加哥",celtics:"波士頓",knicks:"紐約"};
+  TEAMS.forEach(team=>{team.city=cities[team.id];});
+  const scenes={harbor:"海風、燈塔與碼頭邊的球框",park:"樹蔭、草地與步道旁的球框",roof:"天際線、樓群與高台上的球框"};
+  const COURTS = courtGroups.flatMap(group=>group.names.map((name,i)=>({id:`${group.prefix}-${String(i+1).padStart(2,"0")}`,name,region:group.region,type:group.prefix,scene:scenes[group.prefix],color:group.color,x:group.positions[i][0],y:group.positions[i][1]})));
   const MATCHES = [
-    {id:"bay-derby",homeId:"warriors",awayId:"lakers",startTime:"11:00",live:{home:78,away:74,period:"第 3 節"},final:{home:108,away:101}},
+    {id:"bay-derby",homeId:"lakers",awayId:"warriors",startTime:"11:00",live:{home:74,away:78,period:"第 3 節"},final:{home:101,away:108}},
     {id:"coast-highland",homeId:"clippers",awayId:"nuggets",startTime:"10:30",live:{home:62,away:66,period:"第 3 節"},final:{home:110,away:114}},
     {id:"highland-city",homeId:"mavericks",awayId:"bulls",startTime:"09:30",live:{home:55,away:51,period:"第 2 節"},final:{home:112,away:106}},
     {id:"city-derby",homeId:"celtics",awayId:"knicks",startTime:"08:30",live:{home:89,away:85,period:"第 4 節"},final:{home:119,away:113}}

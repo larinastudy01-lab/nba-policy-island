@@ -98,12 +98,18 @@ function createPolicySession(storage) {
       }
     },
     simulate() {
+      if (selectedPlan === null) return null;
       result = calculatePolicy(selectedPlan);
       comparisonVisible = true;
       return { ...result };
     },
     retry() {
       result = null;
+    },
+    reset() {
+      selectedPlan = null;
+      result = null;
+      comparisonVisible = false;
     },
     confirm() {
       if (!result || result.planId !== selectedPlan) return false;

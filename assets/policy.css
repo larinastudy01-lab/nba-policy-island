@@ -50,6 +50,7 @@
 .policy-metrics dd { color: var(--text); font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; margin: 10px 0 0; line-height: 1.4; }
 .policy-metrics dd span { font-size: 11px; font-weight: 400; margin-left: 4px; color: #b5c4d9; }
 .policy-metrics dd .expected-prefix { display: block; margin: 0 0 2px; font-size: 11px; color: #c2a861; }
+.policy-metrics dd .metric-number{font:inherit}
 .policy-metrics > div:last-child dd { color: var(--gold); }
 .policy-goal-results { display: flex; flex-wrap: wrap; gap: 10px 20px; list-style: none; padding: 0; margin: 17px 0; }
 .policy-goal-results li { color: #c5d0df; font-size: 12px; line-height: 1.8; }
@@ -61,6 +62,13 @@
 .policy-comparison { margin-top: 28px; padding-top: 24px; border-top: 1px solid #34465f; }
 .policy-comparison h3 { margin: 0; font-size: 18px; }
 .policy-comparison-note { margin-bottom: 15px; }
+.policy-table-wrap{max-width:100%}.policy-table{width:100%;border-collapse:collapse;font-size:11px;line-height:1.8;font-variant-numeric:tabular-nums;table-layout:fixed}
+.policy-table caption{text-align:left;color:#b9cddd;padding:0 0 10px;font-size:11px}
+.policy-table th,.policy-table td{padding:10px 8px;border:1px solid #3b4e68;text-align:left;overflow-wrap:anywhere}
+.policy-table thead th{font-size:10px;font-weight:500;background:#18334b;color:#d6e1ed}
+.policy-table tbody th{font-weight:600;color:#d6e1ed}.policy-table tbody tr{background:#0d1725}
+.policy-table tr[data-current="true"]{background:#f3c45b16}.policy-table tr[data-current="true"]>th{color:var(--gold);box-shadow:inset 3px 0 var(--gold)}
+.policy-table .comparison-current{display:block;margin-top:6px;width:fit-content}
 .comparison-card { min-width: 0; padding: 19px; border: 1px solid #3b4e68; border-radius: 7px; background: #0d1725; }
 .comparison-card[data-current="true"] { border-color: var(--gold); }
 .comparison-card h4 { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 15px; margin: 0 0 15px; }
@@ -102,4 +110,13 @@
   .policy-metrics > div:nth-child(n+3) { border-top: 1px solid #2c3e57; }
   .policy-metrics dd { font-size: 25px; }
   .policy-decision-actions .policy-button { flex: 1 1 120px; }
+}
+@media(max-width:700px){
+  .policy-table,.policy-table tbody,.policy-table tr,.policy-table th,.policy-table td{display:block;width:100%}
+  .policy-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .policy-table caption{display:block;width:100%}.policy-table tr{border:1px solid #3b4e68;border-radius:6px;margin:12px 0;padding:8px 12px}
+  .policy-table th,.policy-table td{border:0;padding:8px 0;font-size:12px}
+  .policy-table td{display:flex;align-items:baseline;justify-content:space-between;gap:20px;border-top:1px solid #2d405a}
+  .policy-table td:before{content:attr(data-label);color:#aebfd5;flex-shrink:0;font-size:11px}
+  .policy-table tr[data-current="true"]>th{box-shadow:none}.policy-table .comparison-current{display:inline-block;margin:0 0 0 10px}
 }
