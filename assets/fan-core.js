@@ -6,6 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function (Island) {
   const AVATAR_KEY = "nba-policy-island:fan:v1";
   const ALBUM_KEY = "nba-policy-island:photos:v1";
+  const Sights=typeof module==="object"&&module.exports?require("./sights-core.js"):globalThis.NBASights;
   const OPTIONS = {
     skin: [["peach", "暖杏", "#efbb93"], ["sand", "小麥", "#d89b6e"], ["bronze", "古銅", "#b77750"], ["brown", "深棕", "#855234"], ["deep", "暖褐", "#593b30"]],
     hair: [["crop", "俐落短髮"], ["curls", "捲捲短髮"], ["sweep", "側分長髮"], ["braids", "辮子"], ["bun", "丸子頭"], ["shaved", "光頭"]],
@@ -79,16 +80,20 @@
     const star = STATIONS[mod(day, STATIONS.length)], place = Island.ENCOUNTERS[mod(day, Island.ENCOUNTERS.length)];
     return { date, teamId: star.teamId, starId: star.starId, locationId: place.id };
   }
-  function nightAvailable(teamId, gameState) { return Boolean(getStation(teamId) && Island.gameForTeam(teamId, gameState).glowing); }
-  function createPhoto(teamId, avatar, { pose = "stand", background = "day", capturedAt = new Date().toISOString() } = {}, gameState = "idle") {
+  function nightAvailable(teamId, gameState, bayFixture="away") { return Boolean(getStation(teamId) && Island.gameForTeam(teamId, gameState,bayFixture).glowing); }
+  function createPhoto(teamId, avatar, { pose = "stand", background = "day", capturedAt = new Date().toISOString() } = {}, gameState = "idle",bayFixture="away") {
     const station = getStation(teamId);
     if (!station) throw new RangeError("Unknown photo station.");
     if (!["stand", "ball"].includes(pose) || !["day", "night"].includes(background)) throw new RangeError("Unknown photo option.");
-    if (background === "night" && !nightAvailable(teamId, gameState)) throw new RangeError("Night background unavailable.");
+    if (background === "night" && !nightAvailable(teamId, gameState,bayFixture)) throw new RangeError("Night background unavailable.");
     if (!Number.isFinite(Date.parse(capturedAt))) throw new TypeError("Invalid capture date.");
     return { version: 1, teamId, starId: station.starId, avatar: normalizeAvatar(avatar), pose, background, capturedAt: new Date(capturedAt).toISOString() };
   }
   function normalizePhoto(value) {
+    if(value?.version===3&&value.kind==="sight"){
+      if(!Sights.get(value.locationId)?.photo||!["stand","ball"].includes(value.pose)||!["day","night"].includes(value.background)||!value.avatar||typeof value.avatar!=="object"||typeof value.capturedAt!=="string"||!Number.isFinite(Date.parse(value.capturedAt)))return null;
+      return {version:3,kind:"sight",locationId:value.locationId,avatar:normalizeAvatar(value.avatar),pose:value.pose,background:value.background,capturedAt:new Date(value.capturedAt).toISOString()};
+    }
     const station = value && getStation(value.teamId);
     if (!station || station.starId !== value.starId || !["stand", "ball"].includes(value.pose) || typeof value.capturedAt !== "string" || !Number.isFinite(Date.parse(value.capturedAt)) || !value.avatar || typeof value.avatar !== "object") return null;
     if (value.version === 2 && value.kind === "encounter") {
@@ -112,6 +117,7 @@
   }
   function photoInfo(value) {
     const record = normalizePhoto(value);if (!record) throw new TypeError("Invalid photo.");
+    if(record.kind==="sight"){const sight=Sights.get(record.locationId);return {record,sight,scenic:true,star:{starName:sight.name},team:{name:"原創美國地標街景",accent:"#9ed3c4"},venue:sight.name,backgroundLabel:record.background==="night"?"夜景旅行照":"白天旅行照"};}
     const star = getStation(record.teamId), team = Island.getLandmark("nba", record.teamId), encounter = record.kind === "encounter";
     const place = encounter ? Island.getLandmark("encounter", record.locationId) : null;
     return { record, star, team, encounter, venue: record.locationName || place?.name || star.venue, backgroundLabel: encounter ? "島上偶遇" : record.background === "night" ? "夜場燈光" : "一般合影" };
@@ -129,7 +135,7 @@
         if (avatarData?.version === 1) saved = normalizeAvatar(avatarData.avatar);
         const albumData = read(ALBUM_KEY);
         if ([1, 2].includes(albumData?.version) && Array.isArray(albumData.photos)) {
-          for (const value of albumData.photos.slice(0, 100)) { const photo = normalizePhoto(value); if (photo && photo.kind !== "encounter") album[photo.teamId] = photo; }
+          for (const value of albumData.photos.slice(0, 100)) { const photo = normalizePhoto(value); if (photo && photo.version===1) album[photo.teamId] = photo; }
         }
         if (albumData?.version === 2 && Array.isArray(albumData.encounters)) {
           for (const value of albumData.encounters.slice(0, 100)) { const photo = normalizePhoto(value); if (photo?.kind === "encounter") encounters[photo.starId] = photo; }
@@ -143,7 +149,7 @@
       randomize(random) { draft = randomAvatar(random, draft.nickname); return copy(draft); },
       reset() { draft = normalizeAvatar(); return copy(draft); },
       save() { saved = copy(draft); write(AVATAR_KEY, { version: 1, avatar: saved }); return copy(saved); },
-      collect(value) { const photo = normalizePhoto(value); if (!photo) throw new TypeError("Invalid photo record."); if (photo.kind === "encounter") encounters[photo.starId] = copy(photo);else album[photo.teamId] = copy(photo);write(ALBUM_KEY, { version: 2, photos: Object.values(album), encounters: Object.values(encounters) });return copy(photo); }
+      collect(value) { const photo = normalizePhoto(value); if (!photo||photo.kind==="sight") throw new TypeError("Invalid photo record. Scenic photos are download-only."); if (photo.kind === "encounter") encounters[photo.starId] = copy(photo);else album[photo.teamId] = copy(photo);write(ALBUM_KEY, { version: 2, photos: Object.values(album), encounters: Object.values(encounters) });return copy(photo); }
     };
   }
 
@@ -199,6 +205,7 @@ ${pose === "ball" ? '<g data-layer="ball"><circle cx="192" cy="103" r="25" fill=
   function photoDate(value) { return new Date(value).toLocaleString("zh-TW", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }); }
   function photoSVG(value) {
     const record = normalizePhoto(value); if (!record) throw new TypeError("Invalid photo.");
+    if(record.kind==="sight"){const sight=Sights.get(record.locationId);return `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img"><title>${xml(record.avatar.nickname)}在${xml(sight.name)}的旅行照</title>${Sights.photoBackdrop(sight.id,record.background==="night")}<svg x="110" y="202" width="225" height="300" viewBox="0 0 240 320">${avatarBody(record.avatar,{pose:record.pose})}</svg><rect y="512" width="960" height="128" fill="#0c263b"/><g fill="#f4eed3" font-family="Microsoft JhengHei, sans-serif"><text x="40" y="546" font-size="17">NBA 政策島 ／ SCENIC ISLAND MEMORIES</text><text x="40" y="583" font-size="27">${xml(record.avatar.nickname)} · ${xml(sight.name)}</text><text x="40" y="614" font-size="16">${xml(sight.region)}・${record.background==="night"?"夜景":"白天"}・原創微縮地標旅行照</text><text x="920" y="549" text-anchor="end" font-size="14">${xml(photoDate(record.capturedAt))}（台灣）</text></g></svg>`;}
     const { star: station, team, encounter, venue, backgroundLabel } = photoInfo(record);
     return `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img"><title>${xml(record.avatar.nickname)}與${xml(station.starName)}的${encounter ? "偶遇" : "主場"}合影</title>${encounter ? encounterBody(record.locationId,record.sceneVersion) : arenaBody(record.teamId, record.background === "night")}<svg x="210" y="176" width="240" height="320" viewBox="0 0 240 320">${avatarBody(record.avatar, { pose: record.pose })}</svg><svg x="508" y="153" width="258" height="344" viewBox="0 0 240 320">${avatarBody(starAvatar(station), { pose: "ball", beard: Boolean(station.beard) })}</svg><rect x="0" y="512" width="960" height="128" fill="#081b2e"/><path d="M30 532h8v80h-8Z" fill="${team.accent}"/><g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#edf4f2"><text x="60" y="548" font-size="16" fill="${team.accent}">NBA 政策島 ／ ${encounter ? "ISLAND ENCOUNTER" : "HOME COURT MEMORIES"}</text><text x="60" y="579" font-size="24" font-weight="700">${xml(record.avatar.nickname)} × ${xml(station.starName)}</text><text x="60" y="605" font-size="16">${xml(team.name)}・${xml(venue)}・${backgroundLabel}</text><text x="900" y="548" font-size="14" text-anchor="end">${xml(photoDate(record.capturedAt))}（台灣）</text><text x="900" y="626" font-size="12" fill="#abc1d2" text-anchor="end">原創 Q 版・代表球星・隊史致敬・非現役名單</text></g></svg>`;
   }

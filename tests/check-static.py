@@ -40,7 +40,7 @@ page = Page()
 page.feed((ROOT / "index.html").read_text(encoding="utf-8-sig"))
 assert len(page.ids) == len(set(page.ids)), "Duplicate HTML IDs"
 assert not page.errors, page.errors
-for layer in ("landmark-layer", "road-layer", "district-layer", "fan-map-marker", "island-encounter-actor"):
+for layer in ("landmark-layer", "road-layer", "district-layer", "fan-map-marker", "island-encounter-actor", "npc-layer", "scenery-layer", "traffic-layer"):
     assert "island-world" in page.ancestors[layer], f"Layer outside shared world: {layer}"
 assert "island-world" not in page.ancestors["map-scoreboard"], "Scoreboard must stay outside zoomed world"
 print("Map: terrain/layers use one world; scoreboard stays outside camera transform")
@@ -61,7 +61,7 @@ for node in svg.iter():
     for attr in ("href", "{http://www.w3.org/1999/xlink}href"):
         if attr in node.attrib:
             assert node.attrib[attr].startswith("#") and node.attrib[attr][1:] in svg_ids
-for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css"):
+for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css", ROOT / "assets/bay.css", ROOT / "assets/scenery.css"):
     css = file.read_text(encoding="utf-8-sig")
     css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
     css = re.sub(r'''"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*' ''', "", css, flags=re.X)
@@ -118,6 +118,7 @@ for vector in vectors:
 node_source = """
 const F=require('./assets/fan-core.js');
 const C=require('./assets/island-core.js');
+const B=require('./assets/bay-scene.js');
 const photos=F.STATIONS.map(s=>F.photoSVG(F.createPhoto(s.teamId,{nickname:'<Fan>&',number:'07'},{pose:'ball',capturedAt:'2026-11-24T06:30:00Z'})));
 photos.push(F.photoSVG(F.createPhoto('lakers',F.DEFAULT_AVATAR,{background:'night'},'live')));
 for(const date of ['2026-01-01','2026-01-02','2026-01-03']) photos.push(F.photoSVG(F.createEncounterPhoto(F.dailyEncounter(date),F.DEFAULT_AVATAR,{pose:'ball',capturedAt:date+'T06:30:00Z'})));
@@ -125,7 +126,9 @@ const assets=F.STATIONS.flatMap(s=>[s.illustration,s.background]).concat(C.ENCOU
 const fs=require('node:fs'),vm=require('node:vm'),G=require('./assets/games-core.js');
 const sandbox={NBAGames:G};vm.createContext(sandbox);vm.runInContext(fs.readFileSync('./assets/games-ui.js','utf8'),sandbox);
 const scenes=G.GAMES.map(config=>{const game=G.createGame(config.id,{seed:2026});game.start(0);const view=sandbox.NBAGamesUI.view(game.tick(1000));return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320">'+view.graphic+'</svg>';});
-console.log(JSON.stringify({photos,assets,scenes}));
+const bayArt=B.PEOPLE.map(p=>B.npcSVG(p,F));
+bayArt.push(...[B.arenaGraphic(),B.courtGraphic()].map(body=>'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-80 -68 160 132">'+body+'</svg>'));
+console.log(JSON.stringify({photos,assets,scenes,bayArt}));
 """
 result = json.loads(subprocess.check_output(["node", "-e", node_source], cwd=ROOT).decode("utf-8"))
 for ref in result["assets"]:
@@ -147,3 +150,39 @@ for markup in result["scenes"]:
     assert scene.attrib["viewBox"] == "0 0 600 320"
     assert not any("href" in name for node in scene.iter() for name in node.attrib)
 print("Game XML: 15 dedicated SVG scenes parsed without browser rendering")
+bay_files = list((ROOT / "assets").glob("bay-*.svg"))
+assert len(bay_files) == 5
+for file in bay_files:
+    tree = ET.parse(file).getroot()
+    assert tree.attrib["viewBox"] == "0 0 1600 1000"
+    assert tree.find("{http://www.w3.org/2000/svg}title") is not None
+    assert not tree.findall(".//{http://www.w3.org/2000/svg}script")
+    ids = {node.attrib["id"] for node in tree.iter() if "id" in node.attrib}
+    for node in tree.iter():
+        for name, value in node.attrib.items():
+            assert "href" not in name
+            for ref in re.findall(r"url\(#([^)]+)\)", value):
+                assert ref in ids
+assert len(result["bayArt"]) == 12
+for markup in result["bayArt"]:
+    ET.fromstring(markup)
+print("Bay XML: 5 local terrain/light/occlusion layers and 12 arena/court/pedestrian compositions valid")
+
+# New original landmark and car vectors, checked without rendering.
+scenery = list((ROOT / "assets/sights").glob("*.svg"))
+cars = list((ROOT / "assets/cars").glob("*.svg"))
+assert (len(scenery), len(cars)) == (40, 18)
+for file in scenery + cars + [ROOT / "assets/traffic-roads.svg", ROOT / "assets/scenery-ground.svg"]:
+    tree = ET.parse(file).getroot()
+    assert tree.tag == "{http://www.w3.org/2000/svg}svg"
+    assert not any("href" in name for node in tree.iter() for name in node.attrib)
+    assert not tree.findall(".//{http://www.w3.org/2000/svg}script")
+source = "const F=require('./assets/fan-core.js'),S=require('./assets/sights-core.js');console.log(JSON.stringify(S.SIGHTS.filter(s=>s.photo).flatMap(s=>['day','night'].map(background=>F.photoSVG(F.normalizePhoto({version:3,kind:'sight',locationId:s.id,avatar:F.DEFAULT_AVATAR,pose:'ball',background,capturedAt:'2026-11-24T06:00:00Z'}))))));"
+scenic_photos = json.loads(subprocess.check_output(["node", "-e", source], cwd=ROOT).decode("utf-8"))
+assert len(scenic_photos) == 8
+for markup in scenic_photos:
+    tree = ET.fromstring(markup)
+    assert tree.attrib["width"] == "960" and tree.attrib["height"] == "640"
+    assert len([n for n in tree.iter() if n.attrib.get("data-layer") == "face"]) == 1
+    assert not any("href" in name for node in tree.iter() for name in node.attrib)
+print("Scenery XML: 20 day/night landmarks, 6 cars x 3 views, 2 traffic lanes, 8 scenic photo compositions valid")

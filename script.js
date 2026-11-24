@@ -3,6 +3,7 @@
 function initializeIsland() {
   const C = globalThis.NBAIsland;
   const F = globalThis.NBAFan;
+  const S = globalThis.NBASights;
   const G = globalThis.NBAGames;
   const { POLICY_CHALLENGE, calculatePolicy, createPolicySession } = globalThis.NBAPolicy;
   const $ = (id) => document.getElementById(id);
@@ -14,6 +15,9 @@ function initializeIsland() {
   const state = C.createIslandState();
   let fanUI = null;
   let explorer = null;
+  let bayFixture="away",panelRequested=false,pendingPanelFocus=false;
+  const practicedGames=new Set();let tutorialContinuation=null;
+  const matchForTeam=id=>C.gameForTeam(id,state.gameState,bayFixture);
   const encounterConfig=F.encounterDateConfig(window.location.href);
   let encounterDateOverride=encounterConfig.isTest?encounterConfig.date:null;
   let encounterTimer=null,lastEncounterDate=null;
@@ -21,6 +25,7 @@ function initializeIsland() {
   const adapter = globalThis.NBAOnline.createSupabaseAdapter(globalThis.NBA_SUPABASE_CONFIG, {storage});
   const mapNodes = new Map();
   const listNodes = new Map();
+  const sightNodes = new Map();
   let policyOpen = false;
   let onlineReady = false;
   let onlineRulesVerified = false;
@@ -46,11 +51,13 @@ function initializeIsland() {
   const ns = "http://www.w3.org/2000/svg";
 
   function arenaGraphic(team) {
-    return `<ellipse class="arena-halo" cy="-12" rx="73" ry="43"/><ellipse cy="17" rx="62" ry="23" fill="#0a2539" opacity=".5"/><path d="M-55-28 0 2V27L-55-3Z" fill="#536c7b"/><path d="M0 2 55-28V-3L0 27Z" fill="#274456"/><path d="M-55-28 0-58 55-28 0 2Z" fill="${team.color}" stroke="${team.accent}" stroke-width="1.5"/><path d="M-42-29 0-51 42-29 0-7ZM-24-40 24-15M-24-15 24-40" fill="none" stroke="#ffffff25"/><path class="arena-rim" d="M-55-28 0 2 55-28" fill="none" stroke="#9aabb1"/><path class="arena-windows" d="M-44-10v9m10-4v9m10-4v9m45-7v9m12-15v9m12-16v9" stroke="#f3dc8b99" stroke-width="2"/><text class="arena-live-tag" y="12">模擬 LIVE</text><text class="roof-text" y="-23">${team.abbr}</text><text class="landmark-label" y="47">${escapeHTML(team.shortName)}主場</text><ellipse class="selection-ring" cy="-9" rx="77" ry="53"/><rect class="hit-area" x="-76" y="-65" width="152" height="118"/>`;
+    if(team.id==="warriors")return globalThis.NBABay.arenaGraphic();
+    return `<ellipse class="arena-halo" cy="-12" rx="73" ry="43"/><ellipse cx="8" cy="22" rx="62" ry="23" fill="#0a2539" opacity=".5"/><path d="M-55-28 0 2V27L-55-3Z" fill="#536c7b"/><path d="M0 2 55-28V-3L0 27Z" fill="#274456"/><path d="M-55-28 0-58 55-28 0 2Z" fill="${team.color}" stroke="${team.accent}" stroke-width="1.5"/><path d="M-42-29 0-51 42-29 0-7ZM-24-40 24-15M-24-15 24-40" fill="none" stroke="#ffffff25"/><path class="arena-rim" d="M-55-28 0 2 55-28" fill="none" stroke="#9aabb1"/><path class="arena-windows" d="M-44-10v9m10-4v9m10-4v9m45-7v9m12-15v9m12-16v9" stroke="#f3dc8b99" stroke-width="2"/><text class="arena-live-tag" y="12">模擬 LIVE</text><text class="roof-text" y="-23">${team.abbr}</text><text class="landmark-label" y="47">${escapeHTML(team.shortName)}主場</text><ellipse class="selection-ring" cy="-9" rx="77" ry="53"/><rect class="hit-area" x="-76" y="-65" width="152" height="118"/>`;
   }
   function courtGraphic(court) {
+    if(court.id==="harbor-01")return globalThis.NBABay.courtGraphic();
     const depth = court.type === "roof" ? 25 : 7;
-    return `<ellipse class="court-light-pool" cy="-8" rx="49" ry="26"/><ellipse cy="17" rx="43" ry="18" fill="#0a2539" opacity=".45"/><path d="M-43-18 0 4 43-18V${depth-16}L0 ${depth+5} -43 ${depth-16}Z" fill="${court.type === "roof" ? "#52677b" : "#355d56"}"/><g transform="matrix(1 .5 -1 .5 0 -18)"><rect x="-26" y="-17" width="52" height="34" fill="${court.color}" stroke="#e0e3ca"/><path d="M0-17v34M-26-7h12V7h-12M26-7H14V7h12" fill="none" stroke="#e0e3ca" stroke-width=".8"/><circle r="6" fill="none" stroke="#e0e3ca" stroke-width=".8"/></g><path class="court-floodlight" d="M-45-28v-28h12m78 28v-28H33" fill="none" stroke="#e5dcac" stroke-width="2"/><path d="M-29-23v-18m58 18v-18" stroke="#b9d0cf" stroke-width="1.8"/><path d="m-36-42 14 0m0 3-14 0m51-3h14m0 3H22" stroke="#ecded1" stroke-width="2"/><ellipse cx="-29" cy="-35" rx="5" ry="2" fill="none" stroke="#f3c45b"/><ellipse cx="29" cy="-35" rx="5" ry="2" fill="none" stroke="#f3c45b"/><text class="landmark-label court-label" y="${depth+23}">${escapeHTML(court.name)}</text><ellipse class="selection-ring" cy="-8" rx="49" ry="37"/><rect class="hit-area" x="-50" y="-48" width="100" height="${depth+83}"/>`;
+    return `<ellipse class="court-light-pool" cy="-8" rx="49" ry="26"/><ellipse cx="7" cy="22" rx="43" ry="18" fill="#0a2539" opacity=".45"/><path d="M-43-18 0 4 43-18V${depth-16}L0 ${depth+5} -43 ${depth-16}Z" fill="${court.type === "roof" ? "#52677b" : "#355d56"}"/><g transform="matrix(1 .5 -1 .5 0 -18)"><rect x="-26" y="-17" width="52" height="34" fill="${court.color}" stroke="#e0e3ca"/><path d="M0-17v34M-26-7h12V7h-12M26-7H14V7h12" fill="none" stroke="#e0e3ca" stroke-width=".8"/><circle r="6" fill="none" stroke="#e0e3ca" stroke-width=".8"/></g><path class="court-floodlight" d="M-45-28v-28h12m78 28v-28H33" fill="none" stroke="#e5dcac" stroke-width="2"/><path d="M-29-23v-18m58 18v-18" stroke="#b9d0cf" stroke-width="1.8"/><path d="m-36-42 14 0m0 3-14 0m51-3h14m0 3H22" stroke="#ecded1" stroke-width="2"/><ellipse cx="-29" cy="-35" rx="5" ry="2" fill="none" stroke="#f3c45b"/><ellipse cx="29" cy="-35" rx="5" ry="2" fill="none" stroke="#f3c45b"/><text class="landmark-label court-label" y="${depth+23}">${escapeHTML(court.name)}</text><path class="court-fence" d="M-45-10v18L0 31l25-13m15-8 6-3V-8M-45-10 0 13l25-13m15-8 6-3M-35-5v18m12-12v18m12-12v18m12-12v18m12-24v18" fill="none" stroke="#a8c6c7" stroke-width="1"/><ellipse class="selection-ring" cy="-8" rx="49" ry="37"/><rect class="hit-area" x="-50" y="-48" width="100" height="${depth+83}"/>`;
   }
   function buildLandmarks() {
     $("landmark-layer").setAttribute("aria-label",`${C.TEAMS.length+C.COURTS.length+C.ENCOUNTERS.length} 個可探索地標，使用 Tab 選取後按 Enter 或空白鍵開啟`);
@@ -67,7 +74,7 @@ function initializeIsland() {
         node.style.top=`${(item.y-frame.y)/C.MAP.height*100}%`;
         node.style.width=`${frame.w/C.MAP.width*100}%`;
         node.style.height=`${frame.h/C.MAP.height*100}%`;
-        node.style.zIndex=String(Math.round(item.y));
+        node.style.zIndex=String(Math.round(item.y)-(item.id==="harbor-01"?35:0));
         node.dataset.x=String(item.x);node.dataset.y=String(item.y);
         node.setAttribute("tabindex","0");
         node.setAttribute("role","button");
@@ -112,6 +119,19 @@ function initializeIsland() {
     if(activity === null)return adapter.configured ? "狀態待連線確認" : "真人連線未配置";
     return activity.waiting || activity.preparing || activity.playing ? `等待對手 ${activity.waiting} 房 · 準備中 ${activity.preparing} 房 · 對戰中 ${activity.playing} 房` : "目前無等待或對戰中的房間";
   }
+  function buildSights(){
+    for(const item of S.SIGHTS){
+      const image=document.createElement("img");image.className="scenic-art";image.id=`scenic-art-${item.id}`;image.src=item.asset;image.alt="";image.setAttribute("aria-hidden","true");
+      image.style.left=`${(item.x-item.width/2)/C.MAP.width*100}%`;image.style.top=`${(item.y-item.height)/C.MAP.height*100}%`;image.style.width=`${item.width/C.MAP.width*100}%`;image.style.height=`${item.height/C.MAP.height*100}%`;image.style.zIndex=String(item.key==="golden-gate"?3:Math.round(item.y)-2);
+      const node=document.createElement("button");node.type="button";node.id=`landmark-${item.id}`;node.className="scenic-point";node.dataset.kind="sight";
+      const point=item.entrance||{x:item.x,y:item.y};node.style.left=`${point.x/C.MAP.width*100}%`;node.style.top=`${point.y/C.MAP.height*100}%`;node.style.zIndex="2300";
+      node.setAttribute("aria-label",`${item.name}・${item.photo?"沿步道前往觀景拍照":"查看街景名稱，保持玩家原位"}`);node.setAttribute("aria-controls","station-panel");
+      const icon=element("span","scenic-icon",item.photo?"◎":"◇"),label=element("span","scenic-label",item.name+(item.photo?" · 拍照":""));node.append(icon,label);
+      node.addEventListener("click",()=>openLandmark("sight",item.id));node.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();if(!event.repeat)openLandmark("sight",item.id);}});node.addEventListener("focus",()=>explorer?.focusOnly(item.id));
+      $("scenery-layer").append(image,node);sightNodes.set(item.id,{node,image});
+      const button=element("button","");button.id=`list-${item.id}`;button.type="button";button.setAttribute("aria-controls","station-panel");button.textContent=`${item.photo?"◎ 觀景拍照":"◇ 街景"}｜${item.name}・${item.region}`;button.addEventListener("click",()=>openLandmark("sight",item.id));$("station-list").append(button);listNodes.set(item.id,{button,kind:"sight",item});
+    }
+  }
   function renderMapAndDirectory() {
     const complete = policySession.getState().completedPlanId !== null;
     const album = fanUI?.getState().homeAlbum || {};
@@ -120,6 +140,8 @@ function initializeIsland() {
     $("filter-nba").setAttribute("aria-pressed",String(state.filter==="nba"));
     $("filter-court").setAttribute("aria-pressed",String(state.filter==="court"));
     $("filter-encounter").setAttribute("aria-pressed",String(state.filter==="encounter"));
+    $("filter-sight").setAttribute("aria-pressed",String(state.filter==="sight"));
+    for(const [id,{node}]of sightNodes){const selected=state.kind==="sight"&&state.id===id;node.dataset.selected=String(selected);node.setAttribute("aria-pressed",String(selected));const entry=listNodes.get(id);entry.button.hidden=state.filter!=="sight";entry.button.setAttribute("aria-pressed",String(selected));}
     for(const [id,{node,badge,photoBadge}] of mapNodes) {
       const kind=node.dataset.kind;
       const item=C.getLandmark(kind,id);
@@ -132,7 +154,7 @@ function initializeIsland() {
       photoBadge.setAttribute("visibility",photographed?"visible":"hidden");
       let status=kind==="encounter"?"探索地點・每日偶遇":courtStatus(id);
       if(kind==="nba"){
-        const match=C.gameForTeam(id,state.gameState);
+        const match=matchForTeam(id);
         node.dataset.state=match.state;node.dataset.glowing=String(match.glowing);
         status=`模擬${{idle:"無賽事",scheduled:"待開打",live:"進行中",final:"已完賽"}[match.state]}，${match.isHome?"本場主隊":"本場客隊"}${done?"，政策挑戰已完成":""}`;
         if(photographed)status+="，已收藏主場合影";
@@ -144,7 +166,7 @@ function initializeIsland() {
       entry.button.setAttribute("aria-label",`${item.name}${kind==="court"?"，"+item.gameName:""}，${status}`);
       entry.button.innerHTML=`<span class="list-symbol" aria-hidden="true">${kind==="nba"?item.abbr:kind==="encounter"?"偶遇":item.type==="harbor"?"港邊":item.type==="park"?"公園":"屋頂"}</span><span class="list-copy"><strong>${escapeHTML(item.name)}${done?" ✓":""}</strong><small>${escapeHTML(kind==="nba"?item.region:kind==="court"?item.gameName+"・"+status:status)}${photographed?"・合影已收藏":""}</small></span>`;
     }
-    fanUI?.updateLocation(state);fanUI?.refreshGame();explorer?.refreshLabels();explorer?.refreshEncounter();
+    fanUI?.updateLocation(state);fanUI?.refreshGame();explorer?.refreshScene();explorer?.refreshEncounter();
   }
   function element(tag,className,text) {
     const node=document.createElement(tag);node.className=className;
@@ -174,15 +196,17 @@ function initializeIsland() {
     container.append(footer);
   }
   function renderPanel() {
+    updatePanelVisibility();
     const item=C.getLandmark(state.kind,state.id);
     $("tour-map").dataset.policyOpen=String(state.kind==="nba"&&state.id==="warriors"&&policyOpen);
     $("panel-title").textContent=item.name;
-    $("panel-category").textContent=`${item.region} / ${state.kind==="nba"?"NBA ARENA":state.kind==="court"?"PUBLIC COURT":"ISLAND ENCOUNTER"}`;
+    $("panel-category").textContent=`${item.region} / ${state.kind==="nba"?"NBA ARENA":state.kind==="court"?"PUBLIC COURT":state.kind==="sight"?"SCENIC VIEW":"ISLAND ENCOUNTER"}`;
     $("nba-panel").hidden=state.kind!=="nba";
     $("court-panel").hidden=state.kind!=="court";
     $("encounter-panel").hidden=state.kind!=="encounter";
+    $("sight-panel").hidden=state.kind!=="sight";
     if(state.kind==="nba"){
-      const match=C.gameForTeam(item.id,state.gameState);
+      const match=matchForTeam(item.id);
       $("team-badge").textContent=item.abbr;
       $("team-badge").style.setProperty("--team-color",item.color);
       $("team-badge").style.setProperty("--team-accent",item.accent);
@@ -205,26 +229,40 @@ function initializeIsland() {
       $("practice-start").textContent=`單人練習｜${rules.name}`;$("friend-pk-title").textContent=`好友 PK｜${rules.name}`;
       $("court-activity").textContent=`真人房間：${courtStatus(item.id)}`;
       renderRoom();
+    }else if(state.kind==="sight"){
+      $("map-scoreboard").hidden=true;
+      $("sight-image").src=$("island-map").dataset.theme==="night"?item.nightAsset:item.asset;$("sight-image").alt=`${item.name}的原創斜俯視街景插畫`;
+      $("sight-description").textContent=item.description;$("sight-access").textContent=item.photo?"已沿步道抵達觀景點。可用已儲存的球迷造型拍照與下載 PNG；景點照不計入主場或偶遇收藏。":"街景眺望・此處沒有開放步行入口；鏡頭查看地標，玩家保持原位。";$("sight-photo").hidden=!item.photo;
     }else{
       $("map-scoreboard").hidden=true;fanUI?.renderEncounterPanel(item.id);
     }
     renderPolicyProgress();
   }
   function openLandmark(kind,id,focus=true) {
-    if(gameMode==="practice"&&(kind!=="court"||id!==gameCourtId))leavePractice(false);
+    if(["practice","tutorial"].includes(gameMode)&&(kind!=="court"||id!==gameCourtId))leavePractice(false);
     if(gameMode==="online"&&(kind!=="court"||id!==gameCourtId)){stopGameTimer();stopSounds();$("play-court").hidden=true;}
     C.selectLandmark(state,kind,id);
-    explorer?.visit(id);
+    panelRequested=true;pendingPanelFocus=focus;setDirectory(false);
+    const scenery=kind==="sight"&& !S.get(id).photo;
+    if(scenery)explorer?.inspect(id);else explorer?.visit(id);
     renderMapAndDirectory();renderPanel();
     if(gameMode==="online"&&game&&kind==="court"&&id===gameCourtId){$("play-court").hidden=false;if(!gameFinished&&gameTimer===null){gameTimer=setInterval(tickGame,50);tickGame();}}
-    if(focus)$("panel-title").focus();
-    announce(`已開啟${C.getLandmark(kind,id).name}${kind==="nba"?"主場":kind==="court"?"球場":"偶遇地點"}面板。`);
+    if(focus&&(scenery||explorer?.hasArrived(id))){pendingPanelFocus=false;$("panel-title").focus();}
+    announce(scenery?`眺望${S.get(id).name}；玩家位置未變。`:explorer?.hasArrived(id)?`已開啟${C.getLandmark(kind,id).name}資訊。`:`正沿步道前往${C.getLandmark(kind,id).name}，抵達後開啟資訊。`);
     if(kind==="court"&&onlineReady)refreshMyRooms();
   }
+  function updatePanelVisibility(){const open=Boolean(panelRequested&&(state.kind==="sight"&&!S.get(state.id).photo||explorer?.hasArrived(state.id)));$("station-panel").hidden=!open;$("tour-map").dataset.panelOpen=String(open);}
+  function closeStationPanel(back=true){panelRequested=false;pendingPanelFocus=false;updatePanelVisibility();if(back)explorer?.backToDistrict();}
+  function setDirectory(open){$("station-directory").hidden=!open;$("toggle-directory").setAttribute("aria-expanded",String(open));}
+  $("station-close").addEventListener("click",()=>{closeStationPanel();$("camera-back").focus();});
+  $("toggle-directory").addEventListener("click",()=>{const open=$("station-directory").hidden;setDirectory(open);if(open)$("station-directory").scrollIntoView?.({block:"start",behavior:"auto"});});
+  $("bay-fixture").addEventListener("change",()=>{bayFixture=$("bay-fixture").value==="home"?"home":"away";$("fixture-description").textContent=bayFixture==="home"?"勇士主場迎戰湖人；只有勇士在 LIVE 時脈動。八場示範，非 NBA 即時賽況。":"勇士客場打湖人；只有湖人在 LIVE 時脈動。八場示範，非 NBA 即時賽況。";renderMapAndDirectory();renderPanel();});
   function setFilter(kind) {state.filter=kind;renderMapAndDirectory();}
   $("filter-nba").addEventListener("click",()=>setFilter("nba"));
   $("filter-court").addEventListener("click",()=>setFilter("court"));
   $("filter-encounter").addEventListener("click",()=>setFilter("encounter"));
+  $("filter-sight").addEventListener("click",()=>setFilter("sight"));
+  $("sight-photo").addEventListener("click",()=>{if(state.kind==="sight"&&explorer?.hasArrived(state.id))fanUI.openSight(state.id,$("island-map").dataset.theme);});
   $("quick-nba").addEventListener("click",()=>openLandmark("nba","warriors"));
   $("quick-courts").addEventListener("click",()=>openLandmark("court",C.COURTS[0].id));
   $("court-select").addEventListener("change",()=>openLandmark("court",$("court-select").value,false));
@@ -290,6 +328,10 @@ function initializeIsland() {
     const state = policySession.getState();
     policyElements.options.forEach((input) => { input.checked = input.value === state.selectedPlan; });
     policyElements.results.hidden = !state.result;
+    $("policy-seat-map").hidden=!state.result;$("policy-seat-grid").replaceChildren();
+    if(state.result){const allocation=globalThis.NBAPolicy.seatAllocation(state.result.planId);$("policy-seat-grid").setAttribute("aria-label",allocation.description);$("policy-seat-grid").dataset.expected=String(allocation.expected);
+      for(const seat of allocation.seats){const cell=element("span",`${seat.type}-seat`,seat.type==="student"?"學":"普");cell.dataset.type=seat.type;cell.setAttribute("aria-hidden","true");$("policy-seat-grid").append(cell);}
+      $("policy-seat-caption").textContent=allocation.description;$("seat-expected-label").hidden=!allocation.expected;}
     if (state.result) {
       policyElements.resultTitle.textContent = `${state.result.name}｜試算結果`;
       renderPolicyResult(state.result);
@@ -443,7 +485,10 @@ function initializeIsland() {
   function playerName(){const name=$("player-name").value.trim();if(!name||Array.from(name).length>24){$("lobby-notice").textContent="請先輸入 1–24 個字的暱稱。";$("player-name").focus();return null;}return name;}
   $("room-form").addEventListener("submit",event=>{event.preventDefault();if(state.kind!=="court"||onlineRoundRunning())return;const name=playerName();if(name)runRoomAction(()=>adapter.create(state.id,name));});
   $("join-room").addEventListener("click",()=>{if(state.kind!=="court"||onlineRoundRunning())return;const name=playerName();const invite=$("invite-code").value.trim().toLowerCase();if(!/^[a-f0-9]{24}$/.test(invite)){$("lobby-notice").textContent="請輸入完整的 24 碼邀請碼。";return;}if(name)runRoomAction(()=>adapter.join(state.id,invite,name));});
-  $("ready-toggle").addEventListener("click",()=>{audioUnlocked=true;if(!roomSnapshot)return;const own=roomSnapshot.players.find(p=>p.user_id===adapter.userId());runRoomAction(()=>adapter.ready(roomSnapshot.room.id,!own?.ready));});
+  $("ready-toggle").addEventListener("click",()=>{audioUnlocked=true;if(!roomSnapshot)return;const own=roomSnapshot.players.find(p=>p.user_id===adapter.userId());const roomId=roomSnapshot.room.id;
+    if(!own?.ready&&!practicedGames.has(C.getLandmark("court",state.id).gameId)){
+      tutorialContinuation=()=>{if(roomSnapshot?.room.id===roomId&&state.kind==="court")runRoomAction(()=>adapter.ready(roomId,true));};startGame("tutorial",state.id,Date.now()+200);return;}
+    runRoomAction(()=>adapter.ready(roomId,!own?.ready));});
   $("room-start").addEventListener("click",()=>{audioUnlocked=true;if(roomSnapshot)runRoomAction(()=>adapter.start(roomSnapshot.room.id));});
   $("room-restart").addEventListener("click",()=>roomSnapshot&&runRoomAction(()=>adapter.restart(roomSnapshot.room.id)));
   $("room-leave").addEventListener("click",()=>roomSnapshot&&runRoomAction(async()=>{await adapter.leave(roomSnapshot.room.id);roomSnapshot=null;pendingScore=null;if(gameMode==="online"){stopGameTimer();stopSounds();game=null;gameMode=null;$("play-court").hidden=true;}$("room-panel").hidden=true;return null;}));
@@ -467,24 +512,28 @@ function initializeIsland() {
   });
   function stopGameTimer(){if(gameTimer!==null){clearInterval(gameTimer);gameTimer=null;}}
   function leavePractice(focus=true){
-    if(gameMode!=="practice")return;
+    if(!["practice","tutorial"].includes(gameMode))return;
     stopGameTimer();stopSounds();game=null;gameMode=null;gameFinished=false;
+    tutorialContinuation=null;$("tutorial-controls").hidden=true;
     $("shoot-button").disabled=true;$("play-court").hidden=true;
-    if(focus)$("panel-title").focus();
+    if(focus){panelRequested=true;renderPanel();$("panel-title").focus();}
   }
   function startGame(mode,courtId,startsAt,roomId=null,round=null,selectedGame=null,seed=1){
     const court=C.getLandmark("court",courtId);gameId=selectedGame||court.gameId;
-    stopGameTimer();stopSounds();game=G.createGame(gameId,{seed,online:mode==="online"});game.start(startsAt);gameMode=mode;gameCourtId=courtId;gameRoomId=roomId;gameRound=round;gameFinished=false;pendingScore=null;
+    stopGameTimer();stopSounds();game=mode==="tutorial"?globalThis.NBAPractice.createTutorial(gameId,{seed}):G.createGame(gameId,{seed,online:mode==="online"});game.start(startsAt);gameMode=mode;gameCourtId=courtId;gameRoomId=roomId;gameRound=round;gameFinished=false;pendingScore=null;
+    if(mode!=="tutorial")tutorialContinuation=null;
+    closeStationPanel(false);$("tutorial-controls").hidden=mode!=="tutorial";$("tutorial-begin").disabled=true;$("tutorial-feedback").textContent="不計分試玩，最多 12 秒。先試一次操作，或直接跳過。";
     $("game-stage").dataset.scene=court.type;
     $("game-stage").dataset.game=gameId;
     $("game-stage").setAttribute("aria-label",`${court.name}，${G.getGame(gameId).instructions}`);
     $("play-court").hidden=false;$("round-result").hidden=true;$("practice-fan-result").hidden=true;
-    $("game-mode-label").textContent=mode==="practice"?"單機練習・非真人連線":"好友 1 對 1・真人房間";
+    $("game-mode-label").textContent=mode==="tutorial"?"不計分操作試玩・不是正式對局":mode==="practice"?"單機練習・非真人連線":"好友 1 對 1・真人房間";
     $("shooting-title").textContent=`${court.name}｜${G.getGame(gameId).name}`;
     $("game-context").textContent=(mode==="practice"?`一秒後開始。${gameId==="duel"?"本次對手為電腦，非真人。":"沒有對手，也不會建立房間。"}`:`伺服器共同開始時間與種子 ${seed}；結果由本局雙方實際提交。`)+` ${G.getGame(gameId).win}`;
+    if(mode==="tutorial")$("game-context").textContent=`先試操作，不計分、不送出成績。${gameId==="duel"?"這段試玩對手為電腦。":""}正式開始會重新倒數並歸零；好友房間會在你結束試玩並就緒後，由伺服器設定共同開始時間。`;
     $("game-steps").innerHTML=`<li>${escapeHTML(G.getGame(gameId).instructions)}</li><li>${escapeHTML(G.getGame(gameId).win)}</li><li>聚焦場景可用方向鍵、1／2／3、空白鍵；也可點下方按鈕。離場會停止本機遊戲。</li>`;
     $("practice-restart").hidden=mode!=="practice";
-    $("practice-leave").hidden=mode!=="practice";
+    $("practice-leave").hidden=!["practice","tutorial"].includes(mode);
     $("shot-feedback").textContent="準備好，找到你的投籃節奏。";
     gameTimer=setInterval(tickGame,50);tickGame();$("game-stage").focus();
   }
@@ -497,6 +546,11 @@ function initializeIsland() {
     $("game-hits").textContent=String(snapshot.id==="allround"?snapshot.hits:visibleSnapshot.score);$("game-attempts").textContent=String(snapshot.attempts);
     $("aim-cursor").style.left=`${(snapshot.child?.aim??snapshot.aim)*100}%`;
     miniUI.render(visibleSnapshot);
+    if(gameMode==="tutorial"){
+      $("game-rule-tag").textContent="不計分試玩｜最多 12 秒";
+      $("game-hits").textContent="0";$("game-attempts").textContent="0";$("tutorial-begin").disabled=!(snapshot.interactions>0||snapshot.phase==="finished");
+      if(snapshot.phase==="finished"){gameFinished=true;stopGameTimer();$("tutorial-feedback").textContent="試玩結束，沒有記錄成績。按正式開始會以完整規則重新開局。";}return;
+    }
     const active=snapshot.child||snapshot;
     $("aim-description").textContent=snapshot.phase==="countdown"?`倒數 ${Math.ceil((snapshot.startsAt-now)/1000)} 秒`:!$("aim-meter").hidden?`瞄準 ${Math.round(active.aim*100)}%・抓準金色命中區`:"使用方向鍵、1／2／3 或場景下方按鈕。";
     if(snapshot.phase==="finished"&&!gameFinished){
@@ -527,11 +581,15 @@ function initializeIsland() {
       return;
     }
     const result=game.act(action,Date.now()+(gameMode==="online"?serverOffset:0));
+    if(gameMode==="tutorial"){$("tutorial-feedback").textContent=result.feedback;tickGame();return;}
     if(result.accepted){$("shot-feedback").textContent=gameId==="shoot"?(result.hit?"命中！＋1":"差一點，再抓準節奏。"):result.feedback;if(result.hit)playSound("sound-hit");}tickGame();
   }
   $("shoot-button").addEventListener("click",()=>actGame({type:"shoot"}));
   $("game-stage").addEventListener("keydown",event=>{if(event.target===$("game-stage"))miniUI.key(event);});
-  $("practice-start").addEventListener("click",()=>{audioUnlocked=true;if(state.kind!=="court")return;if(roomSnapshot&&["countdown","playing"].includes(roomSnapshot.room.status)){$("lobby-notice").textContent="真人對局進行中，請先完成對局。";return;}startGame("practice",state.id,Date.now()+1000);});
+  $("practice-start").addEventListener("click",()=>{audioUnlocked=true;if(state.kind!=="court")return;if(roomSnapshot&&["countdown","playing"].includes(roomSnapshot.room.status)){$("lobby-notice").textContent="真人對局進行中，請先完成對局。";return;}tutorialContinuation=null;startGame(practicedGames.has(C.getLandmark("court",state.id).gameId)?"practice":"tutorial",state.id,Date.now()+1000);});
+  function finishTutorial(){if(gameMode!=="tutorial")return;practicedGames.add(gameId);const continuation=tutorialContinuation,courtId=gameCourtId;tutorialContinuation=null;
+    if(continuation){leavePractice(false);panelRequested=true;renderPanel();continuation();}else startGame("practice",courtId,Date.now()+1000);}
+  $("tutorial-begin").addEventListener("click",finishTutorial);$("tutorial-skip").addEventListener("click",finishTutorial);
   $("practice-restart").addEventListener("click",()=>{audioUnlocked=true;if(gameMode==="practice")startGame("practice",gameCourtId,Date.now()+1000);});
   $("practice-leave").addEventListener("click",()=>leavePractice());
   async function submitLocalScore(){
@@ -562,14 +620,15 @@ function initializeIsland() {
   }
 
   buildLandmarks();
-  fanUI=globalThis.NBAFanUI.initializeFan({storage,getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,
+  buildSights();
+  fanUI=globalThis.NBAFanUI.initializeFan({storage,getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,getBayFixture:()=>bayFixture,onContinue:()=>closeStationPanel(),
     getPlayerPosition:()=>explorer?.position(),hasArrived:id=>explorer?explorer.hasArrived(id):state.id===id,
     onReveal:()=>explorer?.refreshEncounter(),
     onVisit:(id,kind="nba")=>openLandmark(kind,id),onChange:()=>{renderMapAndDirectory();renderPracticeFan();}});
   let lastArrivalContext="";
-  explorer=globalThis.NBAExplorerUI.initialize({getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,
+  explorer=globalThis.NBAExplorerUI.initialize({getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,getBayFixture:()=>bayFixture,onView:camera=>{if(camera.level!=="venue")closeStationPanel(false);},
     onPosition:()=>{fanUI.updateLocation();const key=`${state.kind}:${state.id}:${explorer?.hasArrived(state.id)}`;
-      if(key!==lastArrivalContext&&state.kind==="encounter")fanUI.renderEncounterPanel(state.id);lastArrivalContext=key;},onAnnounce:announce});
+      if(key!==lastArrivalContext){if(state.kind==="encounter")fanUI.renderEncounterPanel(state.id);if(explorer?.hasArrived(state.id)&&panelRequested){renderPanel();if(pendingPanelFocus){pendingPanelFocus=false;$("panel-title").focus();}}}lastArrivalContext=key;},onAnnounce:announce});
   // 初始化期間 explorer 尚未賦值；再以行走模型的初始座標渲染一次。
   fanUI.updateLocation();
   function refreshEncounterDay(){const date=currentEncounter().date;if(date!==lastEncounterDate){lastEncounterDate=date;if(state.kind==="encounter")fanUI.renderEncounterPanel(state.id);fanUI.refreshGame();explorer?.refreshEncounter();}}

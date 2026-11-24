@@ -6,32 +6,36 @@
   "use strict";
   const {MAP,TEAMS,COURTS,ENCOUNTERS}=Island;
   const DISTRICTS=[
-    {id:"west",name:"西岸海灣・洛城",label:{x:250,y:605},center:{x:340,y:520},width:900,ids:["warriors","lakers","clippers","harbor-01","meet-pier"]},
-    {id:"desert",name:"西南沙漠",label:{x:480,y:606},center:{x:500,y:745},width:660,ids:["suns","harbor-02","harbor-03"]},
+    {id:"west",name:"西岸海灣・洛城",label:{x:250,y:605},center:{x:420,y:460},width:1100,ids:["warriors","lakers","clippers","harbor-01","meet-pier"]},
+    {id:"desert",name:"西南沙漠",label:{x:480,y:606},center:{x:500,y:745},width:720,ids:["suns","harbor-02","harbor-03"]},
     {id:"highland",name:"西部高地",label:{x:530,y:290},center:{x:560,y:330},width:720,ids:["nuggets","park-01","park-03"]},
-    {id:"south",name:"內陸・南部街區",label:{x:745,y:590},center:{x:805,y:670},width:800,ids:["thunder","mavericks","spurs","park-04","harbor-04","meet-plaza"]},
+    {id:"south",name:"內陸・南部街區",label:{x:745,y:590},center:{x:805,y:660},width:1040,ids:["thunder","mavericks","spurs","park-04","harbor-04","meet-plaza"]},
     {id:"north",name:"北部林地",label:{x:805,y:135},center:{x:820,y:250},width:720,ids:["timberwolves","park-02","roof-01","roof-05"]},
     {id:"lakes",name:"五大湖岸",label:{x:1150,y:442},center:{x:1110,y:408},width:930,ids:["bucks","bulls","raptors","park-05","roof-02","meet-garden"]},
-    {id:"east",name:"東岸街廓",label:{x:1385,y:405},center:{x:1335,y:475},width:800,ids:["celtics","knicks","sixers","roof-03"]},
+    {id:"east",name:"東岸街廓",label:{x:1385,y:405},center:{x:1335,y:475},width:1000,ids:["celtics","knicks","sixers","roof-03"]},
     {id:"coast",name:"南端海濱",label:{x:1275,y:790},center:{x:1245,y:800},width:720,ids:["heat","harbor-05","roof-04"]}
   ];
-  const landmarks=[...TEAMS,...COURTS,...ENCOUNTERS];
-  const districtFor=id=>DISTRICTS.find(d=>d.ids.includes(id))||null;
-  const entrance=id=>{const item=landmarks.find(p=>p.id===id);if(!item)throw new Error("Unknown destination");return {x:item.x+48,y:item.y+26};};
+  const Sights=typeof module==="object"&&module.exports?require("./sights-core.js"):globalThis.NBASights;
+  const landmarks=[...TEAMS,...COURTS,...ENCOUNTERS,...Sights.SIGHTS];
+  const districtFor=id=>DISTRICTS.find(d=>d.ids.includes(id)||Sights.get(id)?.district===d.id)||null;
+  const entrance=id=>{const item=landmarks.find(p=>p.id===id);if(!item||Sights.get(id)&&!item.photo)throw new Error("Unknown destination");if(item.entrance)return {...item.entrance};return {x:item.x+48,y:item.y+26};};
   // 入口就是路網節點；跨水道的三段道路另標示為橋。ID 不影響既有邀請網址。
-  const ROAD_NODES=Object.fromEntries(landmarks.map(item=>[item.id,entrance(item.id)]));
+  const ROAD_NODES=Object.fromEntries(landmarks.filter(item=>!Sights.get(item.id)||item.photo).map(item=>[item.id,entrance(item.id)]));
+  Object.assign(ROAD_NODES,{"bay-junction":{x:323,y:432},"bay-shore":{x:299,y:573},"pier-approach":{x:280,y:645},"bridge-west-walk":{x:145,y:330},"bridge-east-walk":{x:353,y:192},"bay-north-walk":{x:379,y:256}});
   const chains=[
-    ["warriors","lakers","harbor-01","harbor-02","spurs","harbor-04","heat","harbor-05","roof-03","knicks","celtics","raptors","roof-01","timberwolves","park-02","nuggets","warriors"],
+    ["warriors","bay-junction","lakers","harbor-01","harbor-02","spurs","harbor-04","heat","harbor-05","roof-03","knicks","celtics","raptors","roof-01","timberwolves","park-02","nuggets","warriors"],
     ["lakers","clippers","suns","mavericks","thunder","nuggets"],
     ["mavericks","spurs"],["mavericks","meet-plaza","bulls","bucks","raptors"],
     ["meet-plaza","park-05","roof-04","heat"],["bulls","roof-02","knicks"],
     ["park-05","meet-garden","sixers","harbor-05"],
-    ["harbor-01","meet-pier"],["harbor-02","harbor-03"],["nuggets","park-01"],
+    ["bay-junction","bay-shore","pier-approach","meet-pier","harbor-01"],["harbor-02","harbor-03"],["nuggets","park-01"],
     ["park-02","park-03","park-04","meet-plaza"],["timberwolves","roof-05","bulls"],
-    ["meet-plaza","thunder"]
+    ["meet-plaza","thunder"],
+    ["warriors","bay-north-walk","bridge-east-walk","sight-golden-gate","bridge-west-walk","bay-shore"],
+    ["meet-pier","sight-santa-monica","lakers"],["bulls","sight-cloud-gate","meet-garden"],["roof-03","sight-liberty","knicks"]
   ];
-  const bridgePairs=["meet-plaza|park-05","bulls|roof-02","harbor-04|heat","harbor-01|meet-pier"];
-  const ROAD_EDGES=chains.flatMap(chain=>chain.slice(1).map((id,i)=>({from:chain[i],to:id,bridge:bridgePairs.includes(chain[i]+"|"+id)})));
+  const bridgePairs=["meet-plaza|park-05","bulls|roof-02","harbor-04|heat","harbor-01|meet-pier","sight-golden-gate|bridge-east-walk"];
+  const ROAD_EDGES=chains.flatMap(chain=>chain.slice(1).map((id,i)=>({from:chain[i],to:id,bridge:bridgePairs.includes(chain[i]+"|"+id)||bridgePairs.includes(id+"|"+chain[i]),surface:["meet-pier","pier-approach"].includes(chain[i])||id==="meet-pier"?"wood":"stone"})));
   const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   function roadPath(start,targetId){
     if(!ROAD_NODES[targetId])throw new Error("Unknown destination");
@@ -71,14 +75,14 @@
   }
   function createCamera(){return {level:"island",districtId:null,selectedId:"warriors",view:frame({x:800,y:500},1600)};}
   function focusDistrict(camera,id){const district=DISTRICTS.find(d=>d.id===id);if(!district)throw new Error("Unknown district");camera.level="district";camera.districtId=id;camera.view=frame(district.center,district.width);return camera;}
-  function focusVenue(camera,id){const district=districtFor(id);if(!district)throw new Error("Unknown venue");camera.level="venue";camera.districtId=district.id;camera.selectedId=id;camera.view=frame(entrance(id),520);return camera;}
+  function focusVenue(camera,id){const district=districtFor(id);if(!district)throw new Error("Unknown venue");camera.level="venue";camera.districtId=district.id;camera.selectedId=id;camera.view=frame(Sights.get(id)&&!Sights.get(id).photo?Sights.get(id):entrance(id),520);return camera;}
   function fullIsland(camera){camera.level="island";camera.view=frame({x:800,y:500},1600);return camera;}
   function back(camera){return camera.level==="venue"?focusDistrict(camera,camera.districtId):fullIsland(camera);}
   function worldToViewport(point,view){return {x:(point.x-view.x)/view.width,y:(point.y-view.y)/view.height};}
   function viewportToWorld(point,view){return {x:view.x+point.x*view.width,y:view.y+point.y*view.height};}
   function labelVisible(camera,id,glowing=false){
     if(id===camera.selectedId)return true;
-    if(camera.level==="island")return glowing&&["lakers","bucks","celtics"].includes(id);
+    if(camera.level==="island")return glowing&&["lakers","bucks","celtics"].includes(id)||["sight-golden-gate","sight-liberty"].includes(id);
     if(camera.level==="venue")return false;
     return districtFor(id)?.id===camera.districtId;
   }
@@ -88,7 +92,8 @@
     const boxes=[],ids=[];
     for(const item of candidates){
       const court=COURTS.some(c=>c.id===item.id),width=Math.min(170,Math.max(105,item.name.length*11));
-      const box={x:item.x-width/2,y:item.y+(court?35:38),w:width,h:court?37:24};
+      const point=Sights.get(item.id)?.entrance||item;
+      const box={x:point.x-width/2,y:point.y+(Sights.get(item.id)?-28:court?35:38),w:width,h:court?37:24};
       if(boxes.some(b=>box.x<b.x+b.w&&box.x+box.w>b.x&&box.y<b.y+b.h&&box.y+box.h>b.y))continue;
       boxes.push(box);ids.push(item.id);
     }

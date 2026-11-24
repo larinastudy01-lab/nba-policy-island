@@ -2,6 +2,20 @@
 
 目前首頁使用 `island-map.svg`，為本專案原創的 2.5D 籃球島向量素材，無外部圖片、字型或 CDN 依賴。它包含海洋、海岸、岩壁、湖岸、橋梁、中央廣場、道路、碼頭、樹木與街區；不沿用其他遊戲的島形或素材。
 
+## 美國街景與跑車
+
+- `sights-core.js` 集中 20 個 `sight-*` ID、街區、世界座標、日夜素材及四個步行拍照入口；各景點有獨立輪廓，與球隊／球場／偶遇資料分開。
+- `sights/` 共 40 份原創分層 SVG：20 景點各有日／夜版本。`scenery-ground.svg` 補上金門灣水道、橋端平台及四個停車展示鋪面。
+- `traffic-core.js` 集中六款獨立車身、三視角繪圖、兩條圓弧轉角環線、速度與朝向判斷；`cars/` 共 18 份 SVG。沒有品牌外部照片、圖檔取樣或官方車徽；車名僅標示插畫主題。
+- `traffic-roads.svg` 是獨立車道，未加入玩家步行圖。`scenery.css` 控制車影、光束、日夜及可點熱區，`explorer-ui.js` 沿用一個動畫迴圈，不增加獨立車輛計時器。
+- 執行 `node assets/generate_scenery.cjs` 可由上述兩個純資料／繪圖模組重建全部新增 SVG；無套件或網路需求。
+- 景點照片沿用 `fan-core.js` 的自包含 SVG → Canvas 流程，直接內嵌景點圖層與已儲存角色，沒有外部圖片載入。景點照本版只下載，不會寫入主場或偶遇收藏。
+- 詳細車款、景點及待人工預覽項目見 [SCENERY.md](../docs/SCENERY.md)。
+
+灣區精修新增 `bay-ground.svg`、`bay-lights.svg` 與 `bay-foreground-{arena,pier,court}.svg` 五層，來源集中在 `bay-scene.js`。執行 `node assets/generate_bay_assets.cjs` 可重建。橢圓勇士館、潮汐圍網、石板／木板、階梯厚度、碼頭船與近景燈光均為原創向量，沿用同一世界座標。前景按世界 y 排序，非互動圖層不攔截點擊；`bay.css` 統一比例、左上光源及陰影。
+
+`bay-scene.js` 另提供 10 位本地模擬路人資料及連續移動模型，共用球迷 SVG，沒有房間或連線資料。`explorer-ui.js` 共用一個 16ms 迴圈管理人流／步行，近景才啟用。`practice-core.js` 將試玩成績隔離；`policy-core.js` 的 `seatAllocation()` 把同一次政策結果轉成 60 席，抽籤用期望值斜線圖例。
+
 - viewBox：`0 0 1600 1000`，同島依城市方位重整西岸、沙漠、高地、五大湖、東岸與南端海濱，保留擴建空間。
 - 16 座球館、15 座球場及 3 個偶遇地點由 `script.js` 繪製成內含 SVG 的 HTML 按鈕，座標與尺寸來源是 `island-core.js` 的 `MAP`／地標資料。以背景座標換算 absolute 百分比位置及尺寸，圖形、文字及點擊區一起縮放。
 - NBA 主場採有屋頂的立體球館；公共球場可看見球線與籃框，屋頂球場加上建築立面。

@@ -28,7 +28,7 @@ test("all district/venue camera frames are bounded, preserve aspect and round-tr
 });
 test("overview labels are sparse; district names open up, selected label always has priority",()=>{
   const camera=E.createCamera();const glowing=C.TEAMS.filter(t=>C.gameForTeam(t.id,"live").glowing).map(t=>t.id);
-  assert.equal(E.visibleLabels(camera,glowing).length,4);assert.equal(E.labelVisible(camera,"harbor-01"),false);
+  assert.equal(E.visibleLabels(camera,glowing).length,6);assert.ok(E.visibleLabels(camera,glowing).includes("sight-golden-gate"));assert.ok(E.visibleLabels(camera,glowing).includes("sight-liberty"));assert.equal(E.labelVisible(camera,"harbor-01"),false);
   E.focusDistrict(camera,"west");assert.equal(E.labelVisible(camera,"harbor-01"),true);assert.equal(E.labelVisible(camera,"knicks"),false);
   for(const item of all){E.focusVenue(camera,item.id);assert.deepEqual(E.visibleLabels(camera,glowing),[item.id]);}
 });

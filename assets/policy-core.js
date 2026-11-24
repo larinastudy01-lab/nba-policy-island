@@ -127,5 +127,11 @@ function createPolicySession(storage) {
   };
 }
 
-return {POLICY_CHALLENGE,calculatePolicy,createPolicySession};
+function seatAllocation(planId){
+  const result=calculatePolicy(planId);
+  const seats=Array.from({length:POLICY_CHALLENGE.tickets},(_,index)=>({id:`seat-${String(index+1).padStart(2,"0")}`,type:result.isExpected?(index%4===0?"student":"general"):(index<result.students?"student":"general"),expected:result.isExpected}));
+  return {seats,students:result.students,generalFans:result.generalFans,expected:result.isExpected,
+    description:result.isExpected?"60 席期望值示意：平均 15 名學生、45 名一般球迷；斜線席位不代表單次抽籤實際座位。":`60 席分配：學生 ${result.students} 席、一般球迷 ${result.generalFans} 席。`};
+}
+return {POLICY_CHALLENGE,calculatePolicy,createPolicySession,seatAllocation};
 });

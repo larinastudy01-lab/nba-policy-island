@@ -1,5 +1,5 @@
 "use strict";
-(function(root,factory){const api=factory(typeof module!=="undefined"&&module.exports?require("./games-core.js"):root.NBAGames);if(typeof module!=="undefined"&&module.exports)module.exports=api;else root.NBAIsland=api;})(typeof globalThis!=="undefined"?globalThis:this,function(Games){
+(function(root,factory){const api=factory(typeof module!=="undefined"&&module.exports?require("./games-core.js"):root.NBAGames,typeof module!=="undefined"&&module.exports?require("./sights-core.js"):root.NBASights);if(typeof module!=="undefined"&&module.exports)module.exports=api;else root.NBAIsland=api;})(typeof globalThis!=="undefined"?globalThis:this,function(Games,Sights){
   const MAP = {width:1600,height:1000};
   const TEAMS = [
     {id:"warriors",name:"金州勇士",shortName:"勇士",abbr:"GSW",englishName:"Golden State Warriors",region:"西岸海灣",color:"#2464b9",accent:"#f3c45b",x:255,y:350},
@@ -45,10 +45,11 @@
     {id:"south-bay",homeId:"heat",awayId:"raptors",startTime:"08:30",live:{home:71,away:70,period:"第 3 節"},final:{home:105,away:103}}
   ];
   const GAME_STATES=["idle","scheduled","live","final"];
-  function getLandmark(kind,id){return (kind==="nba"?TEAMS:kind==="court"?COURTS:kind==="encounter"?ENCOUNTERS:[]).find(item=>item.id===id)||null;}
-  function gameForTeam(teamId,state="live"){
+  function getLandmark(kind,id){return (kind==="nba"?TEAMS:kind==="court"?COURTS:kind==="encounter"?ENCOUNTERS:kind==="sight"?Sights.SIGHTS:[]).find(item=>item.id===id)||null;}
+  function gameForTeam(teamId,state="live",bayFixture="away"){
     if(!GAME_STATES.includes(state)||!TEAMS.some(team=>team.id===teamId))throw new RangeError("Unknown team or game state.");
-    const match=MATCHES.find(game=>game.homeId===teamId||game.awayId===teamId);
+    let match=MATCHES.find(game=>game.homeId===teamId||game.awayId===teamId);
+    if(match?.id==="bay-derby"&&bayFixture==="home")match={...match,homeId:"warriors",awayId:"lakers",live:{...match.live,home:78,away:74},final:{home:108,away:101}};
     if(!match){const team=TEAMS.find(t=>t.id===teamId);return {id:null,state:"idle",homeId:teamId,awayId:null,home:team,away:null,homeScore:null,awayScore:null,period:null,startTime:null,isHome:true,glowing:false};}
     const score=state==="live"?match.live:state==="final"?match.final:null;
     return {id:match.id,state,homeId:match.homeId,awayId:match.awayId,home:TEAMS.find(t=>t.id===match.homeId),away:TEAMS.find(t=>t.id===match.awayId),homeScore:score?.home??null,awayScore:score?.away??null,period:state==="live"?match.live.period:null,startTime:match.startTime,isHome:match.homeId===teamId,glowing:state==="live"&&match.homeId===teamId};

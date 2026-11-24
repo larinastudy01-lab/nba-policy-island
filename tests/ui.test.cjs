@@ -6,14 +6,15 @@ const F=require("../assets/fan-core.js");
 const G=require("../assets/games-core.js");
 function boot(initial={},adapterFixture=null,options={}){
   const nodes=new Map(),inputs=[],timers=new Map(),records=new Map(Object.entries(initial));let clock=options.now??100000,id=0,fetchCalls=0;
-  const document={activeElement:null};
+  const docEvents=new Map();
+  const document={activeElement:null,hidden:false,addEventListener(type,callback){const list=docEvents.get(type)||[];list.push(callback);docEvents.set(type,list);}};
   class Element{
     constructor(tag="div"){this.tagName=tag.toUpperCase();this.children=[];this.attributes=new Map();this.listeners=new Map();this.dataset={};this.hidden=false;this.disabled=false;this.checked=false;this.value="";this.textContent="";this.className="";this._html="";this.style={setProperty(name,value){this[name]=value;}};this.classList={add:(...values)=>{this.className=[this.className,...values].join(" ").trim();}};}
     set innerHTML(value){this._html=value;this._text="";this.children=[];}get innerHTML(){return this._html+this.children.map(child=>`<${child.tagName.toLowerCase()}>${child._text}${child.innerHTML}</${child.tagName.toLowerCase()}>`).join("");}
     set textContent(value){this._text=String(value);this._html="";this.children=[];}get textContent(){return this._text+this.children.map(child=>child.textContent).join("");}
     setAttribute(key,value){this.attributes.set(key,String(value));}getAttribute(key){return this.attributes.get(key)??null;}
     removeAttribute(key){this.attributes.delete(key);}
-    append(child){this.children.push(child);if(child.id)nodes.set(child.id,child);}replaceChildren(...children){this.children=[];this.textContent="";for(const child of children)this.append(child);}
+    append(...children){for(const child of children){this.children.push(child);if(child.id)nodes.set(child.id,child);}}replaceChildren(...children){this.children=[];this.textContent="";for(const child of children)this.append(child);}
     addEventListener(type,callback){const handlers=this.listeners.get(type)||[];handlers.push(callback);this.listeners.set(type,handlers);}
     emit(type,extra={}){if(this.disabled)return;const event={target:this,preventDefault(){this.defaultPrevented=true;},...extra};for(const cb of this.listeners.get(type)||[])cb(event);return event;}
     focus(){document.activeElement=this;}select(){this.selected=true;}
@@ -29,14 +30,15 @@ function boot(initial={},adapterFixture=null,options={}){
   document.getElementById=id=>nodes.get(id)||null;document.createElement=tag=>new Element(tag);document.createElementNS=(ns,tag)=>new Element(tag);document.querySelectorAll=selector=>inputs.filter(input=>input.name===selector.match(/name="([^"]+)"/)?.[1]);
   const storage={getItem:key=>{if(options.storageBlocked)throw new Error("Storage blocked");return records.get(key)??null;},setItem:(key,value)=>{if(options.storageBlocked)throw new Error("Storage blocked");records.set(key,value);}};
   class ClockDate extends Date{constructor(...args){super(...(args.length?args:[clock]));}static now(){return clock;}}
-  const windowSurface=new Element("window");windowSurface.localStorage=storage;windowSurface.location={href:options.url||"file:///project/index.html"};
+  let intersection=()=>{};
+  const windowSurface=new Element("window");windowSurface.localStorage=storage;windowSurface.location={href:options.url||"file:///project/index.html"};windowSurface.IntersectionObserver=class{constructor(callback){intersection=callback;}observe(){}disconnect(){}};
   // 舊流程預設測減少動態效果的直接抵達；移動測試明確傳 reducedMotion:false。
   const motion=new Element("media");motion.matches=options.reducedMotion!==false;windowSurface.matchMedia=()=>motion;
   const downloads=[],revoked=[];class LocalURL extends URL{static createObjectURL(){return "blob:local-test-png";}static revokeObjectURL(value){revoked.push(value);}}
   const context=vm.createContext({document,window:windowSurface,navigator:{},URL:LocalURL,atob,Date:ClockDate,fetch:async()=>{fetchCalls++;throw new Error("Unexpected network");},setInterval:(callback,delay)=>{timers.set(++id,{callback,delay});return id;},clearInterval:id=>timers.delete(id)});
-  for(const file of ["assets/supabase-config.js","assets/games-core.js","assets/island-core.js","assets/explorer-core.js","assets/policy-core.js","assets/online.js","assets/fan-core.js","assets/fan-ui.js","assets/games-ui.js","assets/explorer-ui.js","script.js"]){if(file==="script.js"&&adapterFixture)context.NBAOnline={createSupabaseAdapter:()=>adapterFixture};vm.runInContext(fs.readFileSync(path.join(root,file),"utf8"),context,{filename:file});}
+  for(const file of ["assets/supabase-config.js","assets/games-core.js","assets/sights-core.js","assets/traffic-core.js","assets/island-core.js","assets/explorer-core.js","assets/bay-scene.js","assets/practice-core.js","assets/policy-core.js","assets/online.js","assets/fan-core.js","assets/fan-ui.js","assets/games-ui.js","assets/explorer-ui.js","script.js"]){if(file==="script.js"&&adapterFixture)context.NBAOnline={createSupabaseAdapter:()=>adapterFixture};vm.runInContext(fs.readFileSync(path.join(root,file),"utf8"),context,{filename:file});}
   // timerCount 預設只計 50ms 投籃計時；可另指定 30000ms 檢查每日輪替計時。
-  return {get(name){assert.ok(nodes.has(name),`Missing ${name}`);return nodes.get(name);},nodes,document,records,downloads,revoked,setPNGExporter:handler=>{context.NBAFan.exportPNG=handler;},network:()=>fetchCalls,now:()=>clock,timerCount:(delay=50)=>[...timers.values()].filter(item=>item.delay===delay).length,windowEvent:(name,extra)=>windowSurface.emit(name,extra),reduceMotion(value){motion.matches=value;motion.emit("change");},select(name,value){for(const input of inputs.filter(i=>i.name===name))input.checked=input.value===value;inputs.find(i=>i.name===name&&i.value===value).emit("change");},advance(ms){clock+=ms;for(const timer of [...timers.values()])timer.callback();}};
+  return {startPractice(withTutorial=false){nodes.get("practice-start").emit("click");if(!withTutorial&&!nodes.get("tutorial-controls").hidden)nodes.get("tutorial-skip").emit("click");},ready(){nodes.get("ready-toggle").emit("click");if(!nodes.get("tutorial-controls").hidden)nodes.get("tutorial-skip").emit("click");},mapVisibility(isIntersecting){intersection([{isIntersecting}]);},visibility(hidden){document.hidden=hidden;for(const cb of docEvents.get("visibilitychange")||[])cb();},get(name){assert.ok(nodes.has(name),`Missing ${name}`);return nodes.get(name);},nodes,document,records,downloads,revoked,setPNGExporter:handler=>{context.NBAFan.exportPNG=handler;},network:()=>fetchCalls,now:()=>clock,timerCount:(delay=50)=>[...timers.values()].filter(item=>item.delay===delay).length,windowEvent:(name,extra)=>windowSurface.emit(name,extra),reduceMotion(value){motion.matches=value;motion.emit("change");},select(name,value){for(const input of inputs.filter(i=>i.name===name))input.checked=input.value===value;inputs.find(i=>i.name===name&&i.value===value).emit("change");},advance(ms){clock+=ms;for(const timer of [...timers.values()])timer.callback();}};
 }
 test("camera controls cover island, district and venue, returning without moving the saved fan",()=>{
   const app=boot();assert.equal(app.get("island-map").dataset.view,"island");assert.equal(app.get("district-layer").children.length,8);
@@ -45,12 +47,12 @@ test("camera controls cover island, district and venue, returning without moving
   app.get("camera-back").emit("click");assert.equal(app.get("island-map").dataset.view,"district");assert.equal(app.get("island-map").dataset.district,"west");
   app.get("camera-overview").emit("click");assert.equal(app.get("island-map").dataset.view,"island");assert.equal(app.get("fan-map-marker").style.left,origin);assert.equal(app.get("landmark-warriors").getAttribute("aria-pressed"),"true");
 });
-test("walking gates encounter reveal until arrival, supports map actor and clears the travel timer",()=>{
+test("walking gates encounter reveal until arrival, supports map actor and shares one loop with nearby pedestrians",()=>{
   const app=boot({},null,{url:"file:///project/index.html?encounterDate=2026-01-01",reducedMotion:false});
   app.get("list-meet-pier").emit("click");assert.equal(app.timerCount(16),1);assert.equal(app.get("fan-map-marker").dataset.moving,"true");assert.equal(app.get("encounter-character").hidden,true);assert.equal(app.get("island-encounter-actor").hidden,true);
   app.get("encounter-character").emit("click");app.get("encounter-photo").emit("click");assert.equal(Boolean(app.get("star-dialog").open),false);
   app.advance(200);assert.equal(app.get("fan-map-marker").dataset.location,"");app.advance(5000);
-  assert.equal(app.timerCount(16),0);assert.equal(app.get("fan-map-marker").dataset.location,"meet-pier");assert.equal(app.get("encounter-character").hidden,false);assert.equal(app.get("island-encounter-actor").hidden,false);
+  assert.equal(app.timerCount(16),1);assert.equal(app.get("fan-map-marker").dataset.moving,"false");assert.equal(app.get("fan-map-marker").dataset.location,"meet-pier");assert.equal(app.get("encounter-character").hidden,false);assert.equal(app.get("island-encounter-actor").hidden,false);
   app.get("island-encounter-actor").emit("click");assert.match(app.get("encounter-star-name").textContent,/柯瑞/);app.get("encounter-photo").emit("click");app.get("capture-photo").emit("click");app.get("collect-photo").emit("click");assert.ok(JSON.parse(app.records.get(F.ALBUM_KEY)).encounters.some(p=>p.starId==="curry"));
 });
 test("latest destination cancels travel; overview during walking stays full-island after arrival",()=>{
@@ -58,7 +60,7 @@ test("latest destination cancels travel; overview during walking stays full-isla
   app.get("list-roof-02").emit("click");assert.equal(app.timerCount(16),1);assert.equal(app.get("fan-map-marker").style.left,previous);
   app.get("camera-overview").emit("click");assert.equal(app.get("island-map").dataset.view,"island");app.advance(5000);
   assert.equal(app.get("fan-map-marker").dataset.location,"roof-02");assert.equal(app.get("island-map").dataset.view,"island");assert.equal(app.timerCount(16),0);
-  app.get("list-harbor-01").emit("click");app.windowEvent("pagehide");assert.equal(app.timerCount(16),0);app.advance(5000);app.windowEvent("pageshow",{persisted:true});assert.equal(app.get("fan-map-marker").dataset.location,"harbor-01");assert.equal(app.timerCount(16),0);
+  app.get("list-harbor-01").emit("click");app.windowEvent("pagehide");assert.equal(app.timerCount(16),0);app.advance(5000);app.windowEvent("pageshow",{persisted:true});assert.equal(app.get("fan-map-marker").dataset.location,"harbor-01");assert.equal(app.timerCount(16),1);
 });
 test("day/night lighting stays enabled after final without changing away glow, photo rules or policy",()=>{
   const app=boot();app.get("map-night").emit("click");assert.equal(app.get("island-map").dataset.theme,"night");assert.equal(app.get("map-night").getAttribute("aria-pressed"),"true");
@@ -67,7 +69,7 @@ test("day/night lighting stays enabled after final without changing away glow, p
   app.get("map-day").emit("click");assert.equal(app.get("island-map").dataset.theme,"day");assert.equal(app.get("landmark-lakers").dataset.glowing,"false");
 });
 test("mobile-compatible roof directory locates the exact venue and starts its dedicated game",()=>{
-  const app=boot();app.get("filter-court").emit("click");app.get("list-roof-02").emit("click");assert.equal(app.get("island-map").dataset.district,"lakes");assert.equal(app.get("fan-map-marker").dataset.location,"roof-02");assert.match(app.get("court-game-name").textContent,/節奏運球/);app.get("practice-start").emit("click");assert.equal(app.get("play-court").hidden,false);assert.equal(app.timerCount(),1);
+  const app=boot();app.get("filter-court").emit("click");app.get("list-roof-02").emit("click");assert.equal(app.get("island-map").dataset.district,"lakes");assert.equal(app.get("fan-map-marker").dataset.location,"roof-02");assert.match(app.get("court-game-name").textContent,/節奏運球/);app.startPractice();assert.equal(app.get("play-court").hidden,false);assert.equal(app.timerCount(),1);
   app.get("district-select").value="west";app.get("district-select").emit("change");assert.equal(app.get("fan-map-marker").dataset.location,"roof-02");assert.equal(app.get("island-map").dataset.district,"west");
 });
 test("keyboard landmark focus reveals a clipped destination without moving; reduced motion visits directly",()=>{
@@ -83,6 +85,49 @@ test("saving clothes during travel updates shared avatar without teleporting or 
 test("enabling reduced motion during a trip snaps to the target and clears travel animation timer",()=>{
   const app=boot({},null,{reducedMotion:false});app.get("list-roof-03").emit("click");app.advance(200);assert.equal(app.timerCount(16),1);
   app.reduceMotion(true);assert.equal(app.timerCount(16),0);assert.equal(app.get("fan-map-marker").dataset.location,"roof-03");assert.equal(app.get("fan-map-marker").dataset.moving,"false");assert.match(app.get("island-world").style.transform,/scale\(3.0769/);
+});
+test("first screen hides station/directory; arrival opens a panel and close returns to the same district",()=>{
+  const app=boot({},null,{reducedMotion:false});assert.equal(app.get("station-panel").hidden,true);assert.equal(app.get("station-directory").hidden,true);assert.equal(app.get("tour-map").dataset.panelOpen,"false");
+  app.get("toggle-directory").emit("click");assert.equal(app.get("station-directory").hidden,false);app.get("list-meet-pier").emit("click");assert.equal(app.get("station-directory").hidden,true);assert.equal(app.get("station-panel").hidden,true);
+  app.advance(5000);assert.equal(app.get("station-panel").hidden,false);assert.equal(app.get("tour-map").dataset.panelOpen,"true");assert.equal(app.document.activeElement,app.get("panel-title"));
+  const position=app.get("fan-map-marker").style.left;app.get("station-close").emit("click");assert.equal(app.get("station-panel").hidden,true);assert.equal(app.get("island-map").dataset.view,"district");assert.equal(app.get("island-map").dataset.district,"west");assert.equal(app.get("fan-map-marker").style.left,position);
+});
+test("bay uses one loop, preserves crowd positions at night, pauses offscreen/background and supports static reduced motion",()=>{
+  const app=boot({},null,{reducedMotion:false});assert.equal(app.timerCount(16),0);assert.equal(app.get("npc-layer").children.length,10);assert.equal(app.get("npc-layer").children.filter(p=>!p.hidden).length,3);
+  app.get("district-west").emit("click");assert.equal(app.timerCount(16),1);app.advance(100);const npc=app.get("npc-fan-ticket"),point=[npc.style.left,npc.style.top];app.get("map-night").emit("click");assert.deepEqual([npc.style.left,npc.style.top],point);
+  app.visibility(true);assert.equal(app.timerCount(16),0);app.advance(5000);assert.deepEqual([npc.style.left,npc.style.top],point);app.visibility(false);assert.equal(app.timerCount(16),1);assert.deepEqual([npc.style.left,npc.style.top],point);
+  app.get("district-select").value="east";app.get("district-select").emit("change");assert.equal(app.timerCount(16),0);app.advance(4000);assert.deepEqual([npc.style.left,npc.style.top],point);
+  app.get("district-select").value="west";app.get("district-select").emit("change");assert.equal(app.timerCount(16),1);app.reduceMotion(true);assert.equal(app.timerCount(16),0);assert.equal(app.get("island-map").dataset.crowdActive,"false");assert.equal(app.network(),0);
+});
+test("home-fixture entrance/exit crowd, arena glow and night photo permission agree without changing stored policy",()=>{
+  const app=boot();app.get("landmark-warriors").emit("click");app.get("bay-fixture").value="home";app.get("bay-fixture").emit("change");app.select("game-state","scheduled");assert.equal(app.get("island-map").dataset.crowdMode,"enter");
+  app.select("game-state","live");assert.equal(app.get("landmark-warriors").dataset.glowing,"true");assert.equal(app.get("landmark-lakers").dataset.glowing,"false");assert.equal(app.get("island-map").dataset.crowdMode,"live");app.get("find-star").emit("click");assert.equal(app.get("photo-night-option").disabled,false);app.get("star-close").emit("click");
+  app.get("map-night").emit("click");app.select("game-state","final");assert.equal(app.get("island-map").dataset.crowdMode,"exit");assert.equal(app.get("island-map").dataset.theme,"night");assert.equal(app.get("landmark-warriors").dataset.glowing,"false");assert.match(app.get("team-game").innerHTML,/108/);
+  app.get("bay-fixture").value="away";app.get("bay-fixture").emit("change");assert.equal(app.get("island-map").dataset.crowdMode,"ambient");assert.match(app.get("fixture-description").textContent,/客場/);
+});
+test("scrolling the map out of the viewport pauses pedestrian work and resumes without advancing hidden time",()=>{
+  const app=boot({},null,{reducedMotion:false});app.get("district-west").emit("click");app.advance(100);const npc=app.get("npc-pier-walker"),point=[npc.style.left,npc.style.top];app.mapVisibility(false);assert.equal(app.timerCount(16),0);app.advance(9000);assert.deepEqual([npc.style.left,npc.style.top],point);app.mapVisibility(true);assert.equal(app.timerCount(16),1);assert.deepEqual([npc.style.left,npc.style.top],point);
+});
+test("policy seat display follows only the latest calculation, labels lottery expectation and clears on reset",()=>{
+  const app=boot();app.get("landmark-warriors").emit("click");app.get("policy-launch").emit("click");assert.equal(app.get("policy-seat-map").hidden,true);
+  for(const [plan,count,expected] of [["regular",0,false],["reserved",20,false],["lottery",15,true]]){app.select("policy-plan",plan);assert.equal(app.get("policy-seat-map").hidden,true);app.get("policy-form").emit("submit");const grid=app.get("policy-seat-grid");assert.equal(grid.children.length,60);assert.equal(grid.children.filter(s=>s.dataset.type==="student").length,count);assert.equal(grid.dataset.expected,String(expected));assert.equal(app.get("seat-expected-label").hidden,!expected);}
+  assert.match(app.get("policy-seat-caption").textContent,/期望值/);app.get("policy-form").emit("reset");assert.equal(app.get("policy-seat-map").hidden,true);assert.equal(app.get("policy-seat-grid").children.length,0);
+});
+test("an unscored shot tutorial starts a fresh full 30-second practice and cannot submit a score",()=>{
+  const app=boot();app.get("list-harbor-01").emit("click");app.startPractice(true);assert.equal(app.get("tutorial-controls").hidden,false);assert.match(app.get("game-mode-label").textContent,/不計分/);app.advance(1300);app.get("shoot-button").emit("click");
+  assert.equal(app.get("game-hits").textContent,"0");assert.equal(app.get("game-attempts").textContent,"0");assert.equal(app.get("tutorial-begin").disabled,false);assert.match(app.get("tutorial-feedback").textContent,/不計分/);
+  app.get("tutorial-begin").emit("click");assert.equal(app.get("tutorial-controls").hidden,true);assert.equal(app.get("game-timer").textContent,"30.0");assert.equal(app.get("game-hits").textContent,"0");app.advance(31300);assert.equal(app.get("round-result").hidden,false);assert.equal(app.timerCount(),0);app.get("practice-leave").emit("click");assert.equal(app.get("station-panel").hidden,false);assert.equal(app.get("court-select").value,"harbor-01");assert.equal(app.network(),0);
+});
+test("all 15 tutorials can be skipped; changing courts or leaving clears their interval and controls",()=>{
+  const app=boot();for(const court of C.COURTS){app.get(`list-${court.id}`).emit("click");app.startPractice(true);assert.equal(app.get("tutorial-controls").hidden,false,court.id);assert.equal(app.timerCount(),1);app.get("tutorial-skip").emit("click");assert.equal(app.get("tutorial-controls").hidden,true);assert.equal(app.get("game-timer").textContent,(G.getGame(court.gameId).durationMs/1000).toFixed(1));app.get("practice-leave").emit("click");assert.equal(app.timerCount(),0);}
+  const fresh=boot();fresh.get("list-roof-02").emit("click");fresh.startPractice(true);fresh.get("list-warriors").emit("click");assert.equal(fresh.timerCount(),0);assert.equal(fresh.get("tutorial-controls").hidden,true);assert.equal(fresh.get("play-court").hidden,true);
+});
+test("tutorial deadline never shows a scored result and still allows formal start",()=>{
+  const app=boot();app.get("list-park-05").emit("click");app.startPractice(true);app.advance(14000);assert.equal(app.timerCount(),0);assert.equal(app.get("round-result").hidden,true);assert.equal(app.get("tutorial-begin").disabled,false);assert.equal(app.get("game-hits").textContent,"0");app.get("tutorial-begin").emit("click");assert.equal(app.get("game-timer").textContent,"45.0");
+});
+test("district encounter clue hides identity; continue-island closes the photo and preserves collection/location",()=>{
+  const app=boot({},null,{url:"file:///project/index.html?encounterDate=2026-01-01"});assert.equal(app.get("district-clue").hidden,true);app.get("district-west").emit("click");assert.equal(app.get("district-clue").hidden,false);assert.doesNotMatch(app.get("district-clue").textContent,/柯瑞|curry/i);
+  app.get("list-meet-pier").emit("click");app.get("island-encounter-actor").emit("click");app.get("encounter-photo").emit("click");app.get("capture-photo").emit("click");app.get("collect-photo").emit("click");const record=app.records.get(F.ALBUM_KEY);app.get("photo-continue-island").emit("click");assert.equal(app.get("star-dialog").open,false);assert.equal(app.get("island-map").dataset.view,"district");assert.equal(app.get("fan-map-marker").dataset.location,"meet-pier");assert.equal(app.records.get(F.ALBUM_KEY),record);
 });
 test("app builds 34 named keyboard-operable HTML buttons aligned to island coordinates",()=>{
   const app=boot();assert.equal(app.get("landmark-layer").children.length,34);
@@ -149,15 +194,15 @@ test("unconfigured multiplayer has disabled invitation actions, no room and zero
 });
 test("all 15 courts can start the shared practice, with time limit and restart",()=>{
   const app=boot();
-  for(const court of C.COURTS){app.get(`list-${court.id}`).emit("click");assert.equal(app.get("court-game-name").textContent,court.gameName);assert.match(app.get(`list-${court.id}`).innerHTML,new RegExp(court.gameName));app.get("practice-start").emit("click");assert.match(app.get("shooting-title").textContent,new RegExp(court.name));assert.match(app.get("game-mode-label").textContent,/非真人/);assert.equal(app.get("game-hits").textContent,"0");app.advance(G.getGame(court.gameId).durationMs+1000);assert.equal(app.get("round-result").hidden,false);assert.equal(app.timerCount(),0);app.get("practice-restart").emit("click");assert.equal(app.get("game-timer").textContent,(G.getGame(court.gameId).durationMs/1000).toFixed(1));}
-  app.get("list-harbor-01").emit("click");app.get("practice-start").emit("click");
+  for(const court of C.COURTS){app.get(`list-${court.id}`).emit("click");assert.equal(app.get("court-game-name").textContent,court.gameName);assert.match(app.get(`list-${court.id}`).innerHTML,new RegExp(court.gameName));app.startPractice();assert.match(app.get("shooting-title").textContent,new RegExp(court.name));assert.match(app.get("game-mode-label").textContent,/非真人/);assert.equal(app.get("game-hits").textContent,"0");app.advance(G.getGame(court.gameId).durationMs+1000);assert.equal(app.get("round-result").hidden,false);assert.equal(app.timerCount(),0);app.get("practice-restart").emit("click");assert.equal(app.get("game-timer").textContent,(G.getGame(court.gameId).durationMs/1000).toFixed(1));}
+  app.get("list-harbor-01").emit("click");app.startPractice();
   app.advance(1300);app.get("game-stage").emit("keydown",{code:"Space",key:" "});assert.equal(app.get("game-hits").textContent,"1");
   app.advance(30000);assert.equal(app.get("shoot-button").disabled,true);assert.equal(app.get("game-timer").textContent,"0.0");assert.match(app.get("round-result-content").textContent,/沒有真人或模擬對手/);
   app.get("practice-restart").emit("click");assert.equal(app.get("game-hits").textContent,"0");assert.equal(app.get("game-attempts").textContent,"0");assert.equal(app.get("game-timer").textContent,"30.0");assert.equal(app.get("round-result").hidden,true);assert.equal(app.network(),0);
 });
 test("audio is opt-in, successful shots and final buzzer play once, while held Space is ignored",()=>{
   const app=boot();assert.equal(app.get("sound-hit").plays||0,0);assert.equal(app.get("sound-end").plays||0,0);
-  app.get("quick-courts").emit("click");app.get("practice-start").emit("click");app.advance(1300);
+  app.get("quick-courts").emit("click");app.startPractice();app.advance(1300);
   app.get("game-stage").emit("keydown",{code:"Space",key:" ",repeat:true});assert.equal(app.get("game-attempts").textContent,"0");
   app.get("shoot-button").emit("click");assert.equal(app.get("game-hits").textContent,"1");assert.equal(app.get("sound-hit").plays||0,0);
   app.get("sound-enabled").checked=true;app.get("sound-enabled").emit("change");app.advance(1200);app.get("shoot-button").emit("click");assert.equal(app.get("sound-hit").plays,1);
@@ -166,14 +211,14 @@ test("audio is opt-in, successful shots and final buzzer play once, while held S
   app.get("sound-enabled").checked=false;app.get("sound-enabled").emit("change");assert.ok(app.get("sound-end").pauses>0);assert.match(app.get("sound-status").textContent,/音效關閉/);
 });
 test("leaving practice, changing landmark and hiding the page clear the active timer",()=>{
-  const app=boot();app.get("quick-courts").emit("click");app.get("practice-start").emit("click");assert.equal(app.timerCount(),1);
+  const app=boot();app.get("quick-courts").emit("click");app.startPractice();assert.equal(app.timerCount(),1);
   app.get("practice-leave").emit("click");assert.equal(app.timerCount(),0);assert.equal(app.get("play-court").hidden,true);
-  app.get("practice-start").emit("click");app.get("landmark-harbor-02").emit("click");assert.equal(app.timerCount(),0);assert.equal(app.get("play-court").hidden,true);
-  app.get("practice-start").emit("click");assert.equal(app.get("game-stage").dataset.scene,"harbor");app.windowEvent("pagehide");assert.equal(app.timerCount(),0);
+  app.startPractice();app.get("landmark-harbor-02").emit("click");assert.equal(app.timerCount(),0);assert.equal(app.get("play-court").hidden,true);
+  app.startPractice();assert.equal(app.get("game-stage").dataset.scene,"harbor");app.windowEvent("pagehide");assert.equal(app.timerCount(),0);
   app.windowEvent("pageshow",{persisted:true});assert.equal(app.timerCount(),1);app.advance(62000);assert.equal(app.get("game-timer").textContent,"0.0");assert.equal(app.timerCount(),0);
 });
 test("an audio playback rejection preserves the hit score and visual feedback",async()=>{
-  const app=boot();app.get("quick-courts").emit("click");app.get("practice-start").emit("click");
+  const app=boot();app.get("quick-courts").emit("click");app.startPractice();
   app.get("sound-enabled").checked=true;app.get("sound-enabled").emit("change");
   app.get("sound-hit").play=()=>Promise.reject(new Error("Playback blocked"));
   app.advance(1300);app.get("shoot-button").emit("click");await Promise.resolve();
@@ -182,7 +227,7 @@ test("an audio playback rejection preserves the hit score and visual feedback",a
 test("required three-stop demonstration finishes Lakers game, reserved policy and a harbor practice",()=>{
   const app=boot();app.get("landmark-lakers").emit("click");assert.equal(app.get("landmark-lakers").dataset.glowing,"true");assert.equal(app.get("landmark-warriors").dataset.glowing,"false");
   app.get("landmark-warriors").emit("click");app.get("policy-launch").emit("click");app.select("policy-plan","reserved");app.get("policy-form").emit("submit");assert.match(app.get("policy-result-content").innerHTML,/2,400/);
-  app.get("landmark-harbor-01").emit("click");app.get("practice-start").emit("click");app.advance(1300);app.get("shoot-button").emit("click");app.advance(29700);
+  app.get("landmark-harbor-01").emit("click");app.startPractice();app.advance(1300);app.get("shoot-button").emit("click");app.advance(29700);
   assert.equal(app.get("game-timer").textContent,"0.0");assert.match(app.get("round-result-content").textContent,/命中 1 球/);assert.equal(app.timerCount(),0);
 });
 
@@ -239,7 +284,7 @@ test("blocked localStorage shows a notice while this-page avatar, photos and col
 });
 test("practice result uses the same saved avatar and nickname, ignores unsaved clothing",()=>{
   const app=boot();app.get("fan-nickname").value="結算球迷";app.get("fan-nickname").emit("input");app.get("fan-form").emit("submit");
-  app.get("fan-nickname").value="未儲存";app.get("fan-nickname").emit("input");app.get("quick-courts").emit("click");app.get("practice-start").emit("click");app.advance(31000);
+  app.get("fan-nickname").value="未儲存";app.get("fan-nickname").emit("input");app.get("quick-courts").emit("click");app.startPractice();app.advance(31000);
   assert.equal(app.get("practice-fan-result").hidden,false);assert.match(app.get("practice-fan-caption").textContent,/結算球迷/);assert.doesNotMatch(app.get("practice-fan-avatar").innerHTML,/未儲存/);assert.equal(app.get("game-timer").textContent,"0.0");
 });
 
@@ -295,7 +340,9 @@ test("friend-room UI flow with a backend fixture: create, duplicate, ready, time
   app=boot({},adapter);await settle();app.get("quick-courts").emit("click");app.get("player-name").value="測試房主";
   app.get("room-form").emit("submit");await settle();assert.equal(app.get("room-panel").hidden,false);assert.equal(app.get("room-start").disabled,true);assert.match(app.get("room-invite-value").value,/court=harbor-01&invite=/);
   app.get("invite-code").value=room.invite_code;app.get("join-room").emit("click");await settle();assert.match(app.get("lobby-notice").textContent,/已加入/);assert.equal(players.length,1);
-  app.get("ready-toggle").emit("click");await settle();assert.equal(app.get("room-start").disabled,true);
+  app.get("ready-toggle").emit("click");await settle();assert.equal(players[0].ready,false);assert.equal(app.get("tutorial-controls").hidden,false);assert.equal(submissions,0);
+  app.get("practice-leave").emit("click");app.get("tutorial-skip").emit("click");await settle();assert.equal(players[0].ready,false);
+  app.get("ready-toggle").emit("click");app.get("tutorial-skip").emit("click");await settle();assert.equal(players[0].ready,true);assert.equal(app.get("room-start").disabled,true);
   players.push({user_id:"guest",display_name:"測試朋友",ready:false,score:null,attempts:null});app.advance(2000);await settle();assert.equal(app.get("room-start").disabled,true);
   players[1].ready=true;app.advance(2000);await settle();assert.equal(app.get("room-start").disabled,false);
   app.get("room-start").emit("click");await settle();assert.equal(app.get("shoot-button").disabled,true);app.advance(5300);await settle();app.get("game-stage").emit("keydown",{key:" ",code:"Space"});assert.equal(app.get("game-hits").textContent,"1");
@@ -307,23 +354,23 @@ test("friend-room UI flow with a backend fixture: create, duplicate, ready, time
 test("court controls route keyboard, range drag and touch/button actions to the selected dedicated game",()=>{
   const app=boot();
   for(const c of C.COURTS)assert.ok(app.get(`landmark-${c.id}`).children[0].innerHTML.includes(c.gameName));
-  app.get("list-harbor-03").emit("click");app.get("practice-start").emit("click");app.advance(1000);
+  app.get("list-harbor-03").emit("click");app.startPractice();app.advance(1000);
   assert.equal(app.get("mini-wind").hidden,false);assert.equal(app.get("aim-meter").hidden,true);
   const wind=Math.round((G.randomAt(1,0,2)*140-70)/10)*10;app.get("mini-wind-aim").value=String(-wind);app.get("mini-wind-aim").emit("input");app.get("shoot-button").emit("click");assert.equal(app.get("game-hits").textContent,"1");
-  app.get("list-harbor-04").emit("click");assert.equal(app.timerCount(),0);app.get("practice-start").emit("click");app.advance(1000);const zone=2-G.pick(1,0,3);app.get("game-stage").emit("keydown",{key:String(zone+1)});assert.equal(app.get("game-hits").textContent,"1");
-  app.get("list-roof-04").emit("click");app.get("practice-start").emit("click");app.advance(1000);assert.equal(app.get("mini-up").hidden,false);app.get("mini-up").emit("click");assert.equal(app.get("game-attempts").textContent,"1");app.get("practice-leave").emit("click");const before=app.get("game-attempts").textContent;app.get("mini-up").emit("click");assert.equal(app.get("game-attempts").textContent,before);assert.equal(app.timerCount(),0);
+  app.get("list-harbor-04").emit("click");assert.equal(app.timerCount(),0);app.startPractice();app.advance(1000);const zone=2-G.pick(1,0,3);app.get("game-stage").emit("keydown",{key:String(zone+1)});assert.equal(app.get("game-hits").textContent,"1");
+  app.get("list-roof-04").emit("click");app.startPractice();app.advance(1000);assert.equal(app.get("mini-up").hidden,false);app.get("mini-up").emit("click");assert.equal(app.get("game-attempts").textContent,"1");app.get("practice-leave").emit("click");const before=app.get("game-attempts").textContent;app.get("mini-up").emit("click");assert.equal(app.get("game-attempts").textContent,before);assert.equal(app.timerCount(),0);
 });
 test("dribble, rhythm and computer duel expose distinct controls; held keys never multiply actions",()=>{
-  const app=boot();app.get("list-park-01").emit("click");app.get("practice-start").emit("click");app.advance(1000);assert.equal(app.get("mini-arrows").hidden,false);assert.equal(app.get("shoot-button").hidden,true);
+  const app=boot();app.get("list-park-01").emit("click");app.startPractice();app.advance(1000);assert.equal(app.get("mini-arrows").hidden,false);assert.equal(app.get("shoot-button").hidden,true);
   app.get("game-stage").emit("keydown",{key:"ArrowRight"});assert.match(app.get("mini-scene").innerHTML,/cx="450"/);const scene=app.get("mini-scene").innerHTML;app.get("game-stage").emit("keydown",{key:"ArrowRight",repeat:true});assert.equal(app.get("mini-scene").innerHTML,scene);
-  app.get("list-roof-02").emit("click");app.get("practice-start").emit("click");app.advance(1600);app.get("mini-left").emit("click");assert.equal(app.get("game-hits").textContent,"10");app.get("game-stage").emit("keydown",{key:"ArrowLeft",repeat:true});assert.equal(app.get("game-attempts").textContent,"1");app.advance(600);app.get("game-stage").emit("keydown",{key:"ArrowRight"});assert.equal(app.get("game-hits").textContent,"20");
-  app.get("list-park-04").emit("click");app.get("practice-start").emit("click");assert.match(app.get("game-context").textContent,/電腦，非真人/);app.advance(1000);app.get("mini-choice-0").emit("click");assert.match(app.get("shot-feedback").textContent,/電腦/);assert.equal(app.get("mini-choice-1").disabled,true);app.advance(7000);assert.equal(app.get("mini-choice-1").disabled,false);app.advance(70000);assert.match(app.get("round-result-content").textContent,/電腦/);
+  app.get("list-roof-02").emit("click");app.startPractice();app.advance(1600);app.get("mini-left").emit("click");assert.equal(app.get("game-hits").textContent,"10");app.get("game-stage").emit("keydown",{key:"ArrowLeft",repeat:true});assert.equal(app.get("game-attempts").textContent,"1");app.advance(600);app.get("game-stage").emit("keydown",{key:"ArrowRight"});assert.equal(app.get("game-hits").textContent,"20");
+  app.get("list-park-04").emit("click");app.startPractice();assert.match(app.get("game-context").textContent,/電腦，非真人/);app.advance(1000);app.get("mini-choice-0").emit("click");assert.match(app.get("shot-feedback").textContent,/電腦/);assert.equal(app.get("mini-choice-1").disabled,true);app.advance(7000);assert.equal(app.get("mini-choice-1").disabled,false);app.advance(70000);assert.match(app.get("round-result-content").textContent,/電腦/);
   assert.equal(app.get("mini-left").listeners.get("click").length,1);assert.equal(app.get("game-stage").listeners.get("keydown").length,1);assert.equal(app.network(),0);
 });
 test("memory input is disabled during demonstration and allround changes active control families",()=>{
-  const app=boot();app.get("list-park-05").emit("click");app.get("practice-start").emit("click");app.advance(1000);assert.equal(app.get("mini-choice-0").disabled,true);app.advance(2200);assert.equal(app.get("mini-choice-0").disabled,false);
+  const app=boot();app.get("list-park-05").emit("click");app.startPractice();app.advance(1000);assert.equal(app.get("mini-choice-0").disabled,true);app.advance(2200);assert.equal(app.get("mini-choice-0").disabled,false);
   const seq=[0,1,2].map(i=>G.pick(1,i,9));for(const n of seq){app.get(`mini-choice-${n}`).emit("click");app.advance(200);}assert.equal(app.get("game-hits").textContent,"3");
-  app.get("list-roof-05").emit("click");app.get("practice-start").emit("click");app.advance(1000);assert.equal(app.get("mini-choices").hidden,true);assert.equal(app.get("shoot-button").hidden,false);app.advance(15000);assert.equal(app.get("mini-choices").hidden,false);assert.equal(app.get("shoot-button").hidden,true);app.advance(10000);assert.equal(app.get("mini-choices").hidden,true);assert.equal(app.get("shoot-label").textContent,"封阻");app.advance(15000);assert.equal(app.get("round-result").hidden,false);assert.match(app.get("round-result-content").textContent,/投籃 0／傳球 0／封阻 0/);
+  app.get("list-roof-05").emit("click");app.startPractice();app.advance(1000);assert.equal(app.get("mini-choices").hidden,true);assert.equal(app.get("shoot-button").hidden,false);app.advance(15000);assert.equal(app.get("mini-choices").hidden,false);assert.equal(app.get("shoot-button").hidden,true);app.advance(10000);assert.equal(app.get("mini-choices").hidden,true);assert.equal(app.get("shoot-label").textContent,"封阻");app.advance(15000);assert.equal(app.get("round-result").hidden,false);assert.match(app.get("round-result-content").textContent,/投籃 0／傳球 0／封阻 0/);
 });
 test("new room submits game ID, common seed and structured result; rematch cannot use prior round",async()=>{
   let app,payload;
@@ -351,4 +398,23 @@ test("friend duel UI never invents opponent choices and reveals only backend-pro
 test("configured rooms remain disabled until backend confirms the games-v2 capability",async()=>{
   const adapter={configured:true,connect:async()=>({id:"a"}),userId:()=>"a",capabilities:async()=>({version:1}),activity:async()=>{throw new Error("must not read rooms before capability");}};
   const app=boot({},adapter);await new Promise(r=>setImmediate(r));app.get("quick-courts").emit("click");assert.equal(app.get("create-room").disabled,true);assert.equal(app.get("join-room").disabled,true);assert.match(app.get("lobby-notice").textContent,/games-v2.sql/);assert.equal(app.get("room-panel").hidden,true);
+});
+
+test('20 scenery directory entries inspect 16 views without moving and walk to four real photo entrances',()=>{
+  const app=boot(),S=require('../assets/sights-core.js');app.get('filter-sight').emit('click');assert.equal(app.get('station-list').children.filter(n=>!n.hidden).length,20);const before=app.get('fan-map-marker').dataset.location;
+  for(const sight of S.SIGHTS.filter(s=>!s.photo)){app.get(`list-${sight.id}`).emit('click');assert.equal(app.get('sight-panel').hidden,false);assert.equal(app.get('station-panel').hidden,false);assert.equal(app.get('fan-map-marker').dataset.location,before);assert.equal(app.get('sight-photo').hidden,true);}
+  for(const sight of S.SIGHTS.filter(s=>s.photo)){app.get(`landmark-${sight.id}`).emit('keydown',{key:'Enter'});assert.equal(app.get('fan-map-marker').dataset.location,sight.id);assert.equal(app.get('station-panel').hidden,false);assert.equal(app.get('sight-photo').hidden,false);assert.equal(app.get('nba-panel').hidden,true);}
+  assert.equal(app.network(),0);
+});
+test('scenic photo waits for arrival, snapshots saved clothes and downloads through existing PNG UI without altering albums',async()=>{
+  const app=boot({},null,{reducedMotion:false});app.get('list-sight-golden-gate').emit('click');app.get('sight-photo').emit('click');assert.equal(Boolean(app.get('star-dialog').open),false);app.advance(5000);assert.equal(app.get('fan-map-marker').dataset.location,'sight-golden-gate');app.get('sight-photo').emit('click');assert.equal(app.get('star-dialog').open,true);assert.equal(app.get('collect-photo').hidden,true);app.get('capture-photo').emit('click');let exported;app.setPNGExporter(async p=>{exported=p;return {type:'image/png'};});app.get('download-photo').emit('click');await new Promise(r=>setImmediate(r));assert.equal(exported.kind,'sight');assert.equal(exported.locationId,'sight-golden-gate');assert.equal(app.downloads.length,1);assert.match(app.downloads[0].download,/sight-golden-gate.*\.png/);app.get('collect-photo').emit('click');assert.equal(app.records.has('nba-policy-island:photos:v1'),false);app.get('photo-back-scene').emit('click');assert.equal(app.get('star-dialog').open,false);assert.equal(app.get('station-panel').hidden,false);
+  app.get('list-warriors').emit('click');app.advance(5000);app.get('find-star').emit('click');app.get('star-landmark').emit('click');assert.equal(app.get('collect-photo').hidden,false);assert.equal(app.get('photo-subject-label').textContent,'\u7403\u661f');
+});
+test('cars use the one shared loop, heading lights survive final score and pause on overview, hidden page and reduced motion',()=>{
+  const app=boot({},null,{reducedMotion:false});assert.equal(app.timerCount(16),0);assert.equal(app.get('traffic-layer').children.length,6);app.get('district-west').emit('click');assert.equal(app.timerCount(16),1);app.advance(100);const car=app.get('car-720s'),before=[car.dataset.x,car.dataset.y];app.get('map-night').emit('click');assert.equal(car.dataset.headlights,'true');assert.deepEqual([car.dataset.x,car.dataset.y],before);app.select('game-state','final');assert.equal(car.dataset.headlights,'true');assert.equal(app.get('landmark-lakers').dataset.glowing,'false');
+  app.advance(100);assert.notDeepEqual([car.dataset.x,car.dataset.y],before);const point=[car.dataset.x,car.dataset.y];app.visibility(true);assert.equal(app.timerCount(16),0);app.advance(7000);app.visibility(false);assert.deepEqual([car.dataset.x,car.dataset.y],point);app.mapVisibility(false);assert.equal(app.timerCount(16),0);app.mapVisibility(true);assert.equal(app.timerCount(16),1);app.get('camera-overview').emit('click');assert.equal(app.timerCount(16),0);app.advance(3000);assert.deepEqual([car.dataset.x,car.dataset.y],point);
+  app.get('district-desert').emit('click');assert.equal(app.timerCount(16),1);const other=app.get('car-aventador'),otherPoint=[other.dataset.x,other.dataset.y];app.advance(100);assert.notDeepEqual([other.dataset.x,other.dataset.y],otherPoint);assert.deepEqual([car.dataset.x,car.dataset.y],point);app.reduceMotion(true);assert.equal(app.timerCount(16),0);app.advance(3000);app.reduceMotion(false);assert.equal(app.timerCount(16),1);app.windowEvent('pagehide');assert.equal(app.timerCount(16),0);
+});
+test('scenic night artwork and PNG background change independently from venue LIVE eligibility',()=>{
+  const app=boot();app.get('list-sight-cloud-gate').emit('click');app.get('map-night').emit('click');assert.match(app.get('sight-image').src,/-night.svg$/);assert.match(app.get('scenic-art-sight-cloud-gate').src,/-night.svg$/);app.get('sight-photo').emit('click');app.get('capture-photo').emit('click');assert.ok(decodeURIComponent(app.get('photo-image').src).includes('#172e49'));app.get('photo-back-scene').emit('click');app.get('map-day').emit('click');assert.doesNotMatch(app.get('sight-image').src,/-night.svg$/);app.get('sight-photo').emit('click');app.get('capture-photo').emit('click');assert.ok(decodeURIComponent(app.get('photo-image').src).includes('#92bec8'));assert.equal(app.network(),0);
 });

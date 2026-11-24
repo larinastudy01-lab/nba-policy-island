@@ -1,6 +1,6 @@
 "use strict";
 (function (root) {
-  function initializeFan({ storage, getSelection, getGameState, getEncounter, getPlayerPosition, hasArrived = () => true, onReveal, onVisit, onChange }) {
+  function initializeFan({ storage, getSelection, getGameState, getEncounter, getBayFixture=()=>"away", getPlayerPosition, hasArrived = () => true, onReveal, onVisit, onChange,onContinue }) {
     const F = root.NBAFan, Island = root.NBAIsland;
     const $ = id => document.getElementById(id);
     const session = F.createFanSession(storage);
@@ -8,6 +8,7 @@
     const fields = ["nickname", "number", ...Object.keys(F.OPTIONS)];
     let teamId = "warriors", photo = null, view = "explore", source = "arena", exporting = false, downloadURL = null;
     let albumTab = "home", encounterContext = null, revealedKey = null;
+    let sightContext=null;
     const today = getEncounter || (() => F.dailyEncounter());
     const encounterKey = value => `${value.date}:${value.starId}:${value.locationId}`;
     const encounterStale = () => Boolean(encounterContext && encounterKey(encounterContext) !== encounterKey(today()));
@@ -34,9 +35,10 @@
       const marker=$("fan-map-marker"),saved=session.getState().saved;
       marker.style.left = `${position.x / Island.MAP.width * 100}%`;
       marker.style.top = `${position.y / Island.MAP.height * 100}%`;
+      marker.style.zIndex=String(Math.round(position.y));
       marker.dataset.location = position.moving?"":position.locationId;
       marker.dataset.x=String(position.x);marker.dataset.y=String(position.y);
-      marker.setAttribute("aria-label",`${saved.nickname}，${position.moving?"沿道路移動中":"目前在"+([...Island.TEAMS,...Island.COURTS,...Island.ENCOUNTERS].find(p=>p.id===position.locationId)?.name||item.name)}`);
+      marker.setAttribute("aria-label",`${saved.nickname}，${position.moving?"沿道路移動中":"目前在"+([...Island.TEAMS,...Island.COURTS,...Island.ENCOUNTERS,...root.NBASights.SIGHTS].find(p=>p.id===position.locationId)?.name||item.name)}`);
       $("fan-map-name").textContent=`我・${Array.from(saved.nickname).slice(0,6).join("")}`;
       // 移動時只更新位置；換裝儲存後才重新產生角色圖層。
       const avatar=JSON.stringify(saved);
@@ -89,11 +91,12 @@
       }
     }
     function updateNight() {
+      if(sightContext){$("photo-home-options").hidden=true;$("photo-location-hint").hidden=false;$("photo-location-hint").textContent=`${root.NBASights.get(sightContext.id).name}・使用${sightContext.background==="night"?"夜景":"白天"}背景；景點照提供下載，不計入兩本球星合影冊。`;return;}
       const isEncounter = Boolean(encounterContext);
       $("photo-home-options").hidden = isEncounter;
       $("photo-location-hint").hidden = !isEncounter;
       if (isEncounter) $("photo-location-hint").textContent = `${Island.getLandmark("encounter", encounterContext.locationId).name}・偶遇場景與模擬賽況各自運作。`;
-      const allowed = F.nightAvailable(teamId, getGameState());
+      const allowed = F.nightAvailable(teamId, getGameState(),getBayFixture());
       $("photo-night-option").disabled = !allowed;
       $("photo-night-hint").textContent = allowed ? "本場主隊 LIVE・可選夜場燈光（模擬賽事）" : "一般合影隨時開放；只有本場 LIVE 的主場能選夜場燈光。";
       if (!photo && !allowed && $("photo-background").value === "night") $("photo-background").value = "day";
@@ -101,22 +104,25 @@
     function renderPhoto() {
       updateNight();
       const record = photo || liveRecord();
-      const { star: station, team, venue, backgroundLabel, encounter } = F.photoInfo(record);
+      const { star: station, team, venue, backgroundLabel, encounter,scenic } = F.photoInfo(record);
+      $("photo-subject-label").textContent=scenic?"地標":"球星";$("photo-category-label").textContent=scenic?"類別":"球隊";$("photo-place-label").textContent=scenic?"觀景點":"場館";
       $("photo-image").src = F.svgDataURL(F.photoSVG(record));
-      $("photo-image").alt = `${record.avatar.nickname}與${station.starName}在${venue}的${backgroundLabel}合影，${record.pose === "ball" ? "舉球" : "站姿"}`;
+      $("photo-image").alt = scenic?`${record.avatar.nickname}在${venue}的${backgroundLabel}，含已儲存角色造型與原創地標背景`:`${record.avatar.nickname}與${station.starName}在${venue}的${backgroundLabel}合影，${record.pose === "ball" ? "舉球" : "站姿"}`;
       $("photo-caption").textContent = photo ? `定格照片・${F.photoDate(record.capturedAt)}（台灣時間）` : "即時構圖・使用已儲存造型，拍照後定格。";
       for (const [id, value] of [["photo-fan-name", record.avatar.nickname], ["photo-star-name", station.starName], ["photo-team-name", team.name], ["photo-venue-name", venue], ["photo-date", photo ? F.photoDate(record.capturedAt) + "（台灣）" : "按拍照時記錄"]]) $(id).textContent = value;
       $("photo-pose").disabled = Boolean(photo);$("photo-background").disabled = Boolean(photo);
       $("capture-photo").hidden = Boolean(photo);$("retake-photo").hidden = !photo;
       $("capture-photo").disabled = exporting || encounterStale();$("retake-photo").disabled = exporting;$("photo-back-scene").disabled = exporting;
       $("collect-photo").disabled = !photo || exporting;$("download-photo").disabled = !photo || exporting;
+      $("collect-photo").hidden=Boolean(scenic);
       const exists = encounter ? session.getState().encounters[record.starId] : session.getState().homeAlbum[station.arenaId];
       $("collect-photo").textContent = exists ? (encounter ? "更新這位球星收藏" : "更新這隊收藏") : "收藏合影";
-      $("photo-back-scene").textContent = encounter ? "回到偶遇地點" : "回到球館";
+      $("photo-back-scene").textContent = scenic?"回到觀景點":encounter ? "回到偶遇地點" : "回到球館";
       if (!photo && encounterStale()) $("photo-status").textContent = "偶遇日期已更新，請回地點重新探索。舊收藏仍可查看與下載。";
       storageNotice();
     }
     function openArena(id) {
+      sightContext=null;
       const station = F.getStation(id);if (!station) return;
       teamId = id;photo = null;encounterContext = null;view = "explore";source = "arena";clearDownload();
       const team = Island.getLandmark("nba", id);
@@ -140,6 +146,7 @@
       renderPhoto();$("photo-studio-title").focus();
     }
     function openSavedPhoto(record) {
+      sightContext=null;
       teamId = record.teamId;photo = F.normalizePhoto(record);source = "album";view = "studio";clearDownload();
       encounterContext = record.kind === "encounter" ? { date: record.encounterDate, teamId: record.teamId, starId: record.starId, locationId: record.locationId } : null;
       const station = F.getStation(teamId);
@@ -151,7 +158,8 @@
     }
     function refreshGame() { if (starDialog.open) { updateNight();if (view === "studio" && !photo) renderPhoto(); } }
     function liveRecord() {
-      return encounterContext ? F.createEncounterPhoto(encounterContext, session.getState().saved, { pose: $("photo-pose").value }) : F.createPhoto(teamId, session.getState().saved, { pose: $("photo-pose").value, background: $("photo-background").value }, getGameState());
+      if(sightContext)return F.normalizePhoto({version:3,kind:"sight",locationId:sightContext.id,background:sightContext.background,avatar:session.getState().saved,pose:$("photo-pose").value,capturedAt:new Date().toISOString()});
+      return encounterContext ? F.createEncounterPhoto(encounterContext, session.getState().saved, { pose: $("photo-pose").value }) : F.createPhoto(teamId, session.getState().saved, { pose: $("photo-pose").value, background: $("photo-background").value }, getGameState(),getBayFixture());
     }
     function renderEncounterPanel(placeId) {
       const encounter = today(), place = Island.getLandmark("encounter", placeId), arrived=hasArrived(placeId), present = encounter.locationId === placeId && arrived;
@@ -169,6 +177,7 @@
       $("encounter-era-label").textContent = revealed ? star.label : "";
     }
     function openEncounter() {
+      sightContext=null;
       const encounter = today(), selected = getSelection();
       if (selected.kind !== "encounter" || selected.id !== encounter.locationId || !hasArrived(encounter.locationId) || revealedKey !== encounterKey(encounter)) return;
       encounterContext = { ...encounter };teamId = encounter.teamId;photo = null;source = "encounter";view = "studio";clearDownload();
@@ -208,19 +217,20 @@
     });
     $("find-star").addEventListener("click", () => { const selected = getSelection();if (selected.kind === "nba") openArena(selected.id); });
     $("star-close").addEventListener("click", () => starDialog.close());
-    starDialog.addEventListener("close", () => { clearDownload();if (source === "album") openFan("album");else if (source === "encounter") $("panel-title").focus();else $("find-star").focus(); });
+    starDialog.addEventListener("close", () => { clearDownload();if (source === "album") openFan("album");else if (source === "encounter"||source==="sight") $("panel-title").focus();else $("find-star").focus(); });
     $("star-landmark").addEventListener("click", openStudio);
-    $("photo-back-scene").addEventListener("click", () => { if (encounterContext) { const id = encounterContext.locationId;source = "encounter";starDialog.close();onVisit(id, "encounter");return; }if (source === "album") { onVisit(teamId);source = "arena"; }openArena(teamId); });
+    $("photo-back-scene").addEventListener("click", () => { if(sightContext){starDialog.close();return;}if (encounterContext) { const id = encounterContext.locationId;source = "encounter";starDialog.close();onVisit(id, "encounter");return; }if (source === "album") { onVisit(teamId);source = "arena"; }openArena(teamId); });
     $("photo-pose").addEventListener("change", () => { if (!photo) renderPhoto(); });
+    $("photo-continue-island").addEventListener("click",()=>{starDialog.close();onContinue?.();$("island-map-area").focus();});
     $("photo-background").addEventListener("change", () => { if (!photo) renderPhoto(); });
     $("capture-photo").addEventListener("click", () => {
       if (photo || encounterStale()) return;
       photo = liveRecord();
-      clearDownload();renderPhoto();$("photo-status").textContent = "喀嚓！照片已定格，可收藏或下載 PNG。";
+      clearDownload();renderPhoto();$("photo-status").textContent = sightContext?"旅行照已定格，可下載 PNG。景點照不影響球星收藏計數。":"喀嚓！照片已定格，可收藏或下載 PNG。";
     });
     $("retake-photo").addEventListener("click", () => { photo = null;clearDownload();$("photo-status").textContent = "重新構圖中，使用目前已儲存造型；舊收藏要按收藏才會更新。";renderPhoto(); });
     $("collect-photo").addEventListener("click", () => {
-      if (!photo || exporting) return;
+      if (!photo || exporting||sightContext) return;
       session.collect(photo);albumTab = photo.kind === "encounter" ? "encounter" : "home";renderAlbum();renderPhoto();onChange();
       $("photo-status").textContent = `已收藏！${albumTab === "encounter" ? "偶遇" : "主場"}已收集 ${albumTab === "encounter" ? session.getState().encounterCollected : session.getState().collected}／${F.STATIONS.length}。同一${albumTab === "encounter" ? "球星" : "主場"}更新只計一次。`;
     });
@@ -233,13 +243,18 @@
         const blob = await F.exportPNG(record);
         if (!starDialog.open || JSON.stringify(photo) !== JSON.stringify(record)) return;
         clearDownload();downloadURL = URL.createObjectURL(blob);
-        const link = $("photo-png-link");link.href = downloadURL;link.download = `nba-policy-island-${record.kind === "encounter" ? "encounter-" + record.starId : record.teamId}-${record.capturedAt.slice(0, 10)}.png`;link.hidden = false;link.click();
-        $("photo-status").textContent = "PNG 已產生，包含角色、球星、背景與照片文字。若沒有自動儲存，請按「另存 PNG」。";
+        const link = $("photo-png-link");link.href = downloadURL;link.download = `nba-policy-island-${record.kind==="sight"?record.locationId:record.kind === "encounter" ? "encounter-" + record.starId : record.teamId}-${record.capturedAt.slice(0, 10)}.png`;link.hidden = false;link.click();
+        $("photo-status").textContent = "PNG 已產生，包含角色、場景與照片文字。若沒有自動儲存，請按「另存 PNG」。";
       } catch { $("photo-status").textContent = "PNG 匯出未完成，請再試一次或換支援 Canvas 的瀏覽器；收藏記錄仍保留。"; }
       finally { exporting = false;renderPhoto(); }
     });
     window.addEventListener("pagehide", clearDownload);
-    return { getState: session.getState, updateLocation, refreshGame, renderEncounterPanel, openFan, openArena, savedAvatar: () => session.getState().saved, renderAvatar: avatar => F.avatarSVG(avatar) };
+    function openSight(id,background="day"){
+      const sight=root.NBASights.get(id);if(!sight?.photo||!hasArrived(id))return;
+      sightContext={id,background:background==="night"?"night":"day"};encounterContext=null;photo=null;view="studio";source="sight";clearDownload();
+      $("star-dialog-title").textContent=`${sight.name}｜觀景拍照`;$("star-era-label").textContent="原創地標街景・以已儲存造型留下旅行照";$("photo-pose").value="stand";$("photo-status").textContent="拍照後可下載 PNG，或繼續逛島。";$("arena-explore").hidden=true;$("photo-studio").hidden=false;renderPhoto();if(!starDialog.open)starDialog.showModal();$("photo-studio-title").focus();
+    }
+    return { getState: session.getState, updateLocation, refreshGame, renderEncounterPanel, openFan, openArena,openSight, savedAvatar: () => session.getState().saved, renderAvatar: avatar => F.avatarSVG(avatar) };
   }
   root.NBAFanUI = { initializeFan };
 })(typeof globalThis !== "undefined" ? globalThis : this);

@@ -2,21 +2,23 @@
 
 目前是 16 主場、16 主場合影點、3 偶遇點、15 球場／15 遊戲的原生 HTML／CSS／JavaScript 專案。可直接開啟 index.html，使用相對路徑並支援 `/nba-policy-island/`。本次未開啟瀏覽器、push、部署、套用 SQL 或修改 Supabase。
 
+另已加入 20 個美國街景、4 個步行拍照點、6 款獨立跑車與 2 條巡遊環線。地標與車輛沿用同一 world／鏡頭；操作、177 項測試與待手動項目見 [SCENERY.md](./SCENERY.md)。
+
 | 週次 | 對應功能 | 檔案位置 | 展示方式 |
 | --- | --- | --- | --- |
-| W02 CH03 | a 區內導航、dl 球隊資訊、time 開賽時間、ol 遊戲步驟 | index.html、script.js | 選湖人看台灣開賽時間；從好友 PK 區內連結到開房表單 |
-| W03 CH04 | figure／alt／figcaption、原創 SVG、政策 table／caption／th | index.html、island-map.svg、fan-core.js、policy.css | 看五大湖與球館；試算三方案；查看主場／偶遇照片 |
+| W02 CH03 | a 導覽、分類清單、dl 球隊、time 開賽時間、ol 步驟 | index.html、script.js | 常駐清單到西岸；選站抵達後看球隊／開賽資訊 |
+| W03 CH04 | figure／alt／figcaption、景點／六車分層 SVG、60 席比較表 | index.html、sights/、cars/、sights-core.js、policy-core.js | 看金門橋與車款；拍景點照；保留席 2,400 點 |
 | W04 CH05 | audio 本地進球／終場聲、noscript 簡版指南 | index.html、shot-hit.wav、round-end.wav、script.js | 勾音效，完成一球與結算；關閉後仍有文字回饋 |
-| W05 CH06 | label／fieldset／legend、政策 radio、場地 select／optgroup、range、暱稱開房 | index.html、games-ui.js、script.js | 下拉切三區場地，逆風拋投拖滑桿；輸入暱稱邀戰 |
-| W07 CH08 | 隊色、LIVE／模擬標籤、圖例、等寬比分與倒數 | style.css、games.css、island-core.js | 切四賽況、看主客比分；看遊戲命中區與節拍提示 |
-| W08 CH09 | 共用 world、relative 島圖、absolute 熱區、三層鏡頭、z-index、側欄／手機面板 | island-map.svg、explorer.css、explorer-ui.js、fan.css | 全島→西岸→勇士→回街區；地景／角色／熱區一起縮放 |
-| W09 CH12 | 算術／比較／邏輯：座標換算、道路距離、票房、命中、競速與平手 | explorer-core.js、policy-core.js、games-core.js | 途中改目的地；勇士保留席 2,400；繞樁罰秒；全能賽逐項 1／0.5 |
-| W11 CH13 | 球隊／鏡頭／行走／球星／照片／遊戲／房間物件，共用 DOM | explorer-core.js、explorer-ui.js、island-core.js、fan-core.js、games-core.js | 角色抵達才揭曉；清單與地圖同站；舊照維持造型 |
-| W12 CH14 | addEventListener、preventDefault、行走／遊戲 setInterval／clearInterval | explorer-ui.js、script.js、fan-ui.js、games-ui.js | 點區名、日夜切換、取消舊行程；重玩／離場清理；途中啟用減少動態效果 |
+| W05 CH06 | 政策 radio、場地 select／optgroup、label、fieldset、range、造型／暱稱表單 | index.html、fan-ui.js、games-ui.js | 試三方案、換裝儲存；下拉選屋頂球場與試玩 |
+| W07 CH08 | 隊色、夜景／車頭光束、LIVE、席位圖例與等寬比分 | scenery.css、bay.css、island-core.js | 日夜切換；完賽停止脈動但保留車燈／道路照明 |
+| W08 CH09 | 共用 world、absolute、按 y 排序、鏡頭與分流熱區 | scenery.css、bay.css、explorer-ui.js | 拉近橋面；人物走側道，車走車道；關閉回街區 |
+| W09 CH12 | 路徑、轉向／圓弧減速、NPC 插值、政策與勝負計算 | traffic-core.js、explorer-core.js、policy-core.js、games-core.js | 720S 過橋轉彎；途中改道；保留席 2,400 點 |
+| W11 CH13 | 景點／六車／球隊／造型／相片／遊戲的獨立物件與 DOM | sights-core.js、traffic-core.js、explorer-ui.js、fan-core.js | 地圖清單同站；景點照與兩冊球星照互不影響 |
+| W12 CH14 | addEventListener、preventDefault、車／人共用 interval、清理 | explorer-ui.js、script.js、fan-ui.js | 背景／全島暫停車流，減少動態靜止；拍照下載 |
 
 表格中的檔案除 index.html、script.js、style.css 外均位於 assets。完整球迷／照片動線見 [FAN_GUIDE.md](./FAN_GUIDE.md)，15 款規則見 [README](../README.md)，好友設定與兩裝置步驟見 [MULTIPLAYER.md](./MULTIPLAYER.md)。
 
-本版的四條地圖／角色／日夜／手機驗收，以 [EXPLORER.md](./EXPLORER.md) 為準；下方原有政策、合影、遊戲示範也持續可用。
+本版以 [FINAL_ACCEPTANCE.md](./FINAL_ACCEPTANCE.md) 的五條灣區／座位／試玩／雙裝置動線為準；一般鏡頭操作見 [EXPLORER.md](./EXPLORER.md)，下方原有政策、合影、遊戲示範也持續可用。
 
 ## 建議展示動線
 
@@ -32,12 +34,13 @@
 node --check script.js
 Get-ChildItem assets -Filter *.js | ForEach-Object { node --check $_.FullName }
 node --check assets/generate_fan_assets.cjs
+node --check assets/generate_bay_assets.cjs
 node --test tests/*.test.cjs
 python tests/check-static.py
 git diff --check
 ```
 
-本次最終結果：**131 項 Node 測試通過，0 失敗**。11 個執行用 JS 與素材產生器語法通過。241 個靜態 HTML ID 唯一，錨點與素材支援本機／Pages 子路徑；35 個素材 SVG、20 種合影 XML、5 份 CSS 括號與兩個本地 PCM WAV 通過。
+本次最終結果：**177 項 Node 測試通過，0 失敗**。15 個執行用 JS 與三個素材產生器語法通過。269 個靜態 HTML ID 唯一，錨點與素材支援本機／Pages 子路徑；原有素材與 40 份景點日夜圖、18 份車圖、8 種景點照片 XML、7 份 CSS 括號及兩個本地 PCM WAV 通過。
 
 範圍包括城市相對方位、34 熱區矩形在 viewBox 內且不互相覆蓋；16 主場合影點／15 遊戲／3 偶遇點；台灣跨日、同日一致、舊照讀取與兩類並存；15 款開始、有效操作、計分、勝負／平手、截止與重開；單次事件綁定、換場／離場清理；原有角色、政策、賽況及主場亮燈。
 

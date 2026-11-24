@@ -86,14 +86,15 @@
 node --check script.js
 Get-ChildItem assets -Filter *.js | ForEach-Object { node --check $_.FullName }
 node --check assets/generate_fan_assets.cjs
+node --check assets/generate_bay_assets.cjs
 node --test tests/*.test.cjs
 python tests/check-static.py
 git diff --check
 ```
 
-Node 共 **131 項通過、0 項失敗**。涵蓋 16 個唯一球隊 ID、15 公共球場、16 個合影點與 3 偶遇地點；同日重整、台灣午夜、48 天完整輪替、本機測試日期限制；舊收藏遷移、兩類同人照片並存、重拍不重複計數、換裝／隔天後舊照片不變。造型草稿／儲存／讀回、湖人主場夜場、標記獨立、政策三方案與 30 秒投籃回歸亦通過。
+Node 共 **163 項通過、0 項失敗**。涵蓋 16 個唯一球隊 ID、15 公共球場、16 個合影點與 3 偶遇地點；同日重整、台灣午夜、48 天完整輪替、本機測試日期限制；舊收藏遷移、兩類同人照片並存、重拍不重複計數、換裝／隔天後舊照片不變。造型草稿／儲存／讀回、湖人主場夜場、標記獨立、政策三方案與 30 秒投籃回歸亦通過。
 
-35 個 SVG 素材與 20 種合影 XML 可解析，合影各有兩個人物、沒有外部 image／foreignObject；HTML 241 個 ID 唯一、素材與錨點均使用相對路徑。五個 CSS 檔案做括號檢查，未做瀏覽器排版驗證。
+35 個 SVG 素材與 20 種合影 XML 可解析，合影各有兩個人物、沒有外部 image／foreignObject；HTML 257 個 ID 唯一、素材與錨點均使用相對路徑。六個 CSS 檔案做括號檢查，未做瀏覽器排版驗證。
 
 PNG 測試驗證 SVG 構圖、Canvas 尺寸／繪製／PNG 輸出協定、錯誤處理及下載事件，使用純 Node 的 Image／Canvas／DOM 替身，**未實際在瀏覽器光柵化或下載 PNG**。未執行真人連線或遠端 SQL。
 

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img"><title>西岸灣區：球館廣場、石板步道、木棧道與潮汐球場</title>
+    <defs><pattern id="paving" width="28" height="14" patternUnits="userSpaceOnUse" patternTransform="matrix(1 .38 -1 .38 0 0)"><rect width="28" height="14" fill="#9caeaa"/><path d="M28 0H0V14" stroke="#687f80" stroke-width="1"/></pattern><pattern id="boards" width="10" height="36" patternUnits="userSpaceOnUse" patternTransform="rotate(-27)"><rect width="10" height="36" fill="#a58b62"/><path d="M1 0V36M7 5v12" stroke="#735f48" stroke-width="1"/></pattern></defs>
+    <g fill="#0a2230" opacity=".25"><ellipse cx="289" cy="387" rx="105" ry="32"/><path d="m212 636 110 23 88 90-88 38-150-86Z"/></g>
+    <path d="m176 365 85-45 103 55-82 47-106-55Z" fill="#506b73"/>
+    <path d="m176 347 85-45 103 55-82 47-106-55Z" fill="url(#paving)" stroke="#c3c6ad" stroke-width="2"/>
+    <path d="m283 383 57 26-11 6-57-26Zm-4 5 57 26-11 6-57-26Zm-4 5 57 26-11 6-57-26Z" fill="#c9c4a5" stroke="#748783"/>
+    <path d="M303 388 323 438 299 579 273 686 398 736" fill="none" stroke="#354e55" stroke-width="26"/>
+    <path d="M303 382 323 432 299 573 273 680 398 730" fill="none" stroke="url(#paving)" stroke-width="19"/>
+    <path d="m176 636 89-38 63 64-42 65-101-24Z" fill="#314a53"/>
+    <path d="m176 628 89-38 63 64-42 65-101-24Z" fill="url(#boards)" stroke="#d4bd8b" stroke-width="2"/>
+    <path d="m248 669 25 10 125 50-4 14-128-51-25-10Z" fill="#3f5559"/>
+    <path d="m248 662 25 10 125 50-4 14-128-51-25-10Z" fill="url(#boards)" stroke="#dac596" stroke-width="2"/>
+    <g stroke="#665341" stroke-width="8"><path d="M188 684v28m25-16v28m62-6v26m35-63v25m-30-6v30m43-13v29m43-12v28"/></g>
+    <g fill="#405454" stroke="#cbbd8d" stroke-width="2"><ellipse cx="182" cy="651" rx="4" ry="3"/><ellipse cx="201" cy="692" rx="4" ry="3"/><ellipse cx="278" cy="710" rx="4" ry="3"/></g>
+    <path d="m154 696 38-7-9 20-17 5Z" fill="#e2c994" stroke="#2d4e63" stroke-width="3"/><path d="m170 698 14-4-5 9-8 2Z" fill="#447c94"/>
+    <path d="m171 714 18-6m-24 13 28-8" stroke="#81b7bd" fill="none" opacity=".5"/>
+    <path d="m300 697 52-28 55 30v42l-55 28-52-28Z" fill="#385762"/><path d="m300 689 52-28 55 30v42l-55 28-52-28Z" fill="#6b8c82" stroke="#a8bba6" stroke-width="2"/>
+    <g fill="#aebeb0" stroke="#4b6c69"><path d="m335 728 65-33 38 20-65 34v9l-38-20Z"/><path d="m326 738 65-32 8 5-65 33Z"/><path d="m322 745 65-32 8 5-65 33Z"/></g>
+    <g fill="#a58c64" stroke="#d4bd91"><path d="m207 638 26-12 9 5-26 12Z"/><path d="m207 643 26-12 9 5-26 12Z"/></g>
+    <g fill="#162f3c" opacity=".3"><ellipse cx="197" cy="610" rx="16" ry="6"/><ellipse cx="338" cy="449" rx="17" ry="7"/></g>
+    <g stroke="#5c6851" stroke-width="3"><path d="M190 607v-22m142 58v-25"/></g><g fill="#3d785e"><path d="m174 596 16-31 18 31Z"/><path d="m315 635 17-33 19 33Z"/></g>
+  </svg>

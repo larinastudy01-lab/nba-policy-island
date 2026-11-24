@@ -1,0 +1,27 @@
+/* 全部景物、車輛與步行點沿用 1600×1000 world，不使用螢幕座標定位。 */
+#scenery-layer,#traffic-layer { display:contents; }
+.scenery-ground { position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none; }
+.traffic-roads { position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none; }
+.scenic-art { position:absolute;object-fit:fill;pointer-events:none; }
+.scenic-point { position:absolute;width:1.5%;height:2.4%;min-width:0;padding:0;transform:translate(-50%,-50%);border:0;background:none;color:#fff4cf;cursor:pointer;overflow:visible; }
+.scenic-icon { display:grid;place-items:center;width:100%;height:100%;border:1px solid #9bcbbe;border-radius:50%;background:#193e47dd;font-size:clamp(8px,1vw,13px);box-shadow:1px 3px 3px #051c3377; }
+.scenic-label { position:absolute;left:50%;bottom:115%;transform:translateX(-50%) scale(calc(1 / var(--camera-scale,1)));transform-origin:50% 100%;white-space:nowrap;background:#132e42ed;border:1px solid #6da5a1;border-radius:5px;padding:3px 6px;font-size:12px;line-height:1.3;pointer-events:none; }
+.scenic-point[data-label="false"] .scenic-label { opacity:0; }
+.scenic-point:focus-visible { outline:3px solid #fff1a8;outline-offset:4px; }
+.scenic-point:focus-visible .scenic-label,.scenic-point:hover .scenic-label,.scenic-point[data-selected="true"] .scenic-label { opacity:1; }
+.scenic-point[data-selected="true"] .scenic-icon { border:2px solid #ffda75;box-shadow:0 0 0 3px #f3c45b55; }
+.island-car { position:absolute;width:3.25%;height:4%;transform:translate(-50%,-72%);pointer-events:none; }
+.island-car img { position:relative;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none; }
+.island-car[data-overview="true"] { opacity:.45; }
+.island-car[data-overview="true"] img { filter:brightness(.7); }
+.car-headlight { position:absolute;left:50%;top:72%;width:150%;height:80%;transform-origin:0 50%;margin-top:0;background:linear-gradient(90deg,#fff2b078,#fff1b033 55%,transparent);clip-path:polygon(12% 33%,100% 0,100% 100%,12% 67%);filter:blur(1px);pointer-events:none;z-index:0; }
+#island-map[data-theme="night"] .scenic-art { filter:brightness(.77) saturate(.85); }
+#island-map[data-theme="night"] .scenery-ground { filter:brightness(.68) saturate(.85); }
+#island-map[data-theme="night"] .traffic-roads { filter:brightness(.72); }
+#island-map[data-theme="night"] .island-car img { filter:brightness(.8); }
+#sight-panel figure { margin:0 0 18px; }
+#sight-image { display:block;width:100%;height:auto;max-height:270px;background:linear-gradient(150deg,#386b7b,#193e50);border-radius:16px;padding:12px; }
+#sight-description { margin:12px 0;color:#c3d3dd;line-height:1.7; }
+#sight-panel .button { margin:8px 0; }
+@media(max-width:700px) { .directory-filters { flex-wrap:wrap; }.scenic-label{font-size:11px}.scenic-point { width:2%;height:3.2%; } }
+@media(prefers-reduced-motion:reduce){.island-car,.scenic-point{transition:none;animation:none}}

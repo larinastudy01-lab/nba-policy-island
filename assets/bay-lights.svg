@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img"><title>灣區夜間照明：暖白階梯、暖黃棧道與冷白球場</title>
+    <g fill="#ffe9c3" opacity=".35"><ellipse cx="303" cy="386" rx="40" ry="15"/><ellipse cx="282" cy="373" rx="25" ry="10"/></g>
+    <g fill="#ffd47e" opacity=".26"><ellipse cx="229" cy="650" rx="28" ry="12"/><ellipse cx="283" cy="687" rx="28" ry="12"/></g>
+    <g fill="#b9e7ff" opacity=".22"><ellipse cx="363" cy="714" rx="48" ry="25"/></g>
+    <g stroke="#ffd78a" stroke-linecap="round" opacity=".6"><path d="m154 674 28-7m-31 13 35-8m-21 16 21-6m28 32 28-5m-23 10 30-6"/></g>
+    <g stroke="#fff0ce" stroke-width="2"><path d="m277 389 53 25m-56-19 50 23"/></g>
+    <g fill="#ffde90"><circle cx="221" cy="625" r="3"/><circle cx="280" cy="658" r="3"/><circle cx="317" cy="677" r="3"/></g>
+  </svg>
