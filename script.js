@@ -1,309 +1,161 @@
 "use strict";
 
-// 站點、投影座標與模擬賽事集中於此。新增球隊時沿用同一資料結構。
-// 地圖採 Albers 等積投影，viewBox 0 0 1000 620；座標與 assets/us-map.svg 一致。
-const TOUR_DATA = {
-  map: { width: 1000, height: 620 },
-  initialState: "live",
-  stations: [
-    {
-      id: "warriors",
-      name: "金州勇士",
-      shortName: "勇士",
-      englishName: "Golden State Warriors",
-      city: "舊金山・加州",
-      cityEnglish: "San Francisco, CA",
-      coordinates: { longitude: -122.4194, latitude: 37.7749, x: 61.1088, y: 267.3317 },
-      games: {
-        idle: { status: "今日無賽事", opponent: null, homeScore: null, awayScore: null, period: null, startTime: null },
-        scheduled: { status: "尚未開打", opponent: "湖人", homeScore: null, awayScore: null, period: null, startTime: "11:00", timeZone: "台灣時間" },
-        live: { status: "LIVE", opponent: "湖人", homeScore: 78, awayScore: 74, period: "第 3 節", startTime: null },
-        final: { status: "完賽", opponent: "湖人", homeScore: 108, awayScore: 101, period: null, startTime: null }
-      }
-    }
-  ]
-};
-
-// 本關為自訂模擬；計算與完成進度不讀取或改動 TOUR_DATA 的賽況。
-const POLICY_CHALLENGE = {
-  id: "warriors-ticket-allocation",
-  stationId: "warriors",
-  storageKey: "nba-policy-island:policy-progress:v1",
-  tickets: 60,
-  students: { registered: 20, budget: 30 },
-  generalFans: { registered: 60, budget: 45 },
-  prices: { regular: 45, student: 30, lottery: 30 },
-  studentSeats: 20,
-  goals: { students: 15, revenue: 2000 },
-  plans: [
-    { id: "regular", name: "原價售票", tradeoff: "票房最高，但原價超過學生預算，沒有學生能入場。" },
-    { id: "reserved", name: "學生保留席", tradeoff: "用部分票房換取學生入場機會，仍能同時達到學生人數與收入目標。" },
-    { id: "lottery", name: "全場降價抽籤", tradeoff: "所有登記者都有相同中籤機率，但收入低於目標，且單次抽籤不保證學生人數。" }
-  ]
-};
-
-function calculatePolicy(planId) {
-  const data = POLICY_CHALLENGE;
-  const plan = data.plans.find((item) => item.id === planId);
-  if (!plan) throw new RangeError("Unknown policy plan.");
-  let students = 0;
-  let generalFans = 0;
-  let revenue = 0;
-  let formula = "";
-  let lotteryChance = null;
-
-  if (planId === "regular") {
-    // 本情境學生預算低於原價，原價票由負擔得起的一般球迷購買。
-    students = data.students.budget >= data.prices.regular ? Math.min(data.students.registered, data.tickets) : 0;
-    generalFans = data.generalFans.budget >= data.prices.regular ? Math.min(data.generalFans.registered, data.tickets - students) : 0;
-    revenue = (students + generalFans) * data.prices.regular;
-    formula = `${students + generalFans} 張 × ${data.prices.regular} 點 = ${revenue.toLocaleString("zh-TW")} 點`;
-  } else if (planId === "reserved") {
-    students = data.students.budget >= data.prices.student ? Math.min(data.studentSeats, data.students.registered, data.tickets) : 0;
-    generalFans = data.generalFans.budget >= data.prices.regular ? Math.min(data.generalFans.registered, data.tickets - data.studentSeats) : 0;
-    revenue = students * data.prices.student + generalFans * data.prices.regular;
-    formula = `${students} 張 × ${data.prices.student} 點 ＋ ${generalFans} 張 × ${data.prices.regular} 點 = ${revenue.toLocaleString("zh-TW")} 點`;
-  } else {
-    const eligibleStudents = data.students.budget >= data.prices.lottery ? data.students.registered : 0;
-    const eligibleFans = data.generalFans.budget >= data.prices.lottery ? data.generalFans.registered : 0;
-    const pool = eligibleStudents + eligibleFans;
-    const sold = Math.min(data.tickets, pool);
-    lotteryChance = pool === 0 ? 0 : sold / pool;
-    students = eligibleStudents * lotteryChance;
-    generalFans = eligibleFans * lotteryChance;
-    revenue = sold * data.prices.lottery;
-    formula = `${sold} 張 × ${data.prices.lottery} 點 = ${revenue.toLocaleString("zh-TW")} 點；每人中籤機率 ${sold} ÷ ${pool} = ${lotteryChance * 100}%`;
-  }
-
-  const studentGoalMet = students >= data.goals.students;
-  const revenueGoalMet = revenue >= data.goals.revenue;
-  return {
-    planId, name: plan.name, students, generalFans, total: students + generalFans, revenue,
-    isExpected: planId === "lottery", lotteryChance, studentGoalMet, revenueGoalMet,
-    passed: studentGoalMet && revenueGoalMet, formula, tradeoff: plan.tradeoff
-  };
-}
-
-// storage 由呼叫端提供，可在終端機測試，亦能處理儲存權限被拒絕的環境。
-// 完成代表已確認一項決策；是否達成兩項目標由 calculatePolicy 分開判定。
-function createPolicySession(storage) {
-  let selectedPlan = "regular";
-  let result = null;
-  let completedPlanId = null;
-  let comparisonVisible = false;
-  let storageAvailable = Boolean(storage && typeof storage.getItem === "function" && typeof storage.setItem === "function");
-  let raw = null;
-  if (storageAvailable) {
-    try { raw = storage.getItem(POLICY_CHALLENGE.storageKey); }
-    catch { storageAvailable = false; }
-  }
-  try {
-    const saved = JSON.parse(raw);
-    if (saved && saved.version === 1 && saved.challengeId === POLICY_CHALLENGE.id && saved.stationId === POLICY_CHALLENGE.stationId && saved.completed === true && POLICY_CHALLENGE.plans.some((plan) => plan.id === saved.planId)) {
-      selectedPlan = saved.planId;
-      completedPlanId = saved.planId;
-      result = calculatePolicy(saved.planId);
-      comparisonVisible = true;
-    }
-  } catch { /* 無效或舊版紀錄不影響關卡運行。 */ }
-
-  return {
-    getState() {
-      return { selectedPlan, result: result ? { ...result } : null, completedPlanId, comparisonVisible, storageAvailable };
-    },
-    selectPlan(planId) {
-      if (!POLICY_CHALLENGE.plans.some((plan) => plan.id === planId)) throw new RangeError("Unknown policy plan.");
-      if (selectedPlan !== planId) {
-        selectedPlan = planId;
-        result = null;
-      }
-    },
-    simulate() {
-      result = calculatePolicy(selectedPlan);
-      comparisonVisible = true;
-      return { ...result };
-    },
-    retry() {
-      result = null;
-    },
-    confirm() {
-      if (!result || result.planId !== selectedPlan) return false;
-      completedPlanId = selectedPlan;
-      if (storageAvailable) {
-        try {
-          storage.setItem(POLICY_CHALLENGE.storageKey, JSON.stringify({
-            version: 1, challengeId: POLICY_CHALLENGE.id, stationId: POLICY_CHALLENGE.stationId,
-            completed: true, planId: completedPlanId
-          }));
-        } catch { storageAvailable = false; }
-      }
-      return true;
-    }
-  };
-}
-
-function initializeApp() {
+function initializeIsland() {
+  const C = globalThis.NBAIsland;
+  const { POLICY_CHALLENGE, calculatePolicy, createPolicySession } = globalThis.NBAPolicy;
+  const $ = (id) => document.getElementById(id);
+  const escapeHTML = (value) => String(value).replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
+  const announce = (message) => { $("live-announcement").textContent = message; };
   let storage = null;
-  try { storage = window.localStorage; } catch { /* 本機或隱私模式可能限制儲存。 */ }
+  try { storage = window.localStorage; } catch { /* 保留單次頁面功能。 */ }
   const policySession = createPolicySession(storage);
-  const uiState = { stationId: "warriors", gameState: TOUR_DATA.initialState, cardOpen: true };
-  const elements = {
-    markers: document.querySelector("#station-markers"),
-    scoreboard: document.querySelector("#map-scoreboard"),
-    card: document.querySelector("#station-card"),
-    placeholder: document.querySelector("#station-placeholder"),
-    stationGame: document.querySelector("#station-game"),
-    stationTitle: document.querySelector("#station-title"),
-    stationEnglish: document.querySelector("#station-english"),
-    stationCity: document.querySelector("#station-city"),
-    announcement: document.querySelector("#game-announcement"),
-    closeButton: document.querySelector("#close-station"),
-    openButton: document.querySelector("#open-station"),
-    controls: document.querySelectorAll('input[name="game-state"]')
-  };
+  const state = C.createIslandState();
+  const adapter = globalThis.NBAOnline.createSupabaseAdapter(globalThis.NBA_SUPABASE_CONFIG, {storage});
+  const mapNodes = new Map();
+  const listNodes = new Map();
+  let policyOpen = false;
+  let onlineReady = false;
+  let activityRows = null;
+  let roomSnapshot = null;
+  let onlineBusy = false;
+  let polling = false;
+  let serverOffset = 0;
+  let game = null;
+  let gameMode = null;
+  let gameCourtId = null;
+  let gameRoomId = null;
+  let gameRound = null;
+  let gameTimer = null;
+  let gameFinished = false;
+  let pendingScore = null;
+  let scoreSubmitting = false;
+  let lastResultToken = null;
+  const ns = "http://www.w3.org/2000/svg";
 
-  const basketballSVG = '<svg class="basketball" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21.5"/><path fill="none" d="M2.5 24h43M24 2.5v43M9 8q30 16 0 32M39 8Q9 24 39 40"/></svg>';
-
-  // 模板只使用本地設定；轉義文字，方便之後替換資料來源。
-  function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+  function arenaGraphic(team) {
+    return `<ellipse class="arena-halo" cy="-12" rx="73" ry="43"/><ellipse cy="17" rx="62" ry="23" fill="#0a2539" opacity=".5"/><path d="M-55-28 0 2V27L-55-3Z" fill="#536c7b"/><path d="M0 2 55-28V-3L0 27Z" fill="#274456"/><path d="M-55-28 0-58 55-28 0 2Z" fill="${team.color}" stroke="${team.accent}" stroke-width="1.5"/><path d="M-42-29 0-51 42-29 0-7ZM-24-40 24-15M-24-15 24-40" fill="none" stroke="#ffffff25"/><path class="arena-rim" d="M-55-28 0 2 55-28" fill="none" stroke="#9aabb1"/><path d="M-44-10v9m10-4v9m10-4v9m45-7v9m12-15v9m12-16v9" stroke="#f3dc8b99" stroke-width="2"/><text class="roof-text" y="-23">${team.abbr}</text><text class="landmark-label" y="47">${escapeHTML(team.shortName)}主場</text><ellipse class="selection-ring" cy="-9" rx="77" ry="53"/><rect class="hit-area" x="-76" y="-65" width="152" height="118"/>`;
   }
-
-  function currentStation() {
-    return TOUR_DATA.stations.find((station) => station.id === uiState.stationId);
+  function courtGraphic(court) {
+    const depth = court.type === "roof" ? 25 : 7;
+    return `<ellipse cy="17" rx="43" ry="18" fill="#0a2539" opacity=".45"/><path d="M-43-18 0 4 43-18V${depth-16}L0 ${depth+5} -43 ${depth-16}Z" fill="${court.type === "roof" ? "#52677b" : "#355d56"}"/><g transform="matrix(1 .5 -1 .5 0 -18)"><rect x="-26" y="-17" width="52" height="34" fill="${court.color}" stroke="#e0e3ca"/><path d="M0-17v34M-26-7h12V7h-12M26-7H14V7h12" fill="none" stroke="#e0e3ca" stroke-width=".8"/><circle r="6" fill="none" stroke="#e0e3ca" stroke-width=".8"/></g><path d="M-29-23v-18m58 18v-18" stroke="#b9d0cf" stroke-width="1.8"/><path d="m-36-42 14 0m0 3-14 0m51-3h14m0 3H22" stroke="#ecded1" stroke-width="2"/><ellipse cx="-29" cy="-35" rx="5" ry="2" fill="none" stroke="#f3c45b"/><ellipse cx="29" cy="-35" rx="5" ry="2" fill="none" stroke="#f3c45b"/><text class="landmark-label court-label" y="${depth+23}">${escapeHTML(court.name)}</text><ellipse class="selection-ring" cy="-8" rx="49" ry="37"/><rect class="hit-area" x="-50" y="-48" width="100" height="${depth+83}"/>`;
   }
-
-  function gameSummary(station, game, state) {
-    if (state === "idle") return `${station.shortName}站｜今日無賽事`;
-    if (state === "scheduled") return `${station.shortName} vs ${game.opponent}｜${game.startTime} 開打（${game.timeZone}）`;
-    const score = `${station.shortName} ${game.homeScore}：${game.awayScore} ${game.opponent}`;
-    return state === "live" ? `LIVE｜${score}｜${game.period}｜模擬` : `完賽｜${score}｜模擬`;
+  function buildLandmarks() {
+    for (const [kind,items] of [["nba",C.TEAMS],["court",C.COURTS]]) {
+      for (const item of items) {
+        const node = document.createElementNS(ns,"g");
+        node.id = `landmark-${item.id}`;
+        node.classList.add("landmark");
+        node.dataset.kind = kind;
+        node.setAttribute("transform",`translate(${item.x} ${item.y})`);
+        node.setAttribute("tabindex","0");
+        node.setAttribute("role","button");
+        node.setAttribute("aria-controls","station-panel");
+        node.style.setProperty("--team-accent",item.accent || "#f3c45b");
+        node.innerHTML = kind === "nba" ? arenaGraphic(item) : courtGraphic(item);
+        const badge = document.createElementNS(ns,"text");
+        badge.classList.add("complete-label");
+        badge.setAttribute("x","52"); badge.setAttribute("y","-43");
+        badge.setAttribute("aria-hidden","true");badge.textContent="✓";
+        node.append(badge);
+        node.addEventListener("click",()=>openLandmark(kind,item.id));
+        node.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();if(!event.repeat)openLandmark(kind,item.id);}});
+        $("landmark-layer").append(node);
+        mapNodes.set(item.id,{node,badge});
+        const button = document.createElement("button");
+        button.type="button";button.id=`list-${item.id}`;
+        button.style.setProperty("--team-color",item.color);
+        button.style.setProperty("--team-accent",item.accent||"#e4efdd");
+        button.setAttribute("aria-controls","station-panel");
+        button.addEventListener("click",()=>openLandmark(kind,item.id));
+        $("station-list").append(button);
+        listNodes.set(item.id,{button,kind,item});
+      }
+    }
   }
-
-  function statusHTML(game) {
-    return `<span class="status-dot" aria-hidden="true"></span>${escapeHTML(game.status)}<span class="demo-tag">模擬</span>`;
+  function courtStatus(id) {
+    const activity = C.courtActivity(activityRows,id);
+    if(activity === null)return adapter.configured ? "狀態待連線確認" : "真人連線未配置";
+    return activity.waiting || activity.preparing || activity.playing ? `等待對手 ${activity.waiting} 房 · 對戰中 ${activity.playing} 房` : "目前無等待或對戰中的房間";
   }
-
-  function scoreboardHTML(station, game, state) {
-    const period = state === "live" ? game.period : state === "final" ? "最終比分" : "勇士站";
-    const top = `<div class="scoreboard-top"><span class="scoreboard-status">${statusHTML(game)}</span><span class="scoreboard-period">${escapeHTML(period)}</span></div>`;
-    if (state === "idle") return `${top}<div class="scoreboard-idle">今日無賽事</div><div class="scoreboard-footer">灣區熱情，持續在線。</div>`;
-    const isScheduled = state === "scheduled";
-    const match = `<div class="scoreboard-match"><div class="score-team"><span class="score-team-name">${escapeHTML(station.shortName)}</span>${isScheduled ? "" : `<strong>${game.homeScore}</strong>`}</div><span class="score-colon">${isScheduled ? "VS" : "："}</span><div class="score-team"><span class="score-team-name">${escapeHTML(game.opponent)}</span>${isScheduled ? "" : `<strong>${game.awayScore}</strong>`}</div></div>`;
-    const caption = isScheduled ? `${game.startTime} 開打（${game.timeZone}）` : state === "live" ? "灣區主場 · 比賽進行中" : "比賽結束 · 最終比分";
-    return `${top}${match}<div class="scoreboard-footer">${escapeHTML(caption)}</div>`;
+  function renderMapAndDirectory() {
+    const complete = policySession.getState().completedPlanId !== null;
+    $("open-team-count").textContent=`${C.TEAMS.length}／30`;
+    $("filter-nba").setAttribute("aria-pressed",String(state.filter==="nba"));
+    $("filter-court").setAttribute("aria-pressed",String(state.filter==="court"));
+    for(const [id,{node,badge}] of mapNodes) {
+      const kind=node.dataset.kind;
+      const item=C.getLandmark(kind,id);
+      const selected=state.kind===kind&&state.id===id;
+      node.dataset.selected=String(selected);node.dataset.muted=String(state.filter!==kind);
+      node.setAttribute("aria-pressed",String(selected));
+      const done=kind==="nba"&&id==="warriors"&&complete;
+      badge.setAttribute("visibility",done?"visible":"hidden");
+      let status=courtStatus(id);
+      if(kind==="nba"){
+        const match=C.gameForTeam(id,state.gameState);
+        node.dataset.state=match.state;node.dataset.glowing=String(match.glowing);
+        status=`模擬${{idle:"無賽事",scheduled:"待開打",live:"進行中",final:"已完賽"}[match.state]}，${match.isHome?"本場主隊":"本場客隊"}${done?"，政策挑戰已完成":""}`;
+      }
+      node.setAttribute("aria-label",`${item.name}，${item.region}，${status}`);
+      const entry=listNodes.get(id);
+      entry.button.hidden=kind!==state.filter;
+      entry.button.setAttribute("aria-pressed",String(selected));
+      entry.button.setAttribute("aria-label",`${item.name}，${status}`);
+      entry.button.innerHTML=`<span class="list-symbol" aria-hidden="true">${kind==="nba"?item.abbr:item.type==="harbor"?"港邊":item.type==="park"?"公園":"屋頂"}</span><span class="list-copy"><strong>${escapeHTML(item.name)}${done?" ✓":""}</strong><small>${escapeHTML(kind==="nba"?item.region:status)}</small></span>`;
+    }
   }
-
-  function stationGameHTML(station, game, state) {
-    const round = state === "live" ? game.period : state === "final" ? "FINAL" : "模擬情境";
-    const top = `<div class="game-state-row"><span class="game-status">${statusHTML(game)}</span><span class="game-round">${escapeHTML(round)}</span></div>`;
-    if (state === "idle") return `${top}<p class="detail-message">今天，先逛逛灣區。</p><p class="detail-caption idle-caption">勇士今日沒有安排賽事。<br>切換下方情境，體驗不同的球場狀態。</p>`;
-    const isScheduled = state === "scheduled";
-    const match = `<div class="detail-match"><div class="detail-team"><span>金州勇士</span><strong>${isScheduled ? "GSW" : game.homeScore}</strong></div><span class="detail-separator">${isScheduled ? "VS" : "："}</span><div class="detail-team"><span>${escapeHTML(game.opponent)}</span><strong>${isScheduled ? "LAL" : game.awayScore}</strong></div></div>`;
-    const caption = isScheduled ? `<p class="detail-time">${game.startTime} 開打（${game.timeZone}）</p>` : `<p class="detail-caption">${state === "live" ? "比賽進行中 · 本地模擬比分" : "比賽結束 · 最終比分保留"}</p>`;
-    return `${top}${match}${caption}`;
+  function scoreboardHTML(match) {
+    const labels={idle:"今日無賽事",scheduled:"待開打",live:"LIVE",final:"完賽"};
+    const top=`<div class="scoreboard-top"><span class="${match.state==="live"?"live-label":""}">${labels[match.state]} <span class="demo-tag">模擬賽事</span></span><span>${match.period|| (match.state==="final"?"最終比分":"台灣時間")}</span></div>`;
+    if(match.state==="idle")return top+'<div class="scoreboard-idle">今日無賽事，先逛逛這座島。</div>';
+    const rows=[["主隊",match.home,match.homeScore],["客隊",match.away,match.awayScore]].map(([side,team,score])=>`<div class="scoreboard-row"><span class="side-label">${side}</span><strong>${escapeHTML(team.shortName)} <small>${team.abbr}</small></strong><b>${score===null?"—":score}</b></div>`).join("");
+    return `${top}<div class="scoreboard-rows">${rows}</div><div class="scoreboard-footer">${match.state==="scheduled"?`${match.startTime} 開打（台灣時間 UTC+8）`:match.state==="live"?`${match.period}・主隊球館亮燈中`:"比賽結束・最終比分保留"}</div>`;
   }
-
-  function selectStation(stationId, moveFocus = true) {
-    uiState.stationId = stationId;
-    uiState.cardOpen = true;
-    render();
-    if (moveFocus) elements.stationTitle.focus({ preventScroll: true });
-  }
-
-  function buildMarkers() {
-    TOUR_DATA.stations.forEach((station) => {
-      const marker = document.createElement("button");
-      marker.type = "button";
-      marker.className = "station-marker";
-      marker.id = `marker-${station.id}`;
-      marker.style.left = `${station.coordinates.x / TOUR_DATA.map.width * 100}%`;
-      marker.style.top = `${station.coordinates.y / TOUR_DATA.map.height * 100}%`;
-      marker.setAttribute("aria-controls", "station-card");
-      marker.innerHTML = `${basketballSVG}<span class="marker-label" aria-hidden="true">${escapeHTML(station.shortName)}站<small>SAN FRANCISCO</small></span>`;
-      const completeBadge = document.createElement("span");
-      completeBadge.className = "marker-complete";
-      completeBadge.textContent = "✓";
-      completeBadge.hidden = true;
-      completeBadge.setAttribute("aria-hidden", "true");
-      marker.append(completeBadge);
-      // 原生 button 自帶滑鼠、觸控、Enter、Space 啟用行為。
-      marker.addEventListener("click", () => selectStation(station.id));
-      elements.markers.append(marker);
-    });
-  }
-
-  // 地圖記分牌、資訊卡、無障礙標籤皆讀取同一筆 game，一次更新。
-  function render() {
-    const station = currentStation();
-    const state = uiState.gameState;
-    const game = station.games[state];
-    const summary = gameSummary(station, game, state);
-
-    TOUR_DATA.stations.forEach((item) => {
-      const marker = document.querySelector(`#marker-${item.id}`);
-      marker.dataset.state = state;
-      marker.setAttribute("aria-expanded", String(uiState.cardOpen && item.id === station.id));
-    });
-
-    elements.scoreboard.dataset.state = state;
-    elements.scoreboard.setAttribute("aria-label", `模擬賽事：${summary}`);
-    elements.scoreboard.innerHTML = scoreboardHTML(station, game, state);
-    elements.stationGame.dataset.state = state;
-    elements.stationGame.innerHTML = stationGameHTML(station, game, state);
-    elements.stationTitle.firstChild.textContent = station.name;
-    elements.stationEnglish.textContent = station.englishName.toUpperCase();
-    elements.stationCity.textContent = station.city;
-    document.querySelector(".city-english").textContent = station.cityEnglish;
-    elements.card.hidden = !uiState.cardOpen;
-    elements.placeholder.hidden = uiState.cardOpen;
-    elements.controls.forEach((input) => { input.checked = input.value === state; });
+  function renderPanel() {
+    const item=C.getLandmark(state.kind,state.id);
+    $("panel-title").textContent=item.name;
+    $("panel-category").textContent=`${item.region} / ${state.kind==="nba"?"NBA ARENA":"PUBLIC COURT"}`;
+    $("nba-panel").hidden=state.kind!=="nba";
+    $("court-panel").hidden=state.kind!=="court";
+    if(state.kind==="nba"){
+      const match=C.gameForTeam(item.id,state.gameState);
+      $("team-badge").textContent=item.abbr;
+      $("team-badge").style.setProperty("--team-color",item.color);
+      $("team-badge").style.setProperty("--team-accent",item.accent);
+      $("team-english").textContent=item.englishName;
+      $("team-side").textContent=`${item.region}・${match.isHome?"本場主隊":"本場客隊（主場球館本場不亮燈）"}`;
+      $("team-game").dataset.state=match.state;
+      $("team-game").innerHTML=scoreboardHTML(match);
+      $("policy-launch").hidden=item.id!=="warriors";
+      $("team-policy-status").hidden=item.id!=="warriors";
+      $("other-team-note").hidden=item.id==="warriors";
+      $("policy-challenge").hidden=item.id!=="warriors"||!policyOpen;
+    }else{
+      $("court-description").textContent=`${item.region}球場・${item.name}。這座露天球場和其他 14 座球場共用 30 秒投籃規則；好友房間只在指定球場內加入。`;
+      $("court-activity").textContent=`真人房間：${courtStatus(item.id)}`;
+      renderRoom();
+    }
     renderPolicyProgress();
   }
-
-  elements.controls.forEach((input) => {
-    input.addEventListener("change", (event) => {
-      const nextState = event.target.value;
-      if (!Object.prototype.hasOwnProperty.call(currentStation().games, nextState)) return;
-      uiState.gameState = nextState;
-      render();
-      elements.announcement.textContent = `模擬賽事已切換：${gameSummary(currentStation(), currentStation().games[nextState], nextState)}`;
-    });
-  });
-
-  function closeStation() {
-    uiState.cardOpen = false;
-    render();
-    document.querySelector(`#marker-${uiState.stationId}`).focus({ preventScroll: true });
+  function openLandmark(kind,id,focus=true) {
+    C.selectLandmark(state,kind,id);
+    renderMapAndDirectory();renderPanel();
+    if(focus)$("panel-title").focus();
+    announce(`已開啟${C.getLandmark(kind,id).name}${kind==="nba"?"主場":"球場"}面板。`);
+    if(kind==="court"&&onlineReady)refreshMyRooms();
   }
-
-  elements.closeButton.addEventListener("click", closeStation);
-  elements.openButton.addEventListener("click", () => selectStation(uiState.stationId));
-  elements.card.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      event.preventDefault();
-      closeStation();
-    }
-  });
+  function setFilter(kind) {state.filter=kind;renderMapAndDirectory();}
+  $("filter-nba").addEventListener("click",()=>setFilter("nba"));
+  $("filter-court").addEventListener("click",()=>setFilter("court"));
+  $("quick-nba").addEventListener("click",()=>openLandmark("nba","warriors"));
+  $("quick-courts").addEventListener("click",()=>openLandmark("court",C.COURTS[0].id));
+  document.querySelectorAll('input[name="game-state"]').forEach(input=>input.addEventListener("change",()=>{if(!input.checked)return;C.setGameState(state,input.value);renderMapAndDirectory();renderPanel();announce("模擬賽況已更新；政策與真人房間不受影響。");}));
+  $("policy-launch").addEventListener("click",()=>{policyOpen=!policyOpen;$("policy-challenge").hidden=!policyOpen;$("policy-launch").setAttribute("aria-expanded",String(policyOpen));if(policyOpen)$("policy-title").focus();});
+  $("policy-title").setAttribute("tabindex","-1");
 
   const policyElements = {
-    form: document.querySelector("#policy-form"),
-    options: document.querySelectorAll('input[name="policy-plan"]'),
-    results: document.querySelector("#policy-results"),
-    resultTitle: document.querySelector("#policy-result-title"),
-    resultContent: document.querySelector("#policy-result-content"),
-    confirm: document.querySelector("#confirm-policy"),
-    retry: document.querySelector("#retry-policy"),
-    comparison: document.querySelector("#policy-comparison"),
-    comparisonCards: document.querySelector("#policy-comparison-cards"),
-    completion: document.querySelector("#policy-completion-message"),
-    storageMessage: document.querySelector("#policy-storage-message"),
-    hint: document.querySelector("#policy-trial-hint"),
-    announcement: document.querySelector("#policy-announcement"),
-    mapProgress: document.querySelector("#map-policy-progress"),
-    stationStatus: document.querySelector("#station-policy-status")
+    form:$("policy-form"),options:document.querySelectorAll('input[name="policy-plan"]'),results:$("policy-results"),resultTitle:$("policy-result-title"),resultContent:$("policy-result-content"),confirm:$("confirm-policy"),retry:$("retry-policy"),comparison:$("policy-comparison"),comparisonCards:$("policy-comparison-cards"),completion:$("policy-completion-message"),storageMessage:$("policy-storage-message"),hint:$("policy-trial-hint"),announcement:$("policy-announcement")
   };
-
   function number(value) {
     return value.toLocaleString("zh-TW", { maximumFractionDigits: 2 });
   }
@@ -329,25 +181,16 @@ function initializeApp() {
     }).join("");
   }
 
-  function renderPolicyProgress() {
-    const state = policySession.getState();
-    const completed = state.completedPlanId !== null;
-    policyElements.mapProgress.textContent = `已完成 ${completed ? 1 : 0}／1 個政策挑戰`;
-    policyElements.mapProgress.dataset.completed = String(completed);
-    policyElements.stationStatus.textContent = completed ? "✓ 政策挑戰・已完成" : "政策挑戰・尚未完成";
-    policyElements.stationStatus.dataset.completed = String(completed);
-    TOUR_DATA.stations.forEach((station) => {
-      const marker = document.querySelector(`#marker-${station.id}`);
-      const stationCompleted = completed && station.id === POLICY_CHALLENGE.stationId;
-      marker.dataset.policyCompleted = String(stationCompleted);
-      marker.querySelector(".marker-complete").hidden = !stationCompleted;
-      const summary = gameSummary(station, station.games[uiState.gameState], uiState.gameState);
-      const progress = stationCompleted ? "，政策挑戰已完成" : "，政策挑戰尚未完成";
-      marker.setAttribute("aria-label", `開啟${station.name}站資訊，${summary}${progress}`);
-      marker.title = `${station.name} · ${summary}${progress}`;
-    });
-  }
 
+  function renderPolicyProgress(){
+    const completed=policySession.getState().completedPlanId!==null;
+    $("policy-progress-global").textContent=`已完成 ${completed?1:0}／1 個政策挑戰`;
+    $("policy-progress-global").dataset.completed=String(completed);
+    $("team-policy-status").textContent=completed?"✓ 勇士門票政策挑戰已完成":"勇士主場的第一個政策挑戰，等你決策。";
+    const badge=mapNodes.get("warriors")?.badge;
+    if(badge)badge.setAttribute("visibility",completed?"visible":"hidden");
+    renderMapAndDirectory();
+  }
   function renderPolicy() {
     const state = policySession.getState();
     policyElements.options.forEach((input) => { input.checked = input.value === state.selectedPlan; });
@@ -407,14 +250,152 @@ function initializeApp() {
     selected.focus();
   });
 
-  buildMarkers();
-  render();
-  renderPolicy();
+
+  function errorMessage(error){
+    const messages={ALREADY_JOINED:"你已加入此房間，請從「我的房間」繼續。",ROOM_FULL:"房間已滿，最多只能兩位玩家。",ROOM_NOT_WAITING:"這個房間已開始或結束，不能再加入。",ROOM_EXPIRED:"房間已到期，請重新開房。",WRONG_COURT:"邀請碼屬於另一座球場，請使用完整加入連結。",ROOM_NOT_FOUND:"找不到這個邀請碼。",NOT_HOST:"只有房主能開始或重開對戰。",NOT_READY:"需要兩位玩家都就緒。",NOT_MEMBER:"你不是這個房間的玩家。",ROUND_MISMATCH:"局數已變更，不能提交舊局成績。",TOO_EARLY:"投籃時間尚未結束，請稍後重送。",SCORE_CLOSED:"本局成績已截止。",SCORE_ALREADY_SUBMITTED:"你的成績已提交，無法重複覆寫。",INVALID_SCORE:"成績格式無效。",TOO_MANY_ROOMS:"你已有五個未到期的房間，請先離開不需要的房間。"};
+    return Object.entries(messages).find(([code])=>String(error.message).includes(code))?.[1]||"連線未完成。請檢查網路、Supabase 公開設定、匿名登入與 SQL，再按重新連線。";
+  }
+  function renderConnection(){
+    const label=!adapter.configured?(adapter.reason==="UNCONFIGURED"?"尚未配置":"設定無效"):onlineReady?"已連線":"尚未連線";
+    $("connection-status").textContent=`真人連線：${label}`;
+    $("online-badge").textContent=label;
+    $("online-help").textContent=!adapter.configured?"尚未配置可用的 Supabase 公開連線，真人邀戰目前不可用；單機練習可直接使用。":onlineReady?"已連接真實房間資料。開房後把加入連結分享給朋友，不提供假玩家或自動填入對手。":"真人連線尚未成功，房間狀態待確認；可先單機練習或重新連線。";
+    $("create-room").disabled=!onlineReady||onlineBusy;
+    $("join-room").disabled=!onlineReady||onlineBusy;
+    $("connection-retry").hidden=!adapter.configured||onlineReady;
+  }
+  function receiveRoom(snapshot){
+    if(!snapshot?.room||!Array.isArray(snapshot.players))throw new Error("INVALID_ROOM_DATA");
+    roomSnapshot=snapshot;
+    const serverTime=Date.parse(snapshot.server_now);
+    if(Number.isFinite(serverTime))serverOffset=serverTime-Date.now();
+    const room=snapshot.room;
+    const own=snapshot.players.find(p=>p.user_id===adapter.userId());
+    if((room.status==="countdown"||room.status==="playing")&&own?.score===null){
+      if(gameMode!=="online"||gameRoomId!==room.id||gameRound!==room.round)startGame("online",room.court_id,Date.parse(room.starts_at),room.id,room.round);
+    }else if(room.status==="waiting"&&gameMode==="online"&&gameRoomId===room.id&&gameRound!==room.round){
+      stopGameTimer();game=null;gameMode=null;pendingScore=null;$("play-court").hidden=true;
+    }
+    if(room.status==="finished"&&lastResultToken!==`${room.id}:${room.round}`)showOnlineResult(snapshot);
+    if(room.status==="cancelled"&&gameMode==="online"&&gameRoomId===room.id){stopGameTimer();game=null;$("shoot-button").disabled=true;$("shot-feedback").textContent="房間已取消，本局不計勝負。";}
+    renderRoom();
+  }
+  function renderRoom(){
+    const room=roomSnapshot?.room;
+    $("room-panel").hidden=!room||state.kind!=="court"||room.court_id!==state.id;
+    if(!room)return;
+    const players=roomSnapshot.players;
+    const own=players.find(p=>p.user_id===adapter.userId());
+    const host=room.host_id===adapter.userId();
+    const labels={waiting:players.length<2?"等待對手（1／2）":`雙方準備中（${players.filter(p=>p.ready).length}／2 就緒）`,countdown:"兩人已就緒，倒數後同時開始。",playing:Date.now()+serverOffset>=Date.parse(room.ends_at)?"投籃時間結束，等待雙方成績結算。":"對戰中，雙方各自投籃 30 秒。",finished:"本局已結束，可查看雙方結果。",cancelled:"房間已取消。"};
+    $("room-state").textContent=`${onlineReady?"":"連線中斷，以下是上次同步狀態。"}第 ${room.round} 局・${labels[room.status]||room.status}`;
+    $("room-invite-value").value=C.inviteURL(window.location.href,room.court_id,room.invite_code);
+    $("room-players").innerHTML=players.map(player=>`<li>${escapeHTML(player.display_name)}${player.user_id===room.host_id?"（房主）":""}${player.user_id===adapter.userId()?"・你":""}<small>${player.score===null?(room.status==="finished"?"未提交成績":player.ready?"已就緒":"尚未就緒"):`命中 ${player.score} 球／出手 ${player.attempts} 次`}</small></li>`).join("")+(players.length<2?'<li>空位・等待朋友加入<small>此處沒有自動產生的玩家。</small></li>':"");
+    $("ready-toggle").disabled=!onlineReady||onlineBusy||room.status!=="waiting";
+    $("ready-toggle").textContent=own?.ready?"取消就緒":"準備好了";
+    $("room-start").disabled=!onlineReady||onlineBusy||!host||room.status!=="waiting"||players.length!==2||!players.every(p=>p.ready);
+    $("room-restart").hidden=!host||room.status!=="finished";
+    $("room-restart").disabled=!onlineReady||onlineBusy;
+    $("room-leave").disabled=!onlineReady||onlineBusy;
+    $("resubmit-score").hidden=!pendingScore||pendingScore.roomId!==room.id||room.status==="finished"||room.status==="cancelled";
+    $("resubmit-score").disabled=!onlineReady||scoreSubmitting;
+  }
+  async function refreshMyRooms(){
+    if(!onlineReady||state.kind!=="court")return;
+    const courtId=state.id;
+    try{
+      const rows=await adapter.myRooms(courtId);
+      if(state.kind!=="court"||state.id!==courtId)return;
+      $("my-rooms").hidden=false;$("my-rooms-list").replaceChildren();
+      if(!rows.length){$("my-rooms-list").textContent="目前沒有你在這座球場的房間。";return;}
+      for(const room of rows){const button=document.createElement("button");button.type="button";button.textContent=`第 ${room.round} 局・${room.status}・${room.invite_code.slice(0,6)}…`;button.addEventListener("click",()=>runRoomAction(()=>adapter.get(room.id)));$("my-rooms-list").append(button);}
+    }catch(error){$("lobby-notice").textContent=errorMessage(error);}
+  }
+  async function syncOnline(){
+    if(!adapter.configured||polling)return;
+    polling=true;
+    try{
+      await adapter.connect();
+      const [rows,snapshot]=await Promise.all([adapter.activity(),roomSnapshot?adapter.get(roomSnapshot.room.id):Promise.resolve(null)]);
+      activityRows=rows;onlineReady=true;
+      if(snapshot)receiveRoom(snapshot);
+      renderConnection();renderMapAndDirectory();if(state.kind==="court")$("court-activity").textContent=`真人房間：${courtStatus(state.id)}`;
+      await refreshMyRooms();
+    }catch(error){onlineReady=false;activityRows=null;renderConnection();renderRoom();renderMapAndDirectory();if(state.kind==="court")$("court-activity").textContent="真人房間：連線中斷，狀態待確認";$("lobby-notice").textContent=errorMessage(error);}
+    finally{polling=false;}
+  }
+  function onlineRoundRunning(){return gameMode==="online"&&game&&["countdown","playing"].includes(game.tick(Date.now()+serverOffset).phase);}
+  async function runRoomAction(action){
+    if(!onlineReady||onlineBusy)return;
+    onlineBusy=true;renderConnection();renderRoom();
+    try{const snapshot=await action();if(snapshot?.room)receiveRoom(snapshot);$("lobby-notice").textContent="房間資料已同步。";await refreshMyRooms();}
+    catch(error){$("lobby-notice").textContent=errorMessage(error);announce(errorMessage(error));}
+    finally{onlineBusy=false;renderConnection();renderRoom();}
+  }
+  function playerName(){const name=$("player-name").value.trim();if(!name||Array.from(name).length>24){$("lobby-notice").textContent="請先輸入 1–24 個字的暱稱。";$("player-name").focus();return null;}return name;}
+  $("room-form").addEventListener("submit",event=>{event.preventDefault();if(state.kind!=="court"||onlineRoundRunning())return;const name=playerName();if(name)runRoomAction(()=>adapter.create(state.id,name));});
+  $("join-room").addEventListener("click",()=>{if(state.kind!=="court"||onlineRoundRunning())return;const name=playerName();const invite=$("invite-code").value.trim().toLowerCase();if(!/^[a-f0-9]{24}$/.test(invite)){$("lobby-notice").textContent="請輸入完整的 24 碼邀請碼。";return;}if(name)runRoomAction(()=>adapter.join(state.id,invite,name));});
+  $("ready-toggle").addEventListener("click",()=>{if(!roomSnapshot)return;const own=roomSnapshot.players.find(p=>p.user_id===adapter.userId());runRoomAction(()=>adapter.ready(roomSnapshot.room.id,!own?.ready));});
+  $("room-start").addEventListener("click",()=>roomSnapshot&&runRoomAction(()=>adapter.start(roomSnapshot.room.id)));
+  $("room-restart").addEventListener("click",()=>roomSnapshot&&runRoomAction(()=>adapter.restart(roomSnapshot.room.id)));
+  $("room-leave").addEventListener("click",()=>roomSnapshot&&runRoomAction(async()=>{await adapter.leave(roomSnapshot.room.id);roomSnapshot=null;pendingScore=null;stopGameTimer();if(gameMode==="online"){game=null;gameMode=null;$("play-court").hidden=true;}$("room-panel").hidden=true;return null;}));
+  $("copy-invite").addEventListener("click",async()=>{try{if(!navigator.clipboard)throw new Error();await navigator.clipboard.writeText($("room-invite-value").value);$("lobby-notice").textContent="加入連結已複製，請自行分享給朋友。";}catch{$("room-invite-value").focus();$("room-invite-value").select();$("lobby-notice").textContent="請手動複製已選取的加入連結。";}});
+  $("connection-retry").addEventListener("click",syncOnline);
+
+  function stopGameTimer(){if(gameTimer!==null){clearInterval(gameTimer);gameTimer=null;}}
+  function startGame(mode,courtId,startsAt,roomId=null,round=null){
+    stopGameTimer();game=C.createShootingGame();game.start(startsAt);gameMode=mode;gameCourtId=courtId;gameRoomId=roomId;gameRound=round;gameFinished=false;pendingScore=null;
+    $("play-court").hidden=false;$("round-result").hidden=true;
+    $("game-mode-label").textContent=mode==="practice"?"單機練習・非真人連線":"好友 1 對 1・真人房間";
+    $("shooting-title").textContent=`${C.getLandmark("court",courtId).name}｜投籃挑戰`;
+    $("game-context").textContent=mode==="practice"?"一秒後開始。每次出手間隔至少 0.5 秒；沒有對手，也不會建立房間。":"以伺服器開始時間同步，倒數後雙方各投 30 秒；對手成績會在結算時顯示。";
+    $("practice-restart").hidden=mode!=="practice";
+    $("shot-feedback").textContent="準備好，找到你的投籃節奏。";
+    gameTimer=setInterval(tickGame,50);tickGame();$("game-stage").focus();
+  }
+  function tickGame(){
+    if(!game)return;
+    const now=Date.now()+(gameMode==="online"?serverOffset:0);
+    const snapshot=game.tick(now);
+    $("game-timer").textContent=(snapshot.remainingMs/1000).toFixed(1);
+    $("game-hits").textContent=String(snapshot.hits);$("game-attempts").textContent=String(snapshot.attempts);
+    $("aim-cursor").style.left=`${snapshot.aim*100}%`;
+    $("shoot-button").disabled=snapshot.phase!=="playing";
+    $("aim-description").textContent=snapshot.phase==="countdown"?`倒數 ${Math.ceil((snapshot.startsAt-now)/1000)} 秒`:`瞄準 ${Math.round(snapshot.aim*100)}%・金色命中區為 36%–64%`;
+    if(snapshot.phase==="finished"&&!gameFinished){gameFinished=true;stopGameTimer();$("shoot-button").disabled=true;$("shot-feedback").textContent="時間到！停止出手。";if(gameMode==="practice"){$("round-result").hidden=false;$("round-result-title").textContent="單機練習結果";$("round-result-content").textContent=`你命中 ${snapshot.hits} 球，出手 ${snapshot.attempts} 次。這是單機練習，沒有真人或模擬對手。`;announce("單機練習時間到，結果已顯示。");}else{pendingScore={roomId:gameRoomId,round:gameRound,score:snapshot.hits,attempts:snapshot.attempts};submitLocalScore();}}
+  }
+  function shoot(){if(!game)return;const result=game.shoot(Date.now()+(gameMode==="online"?serverOffset:0));if(result.accepted)$("shot-feedback").textContent=result.hit?"命中！＋1":"差一點，再抓準節奏。";tickGame();}
+  $("shoot-button").addEventListener("click",shoot);
+  $("game-stage").addEventListener("keydown",event=>{if((event.code==="Space"||event.key===" ")&&event.target===$("game-stage")){event.preventDefault();if(!event.repeat)shoot();}});
+  $("practice-start").addEventListener("click",()=>{if(state.kind!=="court")return;if(roomSnapshot&&["countdown","playing"].includes(roomSnapshot.room.status)){$("lobby-notice").textContent="真人對局進行中，請先完成對局。";return;}startGame("practice",state.id,Date.now()+1000);});
+  $("practice-restart").addEventListener("click",()=>{if(gameMode==="practice")startGame("practice",gameCourtId,Date.now()+1000);});
+  async function submitLocalScore(){
+    if(!pendingScore||scoreSubmitting)return;
+    scoreSubmitting=true;renderRoom();
+    try{const p=pendingScore;const snapshot=await adapter.submit(p.roomId,p.round,p.score,p.attempts);pendingScore=null;receiveRoom(snapshot);$("shot-feedback").textContent=snapshot.room.status==="finished"?"雙方成績已結算。":"你的成績已提交，等待雙方結果。";}
+    catch(error){$("lobby-notice").textContent=errorMessage(error);$("shot-feedback").textContent="成績尚未送出，請在成績截止前按重送。";}
+    finally{scoreSubmitting=false;renderRoom();}
+  }
+  $("resubmit-score").addEventListener("click",submitLocalScore);
+  function showOnlineResult(snapshot){
+    lastResultToken=`${snapshot.room.id}:${snapshot.room.round}`;
+    game=null;gameMode="online";gameCourtId=snapshot.room.court_id;gameRoomId=snapshot.room.id;gameRound=snapshot.room.round;gameFinished=true;
+    const own=snapshot.players.find(p=>p.user_id===adapter.userId());
+    $("game-timer").textContent="0.0";$("game-hits").textContent=own?.score===null?"?":String(own?.score??0);$("game-attempts").textContent=own?.attempts===null?"?":String(own?.attempts??0);
+    const result=C.resolveScores(snapshot.players);const winner=snapshot.players.find(p=>p.user_id===result.winnerId);
+    $("play-court").hidden=false;$("round-result").hidden=false;$("round-result-title").textContent=result.type==="draw"?"平手！下局再分高下。":result.type==="no-contest"?"雙方未提交，本局不計勝負。":`${winner?.display_name||"玩家"} 獲勝${result.type==="forfeit"?"（對方未提交）":""}`;
+    $("round-result-content").innerHTML=`<div class="round-score-row">${snapshot.players.map(p=>`<span>${escapeHTML(p.display_name)}：${p.score===null?"未提交":`${p.score} 球`}</span>`).join("")}</div><p>本結果來自這個房間的雙方實際提交，沒有模擬玩家。由房主按「再來一局」後，雙方須重新就緒。</p>`;
+    $("game-mode-label").textContent="好友 1 對 1・真人對局結果";
+    $("shooting-title").textContent=`${C.getLandmark("court",snapshot.room.court_id).name}｜第 ${snapshot.room.round} 局`;
+    $("shoot-button").disabled=true;$("practice-restart").hidden=true;
+    stopGameTimer();pendingScore=null;
+  }
+
+  buildLandmarks();renderMapAndDirectory();renderPanel();renderPolicy();renderConnection();
+  const invitation=C.parseInvite(window.location.href);
+  if(invitation){openLandmark("court",invitation.courtId,false);$("invite-code").value=invitation.invite;$("lobby-notice").textContent="已定位朋友指定的球場；連線後輸入暱稱，按加入朋友房間。";}
+  if(adapter.configured){syncOnline();setInterval(syncOnline,2000);}
 }
 
-// 維持一般 script 載入，file:// 與 GitHub Pages 子路徑皆不需模組伺服器。
-// Node 僅匯出純計算與狀態，執行終端機測試時不初始化 DOM。
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = { TOUR_DATA, POLICY_CHALLENGE, calculatePolicy, createPolicySession };
-}
-if (typeof document !== "undefined") initializeApp();
+if(typeof module!=="undefined"&&module.exports){module.exports={...require("./assets/island-core.js"),...require("./assets/policy-core.js")};}
+else if(typeof document!=="undefined")initializeIsland();
