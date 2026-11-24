@@ -50,15 +50,8 @@ function initializeIsland() {
   const miniUI = globalThis.NBAGamesUI.initialize({getState:()=>game?miniSnapshot(game.tick(Date.now()+(gameMode==="online"?serverOffset:0))):null,onAction:actGame});
   const ns = "http://www.w3.org/2000/svg";
 
-  function arenaGraphic(team) {
-    if(team.id==="warriors")return globalThis.NBABay.arenaGraphic();
-    return `<ellipse class="arena-halo" cy="-12" rx="73" ry="43"/><ellipse cx="8" cy="22" rx="62" ry="23" fill="#0a2539" opacity=".5"/><path d="M-55-28 0 2V27L-55-3Z" fill="#536c7b"/><path d="M0 2 55-28V-3L0 27Z" fill="#274456"/><path d="M-55-28 0-58 55-28 0 2Z" fill="${team.color}" stroke="${team.accent}" stroke-width="1.5"/><path d="M-42-29 0-51 42-29 0-7ZM-24-40 24-15M-24-15 24-40" fill="none" stroke="#ffffff25"/><path class="arena-rim" d="M-55-28 0 2 55-28" fill="none" stroke="#9aabb1"/><path class="arena-windows" d="M-44-10v9m10-4v9m10-4v9m45-7v9m12-15v9m12-16v9" stroke="#f3dc8b99" stroke-width="2"/><text class="arena-live-tag" y="12">模擬 LIVE</text><text class="roof-text" y="-23">${team.abbr}</text><text class="landmark-label" y="47">${escapeHTML(team.shortName)}主場</text><ellipse class="selection-ring" cy="-9" rx="77" ry="53"/><rect class="hit-area" x="-76" y="-65" width="152" height="118"/>`;
-  }
-  function courtGraphic(court) {
-    if(court.id==="harbor-01")return globalThis.NBABay.courtGraphic();
-    const depth = court.type === "roof" ? 25 : 7;
-    return `<ellipse class="court-light-pool" cy="-8" rx="49" ry="26"/><ellipse cx="7" cy="22" rx="43" ry="18" fill="#0a2539" opacity=".45"/><path d="M-43-18 0 4 43-18V${depth-16}L0 ${depth+5} -43 ${depth-16}Z" fill="${court.type === "roof" ? "#52677b" : "#355d56"}"/><g transform="matrix(1 .5 -1 .5 0 -18)"><rect x="-26" y="-17" width="52" height="34" fill="${court.color}" stroke="#e0e3ca"/><path d="M0-17v34M-26-7h12V7h-12M26-7H14V7h12" fill="none" stroke="#e0e3ca" stroke-width=".8"/><circle r="6" fill="none" stroke="#e0e3ca" stroke-width=".8"/></g><path class="court-floodlight" d="M-45-28v-28h12m78 28v-28H33" fill="none" stroke="#e5dcac" stroke-width="2"/><path d="M-29-23v-18m58 18v-18" stroke="#b9d0cf" stroke-width="1.8"/><path d="m-36-42 14 0m0 3-14 0m51-3h14m0 3H22" stroke="#ecded1" stroke-width="2"/><ellipse cx="-29" cy="-35" rx="5" ry="2" fill="none" stroke="#f3c45b"/><ellipse cx="29" cy="-35" rx="5" ry="2" fill="none" stroke="#f3c45b"/><text class="landmark-label court-label" y="${depth+23}">${escapeHTML(court.name)}</text><path class="court-fence" d="M-45-10v18L0 31l25-13m15-8 6-3V-8M-45-10 0 13l25-13m15-8 6-3M-35-5v18m12-12v18m12-12v18m12-12v18m12-24v18" fill="none" stroke="#a8c6c7" stroke-width="1"/><ellipse class="selection-ring" cy="-8" rx="49" ry="37"/><rect class="hit-area" x="-50" y="-48" width="100" height="${depth+83}"/>`;
-  }
+  function arenaGraphic(team) { return globalThis.NBAPixel.arenaMarkup(team); }
+  function courtGraphic(court) { return globalThis.NBAPixel.courtMarkup(court); }
   function buildLandmarks() {
     $("landmark-layer").setAttribute("aria-label",`${C.TEAMS.length+C.COURTS.length+C.ENCOUNTERS.length} 個可探索地標，使用 Tab 選取後按 Enter 或空白鍵開啟`);
     for (const [kind,items] of [["nba",C.TEAMS],["court",C.COURTS],["encounter",C.ENCOUNTERS]]) {
@@ -68,6 +61,7 @@ function initializeIsland() {
         node.id = `landmark-${item.id}`;
         node.classList.add("landmark");
         node.dataset.kind = kind;
+        if(kind==="nba")node.dataset.pixelModel=globalThis.NBAPixel.ARENAS[item.id];if(kind==="court")node.dataset.pixelModel=item.type;
         // 背景、建築與按鈕共用 MAP 座標，擴建後仍一起縮放。
         const frame=kind==="nba"?{x:80,y:68,w:160,h:132}:kind==="court"?{x:55,y:52,w:110,h:128}:{x:45,y:45,w:90,h:95};
         node.style.left=`${(item.x-frame.x)/C.MAP.width*100}%`;
@@ -121,7 +115,7 @@ function initializeIsland() {
   }
   function buildSights(){
     for(const item of S.SIGHTS){
-      const image=document.createElement("img");image.className="scenic-art";image.id=`scenic-art-${item.id}`;image.src=item.asset;image.alt="";image.setAttribute("aria-hidden","true");
+      const image=document.createElement("img");image.className="scenic-art";image.id=`scenic-art-${item.id}`;image.src=item.pixelAsset;image.alt="";image.setAttribute("aria-hidden","true");
       image.style.left=`${(item.x-item.width/2)/C.MAP.width*100}%`;image.style.top=`${(item.y-item.height)/C.MAP.height*100}%`;image.style.width=`${item.width/C.MAP.width*100}%`;image.style.height=`${item.height/C.MAP.height*100}%`;image.style.zIndex=String(item.key==="golden-gate"?3:Math.round(item.y)-2);
       const node=document.createElement("button");node.type="button";node.id=`landmark-${item.id}`;node.className="scenic-point";node.dataset.kind="sight";
       const point=item.entrance||{x:item.x,y:item.y};node.style.left=`${point.x/C.MAP.width*100}%`;node.style.top=`${point.y/C.MAP.height*100}%`;node.style.zIndex="2300";
@@ -231,7 +225,7 @@ function initializeIsland() {
       renderRoom();
     }else if(state.kind==="sight"){
       $("map-scoreboard").hidden=true;
-      $("sight-image").src=$("island-map").dataset.theme==="night"?item.nightAsset:item.asset;$("sight-image").alt=`${item.name}的原創斜俯視街景插畫`;
+      $("sight-image").src=$("island-map").dataset.theme==="night"?item.pixelNightAsset:item.pixelAsset;$("sight-image").alt=`${item.name}的原創斜俯視街景插畫`;
       $("sight-description").textContent=item.description;$("sight-access").textContent=item.photo?"已沿步道抵達觀景點。可用已儲存的球迷造型拍照與下載 PNG；景點照不計入主場或偶遇收藏。":"街景眺望・此處沒有開放步行入口；鏡頭查看地標，玩家保持原位。";$("sight-photo").hidden=!item.photo;
     }else{
       $("map-scoreboard").hidden=true;fanUI?.renderEncounterPanel(item.id);

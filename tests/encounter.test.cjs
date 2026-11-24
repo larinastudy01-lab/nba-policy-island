@@ -11,7 +11,7 @@ test("16 teams, 15 courts, 16 unique arena photo points and 3 separate encounter
   assert.equal(new Set(F.STATIONS.map(station=>station.id)).size,16);assert.equal(new Set(F.STATIONS.map(station=>station.arenaId)).size,16);
   for(const station of F.STATIONS){assert.equal(station.arenaId,C.getLandmark("nba",station.teamId).arenaId);assert.equal(station.historical,true);assert.match(station.label,/代表球星.*隊史/);}
   for(const item of all){assert.ok(item.x>80&&item.x<C.MAP.width-80);assert.ok(item.y>70&&item.y<C.MAP.height-70);}
-  for(const place of C.ENCOUNTERS){assert.equal(C.getLandmark("court",place.id),null);assert.equal(C.getLandmark("nba",place.id),null);assert.equal(fs.readFileSync(path.join(__dirname,"..",place.background),"utf8").trim(),F.encounterSVG(place.id));}
+  for(const place of C.ENCOUNTERS){assert.equal(C.getLandmark("court",place.id),null);assert.equal(C.getLandmark("nba",place.id),null);assert.equal(fs.readFileSync(path.join(__dirname,"..",place.pixelBackground),"utf8").trim(),F.encounterSVG(place.id));}
   for(const id of ["spurs","thunder","suns","timberwolves","bucks","sixers","heat","raptors"]){const match=C.gameForTeam(id,"live");assert.ok(match.id);assert.equal(match.glowing,match.homeId===id);assert.equal(C.gameForTeam(id,"final").glowing,false);}
 });
 test("Taiwan date changes at UTC 16:00 independently of host timezone", () => {

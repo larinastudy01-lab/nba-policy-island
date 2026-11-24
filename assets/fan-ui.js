@@ -33,16 +33,16 @@
       if (!item) return;
       const position=getPlayerPosition?.()||{x:item.x+48,y:item.y+26,locationId:item.id,moving:false};
       const marker=$("fan-map-marker"),saved=session.getState().saved;
-      marker.style.left = `${position.x / Island.MAP.width * 100}%`;
-      marker.style.top = `${position.y / Island.MAP.height * 100}%`;
+      marker.style.left = `${Math.round(position.x/2)*2 / Island.MAP.width * 100}%`;
+      marker.style.top = `${Math.round(position.y/2)*2 / Island.MAP.height * 100}%`;
       marker.style.zIndex=String(Math.round(position.y));
       marker.dataset.location = position.moving?"":position.locationId;
       marker.dataset.x=String(position.x);marker.dataset.y=String(position.y);
       marker.setAttribute("aria-label",`${saved.nickname}，${position.moving?"沿道路移動中":"目前在"+([...Island.TEAMS,...Island.COURTS,...Island.ENCOUNTERS,...root.NBASights.SIGHTS].find(p=>p.id===position.locationId)?.name||item.name)}`);
       $("fan-map-name").textContent=`我・${Array.from(saved.nickname).slice(0,6).join("")}`;
       // 移動時只更新位置；換裝儲存後才重新產生角色圖層。
-      const avatar=JSON.stringify(saved);
-      if(marker.dataset.avatar!==avatar){marker.dataset.avatar=avatar;$("fan-map-avatar").innerHTML = F.avatarSVG(saved);}
+      const avatar=JSON.stringify(saved)+`:${position.direction||"se"}:${position.frame||0}:${position.moving}`;
+      if(marker.dataset.avatar!==avatar){marker.dataset.avatar=avatar;$("fan-map-avatar").innerHTML = F.avatarSVG(saved,{direction:position.direction||"se",frame:position.frame||0,walking:position.moving});}
     }
     function setTab(tab) {
       $("fan-wardrobe").hidden = tab !== "wardrobe";
@@ -158,14 +158,14 @@
     }
     function refreshGame() { if (starDialog.open) { updateNight();if (view === "studio" && !photo) renderPhoto(); } }
     function liveRecord() {
-      if(sightContext)return F.normalizePhoto({version:3,kind:"sight",locationId:sightContext.id,background:sightContext.background,avatar:session.getState().saved,pose:$("photo-pose").value,capturedAt:new Date().toISOString()});
+      if(sightContext)return F.normalizePhoto({version:3,artVersion:root.NBAPixel.SPEC.version,kind:"sight",locationId:sightContext.id,background:sightContext.background,avatar:session.getState().saved,pose:$("photo-pose").value,capturedAt:new Date().toISOString()});
       return encounterContext ? F.createEncounterPhoto(encounterContext, session.getState().saved, { pose: $("photo-pose").value }) : F.createPhoto(teamId, session.getState().saved, { pose: $("photo-pose").value, background: $("photo-background").value }, getGameState(),getBayFixture());
     }
     function renderEncounterPanel(placeId) {
       const encounter = today(), place = Island.getLandmark("encounter", placeId), arrived=hasArrived(placeId), present = encounter.locationId === placeId && arrived;
       const revealed = present && revealedKey === encounterKey(encounter), star = F.getStar(encounter.starId);
       $("encounter-date").textContent = `${encounter.date}・台灣日期`;
-      $("encounter-scene-image").src = place.background;$("encounter-scene-image").alt = `${place.name}・${place.scene}`;
+      $("encounter-scene-image").src = `./assets/pixel/encounters/${place.id}.svg`;$("encounter-scene-image").alt = `${place.name}・${place.scene}`;
       $("encounter-presence").textContent = !arrived ? "沿道路前往中；抵達後再看看附近有誰。" : present ? "附近有熟悉的身影……" : "這裡今天很安靜，沿著島上的步道去其他地點看看吧。";
       $("encounter-character").hidden = !present;$("encounter-character").dataset.revealed = String(revealed);
       if (present) { $("encounter-portrait").src = star.illustration;$("encounter-portrait").alt = revealed ? `${star.starName}，${star.label}` : "熟悉的身影，點擊揭曉身分"; }
@@ -241,7 +241,7 @@
         const record = F.normalizePhoto(photo);
         if (document.fonts) await document.fonts.ready;
         const blob = await F.exportPNG(record);
-        if (!starDialog.open || JSON.stringify(photo) !== JSON.stringify(record)) return;
+        if (!starDialog.open || JSON.stringify(F.normalizePhoto(photo)) !== JSON.stringify(record)) return;
         clearDownload();downloadURL = URL.createObjectURL(blob);
         const link = $("photo-png-link");link.href = downloadURL;link.download = `nba-policy-island-${record.kind==="sight"?record.locationId:record.kind === "encounter" ? "encounter-" + record.starId : record.teamId}-${record.capturedAt.slice(0, 10)}.png`;link.hidden = false;link.click();
         $("photo-status").textContent = "PNG 已產生，包含角色、場景與照片文字。若沒有自動儲存，請按「另存 PNG」。";

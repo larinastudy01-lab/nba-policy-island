@@ -1,5 +1,5 @@
 /* 原創灣區的共同視角／材質與純資料路人模型。所有座標均為島圖世界座標。 */
-(function(root,factory){const api=factory();if(typeof module==="object"&&module.exports)module.exports=api;else root.NBABay=api;})(globalThis,function(){
+(function(root,factory){const api=factory(typeof module==="object"&&module.exports?require("./pixel-core.js"):root.NBAPixel);if(typeof module==="object"&&module.exports)module.exports=api;else root.NBABay=api;})(globalThis,function(P){
   "use strict";
   const STYLE={lightDirection:"upper-left",personWidth:25,playerWidth:29,shadow:{x:8,y:5},waterLevel:0,pierLevel:8,plazaLevel:18};
   const BAY_IDS=["warriors","meet-pier","harbor-01"];
@@ -66,28 +66,23 @@
     {id:"court-dribble",area:"court",look:"dribble",jersey:"clippers",route:[[353,697]],speed:0,wait:0,delay:0},
     {id:"court-seat-a",area:"court",look:"sit",jersey:"heat",route:[[311,722]],speed:0,wait:0,delay:0},
     {id:"court-seat-b",area:"court",look:"sit",jersey:"bucks",route:[[324,729]],speed:0,wait:0,delay:0}
-  ];
+  ].map((p,i)=>({...p,pixelModel:["ball-fan","short-cap","backpack","tall-curls","ponytail","seated","hoodie","ball-fan","senior","seated"][i]}));
   const modeFor=match=>!match?.isHome?"ambient":({scheduled:"enter",live:"live",final:"exit"}[match.state]||"ambient");
   const near=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-  function createCrowd(){return {mode:"ambient",elapsed:0,people:PEOPLE.map(p=>({...p,position:{x:p.route[0][0],y:p.route[0][1]},path:p.route.map(([x,y])=>({x,y})),index:1%p.route.length,pause:p.delay,walking:false,facing:1}))};}
+  function createCrowd(){return {mode:"ambient",elapsed:0,people:PEOPLE.map(p=>({...p,position:{x:p.route[0][0],y:p.route[0][1]},path:p.route.map(([x,y])=>({x,y})),index:1%p.route.length,pause:p.delay,walking:false,facing:1,direction:"se"}))};}
   function advanceCrowd(crowd,delta,match,{active=true,reducedMotion=false,overview=false}={}){
     const mode=modeFor(match);
     if(mode!==crowd.mode){for(const p of crowd.people.filter(p=>p.area==="arena")){p.path=(mode==="exit"?[...p.route].reverse():p.route).map(([x,y])=>({x,y}));let nearest=0;for(let i=1;i<p.path.length;i++)if(near(p.position,p.path[i])<near(p.position,p.path[nearest]))nearest=i;p.index=nearest;p.pause=0;}crowd.mode=mode;}
     if(active&&!reducedMotion){crowd.elapsed+=Math.max(0,delta);for(const p of crowd.people){let ms=Math.max(0,delta),guard=0;p.walking=false;
       while(ms>0&&p.speed>0&&p.path.length>1&&guard++<100){if(p.pause>0){const used=Math.min(ms,p.pause);p.pause-=used;ms-=used;continue;}
         const goal=p.path[p.index],length=near(p.position,goal),speed=p.speed*(p.area==="arena"&&["enter","exit"].includes(mode)?1.25:1),needed=length/speed*1000;
-        if(needed<=ms){p.position={...goal};ms-=needed;p.index=(p.index+1)%p.path.length;p.pause=p.wait;}else{const t=ms/needed,dx=goal.x-p.position.x;p.position={x:p.position.x+(goal.x-p.position.x)*t,y:p.position.y+(goal.y-p.position.y)*t};if(Math.abs(dx)>.1)p.facing=dx<0?-1:1;p.walking=true;ms=0;}
+        if(needed<=ms){p.position={...goal};ms-=needed;p.index=(p.index+1)%p.path.length;p.pause=p.wait;}else{const t=ms/needed,dx=goal.x-p.position.x;p.position={x:p.position.x+(goal.x-p.position.x)*t,y:p.position.y+(goal.y-p.position.y)*t};p.direction=P.direction(goal.x-p.position.x,goal.y-p.position.y,p.direction);if(Math.abs(dx)>.1)p.facing=dx<0?-1:1;p.walking=true;ms=0;}
       }
     }}else for(const p of crowd.people)p.walking=false;
-    return crowd.people.map((p,i)=>({id:p.id,area:p.area,look:p.look,jersey:p.jersey,...p.position,facing:p.facing,walking:p.walking,
+    return crowd.people.map((p,i)=>({id:p.id,area:p.area,look:p.look,jersey:p.jersey,...p.position,facing:p.facing,direction:p.direction,frame:p.walking?Math.floor(crowd.elapsed/P.SPEC.frameMs)%4:0,walking:p.walking,
       visible:(!overview||[0,3,7].includes(i))&&!(mode==="live"&&p.area==="arena"&&i>0),bob:p.walking?Math.sin(crowd.elapsed/160+i)*1.1:0,
       dribble:p.look==="dribble"&&active&&!reducedMotion?Math.abs(Math.sin(crowd.elapsed/180))*7:0}));
   }
-  function npcSVG(person,F){let art=F.avatarSVG({...F.DEFAULT_AVATAR,nickname:"模擬路人",jersey:person.jersey,number:"",hair:person.look==="cap"?"short":"curls",headband:"none"},{pose:["ball","dribble"].includes(person.look)?"ball":"stand"});
-    if(person.look==="cap")art=art.replace("</svg>",'<path d="M73 58q3-39 48-38 45 0 48 38l-48-7-48 7m42-6 64 12-8 8-57-12Z" fill="#e6ca87" stroke="#4f626a" stroke-width="3"/></svg>');
-    if(person.look==="bag")art=art.replace('<g data-layer="arms"','<path d="m154 137 25 10 4 56-30 5Z" fill="#c79865" stroke="#3a535c" stroke-width="4"/><g data-layer="arms"');
-    if(person.look==="sit")art=art.replace("M100 226v45m40-45v45","M100 226h20v38m20-38h20v38");
-    return art;
-  }
+  function npcSVG(person,F,options={}){return P.actorSVG({...F.DEFAULT_AVATAR,nickname:"模擬路人"},{model:person.pixelModel||P.PEOPLE[0],pose:["ball","dribble"].includes(person.look)?"ball":"stand",seated:person.look==="sit",...options});}
   return {STYLE,BAY_IDS,PEOPLE,groundSVG,lightsSVG,foregroundSVG,arenaGraphic,courtGraphic,modeFor,createCrowd,advanceCrowd,npcSVG};
 });

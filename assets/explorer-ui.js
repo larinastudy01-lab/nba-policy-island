@@ -2,7 +2,7 @@
 (function(root){
   "use strict";
   function initialize({getSelection,getGameState,getEncounter,getBayFixture=()=>"away",onPosition,onAnnounce,onView}){
-    const E=root.NBAExplorer,C=root.NBAIsland,$=id=>document.getElementById(id);
+    const E=root.NBAExplorer,C=root.NBAIsland,P=root.NBAPixel,$=id=>document.getElementById(id);
     const camera=E.createCamera(),walker=E.createWalker();
     const motion=window.matchMedia?.("(prefers-reduced-motion: reduce)");
     const B=root.NBABay,crowd=B.createCrowd(),npcNodes=new Map();
@@ -11,23 +11,13 @@
     for(const car of T.CARS){const node=document.createElement("span");node.id=car.id;node.className="island-car";node.dataset.model=car.id;node.dataset.parked=String(car.parked);node.setAttribute("title",`${car.name}｜${car.feature}`);
       const beam=document.createElement("span");beam.className="car-headlight";const image=document.createElement("img");image.alt="";image.width=130;image.height=100;node.append(beam,image);$("traffic-layer").append(node);carNodes.set(car.id,{node,image,beam});}
     let timer=null,theme="day",actorKey=null,arrivalFocus=null,pageHidden=false,mapVisible=true,visibilityObserver=null,lastFrame=Date.now();
-    for(const person of B.PEOPLE){const node=document.createElement("span");node.id=`npc-${person.id}`;node.className="sim-pedestrian";node.dataset.look=person.look;
+    for(const person of B.PEOPLE){const node=document.createElement("span");node.id=`npc-${person.id}`;node.className="sim-pedestrian";node.dataset.look=person.look;node.dataset.pixelModel=person.pixelModel;
       const body=document.createElement("span");body.className="npc-body";body.innerHTML=B.npcSVG(person,root.NBAFan);node.append(body);$("npc-layer").append(node);npcNodes.set(person.id,{node,body});}
     const actorFigure=document.createElement("span");actorFigure.className="actor-silhouette";actorFigure.setAttribute("aria-hidden","true");$("island-encounter-actor").append(actorFigure);
     const svgNS="http://www.w3.org/2000/svg";
     const districtButtons=new Map();
-    const lighting=[];
-    const roads=E.ROAD_EDGES.map((edge,index)=>{
-      const a=E.ROAD_NODES[edge.from],b=E.ROAD_NODES[edge.to];
-      const path=`M${a.x} ${a.y}L${b.x} ${b.y}`;
-      const x=(a.x+b.x)/2,y=(a.y+b.y)/2;
-      const length=Math.hypot(b.x-a.x,b.y-a.y),nx=-(b.y-a.y)/length*10,ny=(b.x-a.x)/length*10;
-      const rails=edge.bridge?[-1,1].map(sign=>`<path class="bridge-rail" d="M${a.x+sign*nx} ${a.y+sign*ny}L${b.x+sign*nx} ${b.y+sign*ny}" stroke-width="2"/>`).join(""):"";
-      lighting.push(`<g class="street-lamp"><ellipse class="light-pool" cx="${x+3}" cy="${y+5}" rx="23" ry="10"/><path d="M${x} ${y}v-23h7" stroke="#829998" stroke-width="2" fill="none"/><circle class="lamp-bulb" cx="${x+7}" cy="${y-23}" r="3"/></g>`);
-      return `<g data-road="${index}"><path d="${path}" transform="translate(0 ${edge.bridge?10:3})" stroke="${edge.bridge?"#1c3549":"#274344"}" stroke-width="${edge.bridge?24:17}"/><path d="${path}" stroke="${edge.surface==="wood"?"#b49b70":edge.bridge?"#b6ad8b":"#829990"}" stroke-width="${edge.bridge?20:12}"/><path d="${path}" stroke="#d5d3af" stroke-width="1" stroke-dasharray="${edge.surface==="wood"?"1 5":"5 9"}"/><path class="road-night-edge" d="${path}" stroke-width="1.3"/>${rails}</g>`;
-    }).join("");
     const paths=document.createElementNS(svgNS,"svg");paths.setAttribute("viewBox","0 0 1600 1000");paths.setAttribute("aria-hidden","true");paths.classList.add("island-roads");
-    paths.innerHTML=`<g fill="none" stroke-linecap="round" stroke-linejoin="round">${roads}</g><g>${lighting.join("")}</g>`;
+    paths.innerHTML='<image class="pixel-day" href="./assets/pixel/roads.png" width="1600" height="1000"/><image class="pixel-night" href="./assets/pixel/roads-night.png" width="1600" height="1000"/>';
     $("road-layer").append(paths);
     // 用 DOM 建立路線節點，避免依賴解析 innerHTML 的全域 ID 副作用。
     const route=document.createElementNS(svgNS,"polyline");route.setAttribute("fill","none");route.setAttribute("stroke","#f6d57f");route.setAttribute("stroke-width","3");route.setAttribute("stroke-dasharray","8 9");paths.append(route);
@@ -93,7 +83,7 @@
       $("island-map").dataset.crowdActive=String(active);$("island-map").dataset.crowdMode=crowd.mode;
       const message=`模擬路人・非真人玩家｜${{ambient:"灣區散步（勇士客場不觸發進散場）",enter:"勇士主場進場動線",live:"主場進行中・少量廣場路人",exit:"勇士主場散場動線"}[crowd.mode]}`;
       if($("crowd-status").textContent!==message)$("crowd-status").textContent=message;
-      for(const p of people){const {node,body}=npcNodes.get(p.id);node.hidden=!p.visible;node.style.left=`${p.x/C.MAP.width*100}%`;node.style.top=`${p.y/C.MAP.height*100}%`;node.style.zIndex=String(Math.round(p.y));node.dataset.walking=String(p.walking);node.dataset.x=String(p.x);node.dataset.y=String(p.y);body.style.transform=`translateY(${p.bob}px) scaleX(${p.facing})`;node.style.setProperty("--ball-bob",`${p.dribble*5}px`);}
+      for(const p of people){const {node,body}=npcNodes.get(p.id);const person=B.PEOPLE.find(item=>item.id===p.id),key=`${p.direction}:${p.frame}:${p.walking}`;if(body.dataset.frameKey!==key){body.dataset.frameKey=key;body.innerHTML=B.npcSVG(person,root.NBAFan,{direction:p.direction,frame:p.frame,walking:p.walking});}node.dataset.direction=p.direction;node.dataset.frame=String(p.frame);node.hidden=!p.visible;node.style.left=`${Math.round(p.x/2)*2/C.MAP.width*100}%`;node.style.top=`${Math.round(p.y/2)*2/C.MAP.height*100}%`;node.style.zIndex=String(Math.round(p.y));node.dataset.walking=String(p.walking);node.dataset.x=String(p.x);node.dataset.y=String(p.y);body.style.transform=`translateY(${p.bob}px) scaleX(${p.facing})`;node.style.setProperty("--ball-bob",`${p.dribble*5}px`);}
     }
     function trafficActive(){return camera.level!=="island"&&T.ROUTES.some(r=>r.district===camera.districtId)&&mapVisible&&!motion?.matches&&!document.hidden&&!pageHidden;}
     function renderTraffic(delta=0){
@@ -101,8 +91,8 @@
       $("island-map").dataset.trafficActive=String(active);
       for(const car of cars){const {node,image,beam}=carNodes.get(car.id);const local=camera.level!=="island"&&car.district===camera.districtId;
         node.hidden=!local&&car.id!=="car-720s"&&car.id!=="car-aventador";node.dataset.overview=String(!local);node.dataset.view=car.view;node.dataset.x=String(car.x);node.dataset.y=String(car.y);node.dataset.heading=String(car.heading);
-        node.style.left=`${car.x/C.MAP.width*100}%`;node.style.top=`${car.y/C.MAP.height*100}%`;node.style.zIndex=String(car.id==="car-f40"?367:car.id==="car-488"?620:car.id==="car-911"?370:Math.round(car.y)+1);
-        const src=`./assets/cars/${car.id}-${car.view}.svg`;if(image.getAttribute("src")!==src){image.setAttribute("src",src);image.src=src;}image.style.transform=`scaleX(${car.flip?-1:1})`;
+        node.style.left=`${Math.round(car.x/2)*2/C.MAP.width*100}%`;node.style.top=`${Math.round(car.y/2)*2/C.MAP.height*100}%`;node.style.zIndex=String(car.id==="car-f40"?367:car.id==="car-488"?620:car.id==="car-911"?370:Math.round(car.y)+1);
+        const src=`./assets/pixel/cars/${car.id}-${car.view}.svg`;if(image.getAttribute("src")!==src){image.setAttribute("src",src);image.src=src;}image.style.transform=`scaleX(${car.flip?-1:1})`;
         const lit=T.headlights(car,theme==="night")&&local;beam.hidden=!lit;node.dataset.headlights=String(lit);beam.style.transform=`translateY(-50%) rotate(${car.heading}rad)`;
       }
       $("traffic-status").textContent=`原創跑車插畫・四台停放、兩台巡遊｜${motion?.matches?"減少動態・靜態車輛":active?"近景車流・轉彎減速":camera.level==="island"?"全島靜態車影":"車流暫停"}${theme==="night"?"・近景巡遊車頭燈開啟":""}`;
@@ -120,7 +110,7 @@
     $("camera-back").addEventListener("click",()=>{arrivalFocus=null;E.back(camera);renderCamera();onAnnounce?.("已返回上一層視角，保留選取與玩家位置。");});
     $("camera-overview").addEventListener("click",()=>{arrivalFocus=null;E.fullIsland(camera);renderCamera();onAnnounce?.(walker.moving?"已回全島，角色繼續原行程。":"已回全島，玩家停留原地。");});
     function setTheme(next){theme=next;$("island-map").dataset.theme=theme;$("map-day").setAttribute("aria-pressed",String(theme==="day"));$("map-night").setAttribute("aria-pressed",String(theme==="night"));$("map-light-status").textContent=theme==="night"?"夜晚・道路與場地照明開啟":"白天・沿路探索島嶼";
-      for(const item of S.SIGHTS){const node=$(`scenic-art-${item.id}`);if(node)node.src=theme==="night"?item.nightAsset:item.asset;}const selected=getSelection();if(selected.kind==="sight")$("sight-image").src=theme==="night"?S.get(selected.id).nightAsset:S.get(selected.id).asset;renderTraffic();}
+      for(const item of S.SIGHTS){const node=$(`scenic-art-${item.id}`);if(node)node.src=theme==="night"?item.pixelNightAsset:item.pixelAsset;}const selected=getSelection();if(selected.kind==="sight")$("sight-image").src=theme==="night"?S.get(selected.id).pixelNightAsset:S.get(selected.id).pixelAsset;renderTraffic();}
     $("map-day").addEventListener("click",()=>setTheme("day"));$("map-night").addEventListener("click",()=>setTheme("night"));
     $("island-encounter-actor").addEventListener("click",()=>{const daily=getEncounter();if(!E.hasArrived(walker,daily.locationId)||getSelection().id!==daily.locationId)return;
       $("encounter-character").click();refreshEncounter();$("encounter-star-name").focus();});
@@ -132,7 +122,7 @@
     renderCamera();setTheme("day");renderWalker();
     $("encounter-star-name").setAttribute("tabindex","-1");
     return {visit,districtView,inspect:id=>{arrivalFocus=null;E.focusVenue(camera,id);renderCamera();},refreshLabels,refreshEncounter,refreshScene:()=>{refreshLabels();renderCrowd();renderTraffic();syncLoop();},backToDistrict:()=>districtView(camera.districtId||E.districtFor(getSelection().id).id),focusOnly:id=>{arrivalFocus=null;E.focusVenue(camera,id);renderCamera();},
-      position:()=>({...walker.position,locationId:walker.locationId,targetId:walker.targetId,moving:walker.moving}),hasArrived:id=>E.hasArrived(walker,id)};
+      position:()=>({...walker.position,locationId:walker.locationId,targetId:walker.targetId,direction:walker.direction,frame:walker.frame,moving:walker.moving}),hasArrived:id=>E.hasArrived(walker,id)};
   }
   root.NBAExplorerUI={initialize};
 })(globalThis);

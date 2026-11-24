@@ -33,7 +33,7 @@
     {id:"meet-pier",name:"西岸碼頭步道",region:"島上偶遇",scene:"西岸港灣木棧道、海風與燈塔",type:"pier",color:"#41899b",x:225,y:660},
     {id:"meet-plaza",name:"中央廣場",region:"島上偶遇",scene:"環島路交會的籃球廣場",type:"plaza",color:"#a5824d",x:895,y:575},
     {id:"meet-garden",name:"五大湖畔公園",region:"島上偶遇",scene:"湖岸樹蔭、公園拱門與波光",type:"garden",color:"#4c8a6b",x:1130,y:540}
-  ].map(place=>({...place,background:`./assets/encounters/${place.id}.svg`}));
+  ].map(place=>({...place,background:`./assets/encounters/${place.id}.svg`,pixelBackground:`./assets/pixel/encounters/${place.id}.svg`}));
   const MATCHES = [
     {id:"bay-derby",homeId:"lakers",awayId:"warriors",startTime:"11:00",live:{home:74,away:78,period:"第 3 節"},final:{home:101,away:108}},
     {id:"coast-highland",homeId:"clippers",awayId:"nuggets",startTime:"10:30",live:{home:62,away:66,period:"第 3 節"},final:{home:110,away:114}},

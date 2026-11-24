@@ -61,7 +61,7 @@ for node in svg.iter():
     for attr in ("href", "{http://www.w3.org/1999/xlink}href"):
         if attr in node.attrib:
             assert node.attrib[attr].startswith("#") and node.attrib[attr][1:] in svg_ids
-for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css", ROOT / "assets/bay.css", ROOT / "assets/scenery.css"):
+for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css", ROOT / "assets/bay.css", ROOT / "assets/scenery.css", ROOT / "assets/pixel.css"):
     css = file.read_text(encoding="utf-8-sig")
     css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
     css = re.sub(r'''"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*' ''', "", css, flags=re.X)
@@ -186,3 +186,35 @@ for markup in scenic_photos:
     assert len([n for n in tree.iter() if n.attrib.get("data-layer") == "face"]) == 1
     assert not any("href" in name for node in tree.iter() for name in node.attrib)
 print("Scenery XML: 20 day/night landmarks, 6 cars x 3 views, 2 traffic lanes, 8 scenic photo compositions valid")
+
+# Pixel files are actual integer cells, not a CSS-only treatment of old vectors.
+import struct
+import zlib
+manifest = json.loads((ROOT / "assets/pixel/manifest.json").read_text(encoding="utf-8"))
+assert len(manifest["files"]) == 130
+assert set(manifest["arenaModels"]) == {p.stem for p in (ROOT / "assets/arenas").glob("*.svg")}
+assert len(set(manifest["arenaModels"].values())) == 6
+assert len(manifest["people"]) == 8 and len(manifest["props"]) == 9
+for item in manifest["files"]:
+    file = ROOT / "assets/pixel" / (item["name"] + ".png")
+    data = file.read_bytes()
+    assert data[:8] == b"\x89PNG\r\n\x1a\n"
+    w,h,depth,mode = struct.unpack("!IIBB", data[16:26])
+    assert (w,h,depth,mode) == (item["width"],item["height"],8,6)
+    cursor,compressed = 8,b""
+    while cursor < len(data):
+        length = struct.unpack("!I",data[cursor:cursor+4])[0]
+        kind = data[cursor+4:cursor+8]; payload = data[cursor+8:cursor+8+length]
+        crc = struct.unpack("!I",data[cursor+8+length:cursor+12+length])[0]
+        assert zlib.crc32(kind+payload)&0xffffffff == crc
+        if kind == b"IDAT":compressed += payload
+        cursor += 12+length
+    assert len(zlib.decompress(compressed)) == h*(1+w*4)
+    tree = ET.parse(file.with_suffix(".svg")).getroot()
+    assert tree.attrib.get("shape-rendering") == "crispEdges" or item["name"].startswith("encounters/")
+    for rect in tree.iter("{http://www.w3.org/2000/svg}rect"):
+        for key in ("x","y","width","height"):
+            assert float(rect.attrib.get(key,0)).is_integer()
+for image in (ROOT/"docs/pixel-preview").glob("*.png"):
+    assert image.read_bytes().startswith(b"\x89PNG")
+print("Pixel: 130 PNG/SVG pairs; valid native grids/CRC/pixels; 6 arena, 3 court, 6 car, 8 pedestrian, 9 prop models")

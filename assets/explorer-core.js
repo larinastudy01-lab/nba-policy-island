@@ -5,6 +5,7 @@
 })(typeof globalThis!=="undefined"?globalThis:this,function(Island){
   "use strict";
   const {MAP,TEAMS,COURTS,ENCOUNTERS}=Island;
+  const Pixel=typeof module==="object"&&module.exports?require("./pixel-core.js"):globalThis.NBAPixel;
   const DISTRICTS=[
     {id:"west",name:"西岸海灣・洛城",label:{x:250,y:605},center:{x:420,y:460},width:1100,ids:["warriors","lakers","clippers","harbor-01","meet-pier"]},
     {id:"desert",name:"西南沙漠",label:{x:480,y:606},center:{x:500,y:745},width:720,ids:["suns","harbor-02","harbor-03"]},
@@ -99,11 +100,12 @@
     }
     return ids;
   }
-  function createWalker(id="warriors"){return {position:entrance(id),locationId:id,targetId:id,moving:false,route:[],startedAt:0,duration:0,token:0};}
+  function createWalker(id="warriors"){return {position:entrance(id),locationId:id,targetId:id,direction:"se",frame:0,moving:false,route:[],startedAt:0,duration:0,token:0};}
   function walk(walker,id,now,reducedMotion=false){
     // 先採樣舊路線，再以最新位置重新規劃，舊 token 不得完成新的行程。
     tick(walker,now);walker.token++;walker.targetId=id;walker.route=roadPath(walker.position,id);
     const length=walker.route.slice(1).reduce((n,p,i)=>n+distance(walker.route[i],p),0);
+    walker.frame=0;const last=walker.route.at(-1),before=walker.route.at(-2);if(before)walker.direction=Pixel.direction(last.x-before.x,last.y-before.y,walker.direction);
     walker.startedAt=now;walker.duration=Math.max(350,Math.min(4200,length*3));walker.moving=length>.01;
     if(reducedMotion||!walker.moving){walker.position=entrance(id);walker.locationId=id;walker.moving=false;}
     return walker.token;
@@ -114,10 +116,10 @@
     const lengths=walker.route.slice(1).map((p,i)=>distance(walker.route[i],p));
     let remaining=lengths.reduce((a,b)=>a+b,0)*fraction;
     for(let i=0;i<lengths.length;i++){
-      if(remaining<=lengths[i]){const a=walker.route[i],b=walker.route[i+1],t=lengths[i]?remaining/lengths[i]:0;walker.position={x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};break;}
+      if(remaining<=lengths[i]){const a=walker.route[i],b=walker.route[i+1],t=lengths[i]?remaining/lengths[i]:0;walker.direction=Pixel.direction(b.x-a.x,b.y-a.y,walker.direction);walker.frame=Math.floor((now-walker.startedAt)/Pixel.SPEC.frameMs)%4;walker.position={x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};break;}
       remaining-=lengths[i];
     }
-    if(fraction===1){walker.position=entrance(walker.targetId);walker.locationId=walker.targetId;walker.moving=false;return true;}
+    if(fraction===1){walker.position=entrance(walker.targetId);walker.locationId=walker.targetId;walker.moving=false;walker.frame=0;return true;}
     return false;
   }
   const hasArrived=(walker,id)=>!walker.moving&&walker.locationId===id&&distance(walker.position,entrance(id))<.01;

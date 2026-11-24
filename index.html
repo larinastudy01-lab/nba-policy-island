@@ -5,8 +5,8 @@
 <meta name="description" content="探索 NBA 政策島：16 座 NBA 主場、15 座公共球場、勇士政策挑戰與好友投籃邀戰。">
 <title>NBA 政策島｜登島，讓每一球有故事</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='19' fill='%23f3c45b'/%3E%3Cpath d='M1 20h38M20 1v38M7 5q28 15 0 30M33 5Q5 20 33 35' fill='none' stroke='%231c4266' stroke-width='2'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./assets/policy.css"><link rel="stylesheet" href="./assets/fan.css"><link rel="stylesheet" href="./assets/games.css"><link rel="stylesheet" href="./assets/explorer.css"><link rel="stylesheet" href="./assets/bay.css"><link rel="stylesheet" href="./assets/scenery.css">
-<script src="./assets/supabase-config.js" defer></script><script src="./assets/games-core.js" defer></script><script src="./assets/sights-core.js" defer></script><script src="./assets/traffic-core.js" defer></script><script src="./assets/island-core.js" defer></script><script src="./assets/explorer-core.js" defer></script><script src="./assets/bay-scene.js" defer></script><script src="./assets/practice-core.js" defer></script><script src="./assets/policy-core.js" defer></script><script src="./assets/online.js" defer></script><script src="./assets/fan-core.js" defer></script><script src="./assets/fan-ui.js" defer></script><script src="./assets/games-ui.js" defer></script><script src="./assets/explorer-ui.js" defer></script><script src="./script.js" defer></script>
+<link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./assets/policy.css"><link rel="stylesheet" href="./assets/fan.css"><link rel="stylesheet" href="./assets/games.css"><link rel="stylesheet" href="./assets/explorer.css"><link rel="stylesheet" href="./assets/bay.css"><link rel="stylesheet" href="./assets/scenery.css"><link rel="stylesheet" href="./assets/pixel.css">
+<script src="./assets/pixel-core.js" defer></script><script src="./assets/pixel-tiles.js" defer></script><script src="./assets/supabase-config.js" defer></script><script src="./assets/games-core.js" defer></script><script src="./assets/sights-core.js" defer></script><script src="./assets/traffic-core.js" defer></script><script src="./assets/island-core.js" defer></script><script src="./assets/explorer-core.js" defer></script><script src="./assets/bay-scene.js" defer></script><script src="./assets/practice-core.js" defer></script><script src="./assets/policy-core.js" defer></script><script src="./assets/online.js" defer></script><script src="./assets/fan-core.js" defer></script><script src="./assets/fan-ui.js" defer></script><script src="./assets/games-ui.js" defer></script><script src="./assets/explorer-ui.js" defer></script><script src="./script.js" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#island-map-area">跳至島圖</a>
@@ -24,19 +24,20 @@
   <div class="map-breadcrumb"><strong id="camera-location">全島總覽</strong><span id="map-light-status">白天・沿路探索島嶼</span></div>
   <div class="island-map-canvas" id="island-map" data-theme="day" data-view="island" aria-label="可探索的籃球島，點區名拉近、點場館沿路前往">
     <div class="island-world" id="island-world">
-      <img class="island-background" src="./assets/island-map.svg" width="1600" height="1000" alt="原創微縮籃球島：厚實海岸、高地、五大湖、南北河道、跨灣橋及碼頭；道路串起西岸到東岸的街區。">
-      <img class="bay-ground" src="./assets/bay-ground.svg" width="1600" height="1000" alt="灣區高架廣場、石板步道、木板碼頭與小船" aria-hidden="true">
-      <img class="scenery-ground" src="./assets/scenery-ground.svg" width="1600" height="1000" alt="金門灣水道、橋側步行平台及四處車輛展示鋪面" aria-hidden="true">
+      <img class="island-background" src="./assets/pixel/island-map.png" width="1600" height="1000" alt="原創微縮籃球島：厚實海岸、高地、五大湖、南北河道、跨灣橋及碼頭；道路串起西岸到東岸的街區。">
+      <img class="bay-ground" src="./assets/pixel/bay-ground.png" width="1600" height="1000" alt="灣區高架廣場、石板步道、木板碼頭與小船" aria-hidden="true">
+      <img class="scenery-ground" src="./assets/pixel/scenery-ground.png" width="1600" height="1000" alt="金門灣水道、橋側步行平台及四處車輛展示鋪面" aria-hidden="true">
+      <img class="pixel-props" src="./assets/pixel/props-world.png" width="1600" height="1000" alt="原創像素小物件：救生圈、纜樁、長椅、飲水台與排隊欄杆" aria-hidden="true">
       <div id="road-layer" aria-hidden="true"></div>
-      <img class="traffic-roads" src="./assets/traffic-roads.svg" width="1600" height="1000" alt="獨立巡遊車道，金門橋車道與南側行人步道分流" aria-hidden="true">
-      <img class="bay-light-layer" src="./assets/bay-lights.svg" width="1600" height="1000" alt="灣區暖白階梯、暖黃碼頭與冷白球場照明" aria-hidden="true">
+      <img class="traffic-roads" src="./assets/pixel/traffic-roads.png" width="1600" height="1000" alt="獨立巡遊車道，金門橋車道與南側行人步道分流" aria-hidden="true">
+      <img class="bay-light-layer" src="./assets/pixel/bay-lights.png" width="1600" height="1000" alt="灣區暖白階梯、暖黃碼頭與冷白球場照明" aria-hidden="true">
       <div id="landmark-layer" role="group" aria-label="34 個可探索地標，使用 Tab 選取後按 Enter 或空白鍵開啟"></div>
       <div id="npc-layer" aria-hidden="true"></div>
       <div id="scenery-layer" role="group" aria-label="20 個原創美國街景；相機標示為四個可步行抵達的拍照點"></div>
       <div id="traffic-layer" aria-hidden="true"></div>
-      <img class="bay-foreground" style="z-index:402" src="./assets/bay-foreground-arena.svg" width="1600" height="1000" alt="球館前景花台與樹木遮擋層" aria-hidden="true">
-      <img class="bay-foreground" style="z-index:711" src="./assets/bay-foreground-pier.svg" width="1600" height="1000" alt="碼頭前景欄杆與長椅遮擋層" aria-hidden="true">
-      <img class="bay-foreground" style="z-index:748" src="./assets/bay-foreground-court.svg" width="1600" height="1000" alt="潮汐一號低圍網與入口缺口" aria-hidden="true">
+      <img class="bay-foreground" style="z-index:402" src="./assets/pixel/bay-foreground-arena.png" width="1600" height="1000" alt="球館前景花台與樹木遮擋層" aria-hidden="true">
+      <img class="bay-foreground" style="z-index:711" src="./assets/pixel/bay-foreground-pier.png" width="1600" height="1000" alt="碼頭前景欄杆與長椅遮擋層" aria-hidden="true">
+      <img class="bay-foreground" style="z-index:748" src="./assets/pixel/bay-foreground-court.png" width="1600" height="1000" alt="潮汐一號低圍網與入口缺口" aria-hidden="true">
       <div id="district-layer" role="group" aria-label="選擇街區拉近鏡頭"></div>
       <div id="fan-map-marker" class="fan-map-marker" role="img" aria-label="我目前在勇士主場"><div id="fan-map-avatar"></div><span id="fan-map-name">我</span></div>
       <button id="island-encounter-actor" class="island-encounter-actor" type="button" aria-controls="encounter-panel" hidden><span id="island-actor-label">附近有熟悉的身影</span></button>
@@ -131,10 +132,11 @@
   <section id="fan-wardrobe" aria-label="角色試衣間">
     <figure class="avatar-stage"><div class="avatar-court-lines" aria-hidden="true"></div><div id="avatar-preview"></div><figcaption id="fan-draft-label">試穿預覽</figcaption><span class="avatar-stage-tag" aria-hidden="true">ROOKIE CARD / 01</span></figure>
     <p id="fan-saved-summary" class="small-note"></p>
+    <p id="pixel-jersey-note" class="pixel-wardrobe-note">像素球迷先穿中性運動服；隊色與背號欄位保留舊設定，未套用到像素上衣。可調整暱稱、膚色與髮型，按儲存套用。<a href="./docs/PIXEL_ART.md">球衣圖層與精靈規格</a></p>
     <form id="fan-form">
-      <fieldset class="fan-fields"><legend>球迷身分</legend><div class="fan-field-grid"><div><label for="fan-nickname">暱稱（最多 16 字）</label><input id="fan-nickname" name="nickname" maxlength="16" autocomplete="nickname" required></div><div><label for="fan-number">背號（0–99）</label><input id="fan-number" name="number" inputmode="numeric" pattern="[0-9]{1,2}" maxlength="2" required></div></div></fieldset>
+      <fieldset class="fan-fields"><legend>球迷身分</legend><div class="fan-field-grid"><div><label for="fan-nickname">暱稱（最多 16 字）</label><input id="fan-nickname" name="nickname" maxlength="16" autocomplete="nickname" required></div><div><label for="fan-number">背號（0–99）</label><input id="fan-number" name="number" aria-describedby="pixel-jersey-note" inputmode="numeric" pattern="[0-9]{1,2}" maxlength="2" required></div></div></fieldset>
       <fieldset class="fan-fields"><legend>臉孔與髮型</legend><div class="fan-field-grid"><div><label for="fan-skin">膚色</label><select id="fan-skin" name="skin"></select></div><div><label for="fan-hair">髮型</label><select id="fan-hair" name="hair"></select></div><div><label for="fan-hairColor">髮色</label><select id="fan-hairColor" name="hairColor"></select></div><div><label for="fan-expression">表情</label><select id="fan-expression" name="expression"></select></div></div></fieldset>
-      <fieldset class="fan-fields"><legend>球衣與配件</legend><div class="fan-field-grid"><div class="field-wide"><label for="fan-jersey">球衣・已開放的 16 隊配色</label><select id="fan-jersey" name="jersey"></select></div><div><label for="fan-shoes">球鞋配色</label><select id="fan-shoes" name="shoes"></select></div><div><label for="fan-headband">頭帶</label><select id="fan-headband" name="headband"></select></div><div><label for="fan-wristband">護腕</label><select id="fan-wristband" name="wristband"></select></div><div><label for="fan-glasses">眼鏡</label><select id="fan-glasses" name="glasses"></select></div></div></fieldset>
+      <fieldset class="fan-fields"><legend>球衣與配件</legend><div class="fan-field-grid"><div class="field-wide"><label for="fan-jersey">球衣・已開放的 16 隊配色</label><select id="fan-jersey" name="jersey" aria-describedby="pixel-jersey-note"></select></div><div><label for="fan-shoes">球鞋配色</label><select id="fan-shoes" name="shoes"></select></div><div><label for="fan-headband">頭帶</label><select id="fan-headband" name="headband"></select></div><div><label for="fan-wristband">護腕</label><select id="fan-wristband" name="wristband"></select></div><div><label for="fan-glasses">眼鏡</label><select id="fan-glasses" name="glasses"></select></div></div></fieldset>
       <div class="fan-form-actions"><button id="fan-random" class="button secondary" type="button">隨機搭配</button><button class="button secondary" type="reset">重設</button><button class="button primary" type="submit">儲存造型 ↗</button></div>
       <p class="small-note">編輯只更新預覽。按儲存後才套用；重設不會清空合影冊或售票挑戰進度。</p>
       <p id="fan-status" class="fan-notice" role="status" aria-atomic="true"></p>

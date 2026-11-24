@@ -23,7 +23,7 @@
     ["faneuil","波士頓法尼爾廳","east",1310,285,110,105,false,0,0,"紅磚市集、白色尖塔與三角山牆。"],
     ["south-beach","邁阿密南海灘救生站","coast",1360,875,110,95,false,0,0,"粉彩高腳救生站與木階梯面向南端沙灘。"]
   ];
-  const SIGHTS=specs.map(([key,name,district,x,y,width,height,photo,ex,ey,description])=>({id:`sight-${key}`,key,name,district,x,y,width,height,photo,entrance:photo?{x:ex,y:ey}:null,description,region:{west:"西岸灣區與洛城",desert:"西南沙地",highland:"西部高地",south:"中南部",lakes:"五大湖岸",east:"東岸街廓",coast:"南端海濱"}[district],asset:`./assets/sights/${key}.svg`,nightAsset:`./assets/sights/${key}-night.svg`,color:"#74c5c0"}));
+  const SIGHTS=specs.map(([key,name,district,x,y,width,height,photo,ex,ey,description])=>({id:`sight-${key}`,key,name,district,x,y,width,height,photo,entrance:photo?{x:ex,y:ey}:null,description,region:{west:"西岸灣區與洛城",desert:"西南沙地",highland:"西部高地",south:"中南部",lakes:"五大湖岸",east:"東岸街廓",coast:"南端海濱"}[district],asset:`./assets/sights/${key}.svg`,nightAsset:`./assets/sights/${key}-night.svg`,pixelAsset:`./assets/pixel/sights/${key}.svg`,pixelNightAsset:`./assets/pixel/sights/${key}-night.svg`,color:"#74c5c0"}));
   const get=id=>SIGHTS.find(s=>s.id===id)||null;
   const xml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"})[c]);
   function art(key,night=false){

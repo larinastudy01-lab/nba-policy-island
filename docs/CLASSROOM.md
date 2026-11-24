@@ -2,19 +2,19 @@
 
 目前是 16 主場、16 主場合影點、3 偶遇點、15 球場／15 遊戲的原生 HTML／CSS／JavaScript 專案。可直接開啟 index.html，使用相對路徑並支援 `/nba-policy-island/`。本次未開啟瀏覽器、push、部署、套用 SQL 或修改 Supabase。
 
-另已加入 20 個美國街景、4 個步行拍照點、6 款獨立跑車與 2 條巡遊環線。地標與車輛沿用同一 world／鏡頭；操作、177 項測試與待手動項目見 [SCENERY.md](./SCENERY.md)。
+目前為等距像素版：6 種球館、3 套球場、20 景點、6 款跑車、8 種路人、9 種小物與八方向中性球迷。保留 4 個觀景拍照點、兩條巡遊線及全部互動 ID。188 項測試與球衣圖格規格、離線日夜比對圖見 [PIXEL_ART.md](./PIXEL_ART.md)；景點位置與車款見 [SCENERY.md](./SCENERY.md)。
 
 | 週次 | 對應功能 | 檔案位置 | 展示方式 |
 | --- | --- | --- | --- |
 | W02 CH03 | a 導覽、分類清單、dl 球隊、time 開賽時間、ol 步驟 | index.html、script.js | 常駐清單到西岸；選站抵達後看球隊／開賽資訊 |
-| W03 CH04 | figure／alt／figcaption、景點／六車分層 SVG、60 席比較表 | index.html、sights/、cars/、sights-core.js、policy-core.js | 看金門橋與車款；拍景點照；保留席 2,400 點 |
+| W03 CH04 | figure／alt／figcaption、原創像素 PNG／SVG、60 席比較表 | index.html、pixel/、pixel-core.js、policy-core.js | 比較六種球館與三類球場；拍景點照；保留席 2,400 點 |
 | W04 CH05 | audio 本地進球／終場聲、noscript 簡版指南 | index.html、shot-hit.wav、round-end.wav、script.js | 勾音效，完成一球與結算；關閉後仍有文字回饋 |
-| W05 CH06 | 政策 radio、場地 select／optgroup、label、fieldset、range、造型／暱稱表單 | index.html、fan-ui.js、games-ui.js | 試三方案、換裝儲存；下拉選屋頂球場與試玩 |
-| W07 CH08 | 隊色、夜景／車頭光束、LIVE、席位圖例與等寬比分 | scenery.css、bay.css、island-core.js | 日夜切換；完賽停止脈動但保留車燈／道路照明 |
-| W08 CH09 | 共用 world、absolute、按 y 排序、鏡頭與分流熱區 | scenery.css、bay.css、explorer-ui.js | 拉近橋面；人物走側道，車走車道；關閉回街區 |
-| W09 CH12 | 路徑、轉向／圓弧減速、NPC 插值、政策與勝負計算 | traffic-core.js、explorer-core.js、policy-core.js、games-core.js | 720S 過橋轉彎；途中改道；保留席 2,400 點 |
-| W11 CH13 | 景點／六車／球隊／造型／相片／遊戲的獨立物件與 DOM | sights-core.js、traffic-core.js、explorer-ui.js、fan-core.js | 地圖清單同站；景點照與兩冊球星照互不影響 |
-| W12 CH14 | addEventListener、preventDefault、車／人共用 interval、清理 | explorer-ui.js、script.js、fan-ui.js | 背景／全島暫停車流，減少動態靜止；拍照下載 |
+| W05 CH06 | 政策 radio、場地 select／optgroup、造型／暱稱表單 | index.html、fan-ui.js、games-ui.js | 更改暱稱／膚色後儲存；玩家穿中性上衣，球衣僅預留 |
+| W07 CH08 | 隊色、像素材質、窗光／路燈／車燈、LIVE 與等寬比分 | pixel.css、pixel-core.js、island-core.js | 全島日夜比對；完賽停止脈動但保留街道照明 |
+| W08 CH09 | 共用 world、像素格、absolute、人物分層與鏡頭熱區 | pixel.css、explorer-ui.js、pixel/player/ | 拉近場館入口；換街區與回全島保持人物原位 |
+| W09 CH12 | 整數格繪圖、方向判斷、插值、政策／遊戲運算 | pixel-core.js、explorer-core.js、policy-core.js、games-core.js | 人物八方向走路；學生保留席 2,400；不同遊戲結算 |
+| W11 CH13 | 16 隊模型對應、身體／上衣、相片版本及 DOM | pixel-core.js、fan-core.js、fan-ui.js、script.js | 舊相片維持原畫風，新照片為像素快照 |
+| W12 CH14 | 事件、150ms 精靈幀、共用動畫 interval、清理 | explorer-ui.js、bay-scene.js、script.js | 移動停止回 idle；背景暫停；減少動態直接抵達 |
 
 表格中的檔案除 index.html、script.js、style.css 外均位於 assets。完整球迷／照片動線見 [FAN_GUIDE.md](./FAN_GUIDE.md)，15 款規則見 [README](../README.md)，好友設定與兩裝置步驟見 [MULTIPLAYER.md](./MULTIPLAYER.md)。
 
@@ -40,13 +40,13 @@ python tests/check-static.py
 git diff --check
 ```
 
-本次最終結果：**177 項 Node 測試通過，0 失敗**。15 個執行用 JS 與三個素材產生器語法通過。269 個靜態 HTML ID 唯一，錨點與素材支援本機／Pages 子路徑；原有素材與 40 份景點日夜圖、18 份車圖、8 種景點照片 XML、7 份 CSS 括號及兩個本地 PCM WAV 通過。
+本次最終結果：**188 項 Node 測試通過，0 失敗**。21 份 JavaScript 與兩支 Python 語法通過。270 個 HTML ID 唯一、8 份 CSS 及所有相對路徑通過；130 組像素 PNG／SVG 檢查原始尺寸、PNG CRC／解壓資料及整數格；另含 16 位像素球星與 16 場館室內 SVG。六種球館、六款車、八種路人的輪廓有實際差異，八方向各四個走路幀。完整路網及原有 34 站 ID／座標／球場遊戲配對與 Git 上一版相同。
 
 範圍包括城市相對方位、34 熱區矩形在 viewBox 內且不互相覆蓋；16 主場合影點／15 遊戲／3 偶遇點；台灣跨日、同日一致、舊照讀取與兩類並存；15 款開始、有效操作、計分、勝負／平手、截止與重開；單次事件綁定、換場／離場清理；原有角色、政策、賽況及主場亮燈。
 
 房間測試使用 Node 的資料形狀替身，驗證局數／共同種子／結構化成績、v2 能力檢查、猜招不產生假對手且只揭曉後端已完成回合。SQL 僅做 RPC／權限與封存條件的結構契約，**沒有 PostgreSQL 執行、RLS／並行交易或兩台真人裝置實測**。
 
-PNG 測試用 Image／Canvas／DOM 替身驗證自包含 SVG、匯出尺寸及按鈕協定，**沒有實際瀏覽器光柵化／下載或手機存檔測試**。
+照片 PNG 測試用 Image／Canvas／DOM 替身驗證自包含 SVG、匯出尺寸及按鈕協定，**沒有實際瀏覽器光柵化／下載或手機存檔測試**。另已用本機程式離線合成並檢視全島日／夜、灣區近景、模型一覽與球迷精靈表；這些是美術比對圖，不是瀏覽器或螢幕截圖。
 
 ## 由你手動確認
 

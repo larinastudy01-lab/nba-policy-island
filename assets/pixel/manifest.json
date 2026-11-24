@@ -1,0 +1,751 @@
+{
+  "version": "pixel-v1",
+  "spec": {
+    "version": "pixel-v1",
+    "worldPixel": 2,
+    "projection": [
+      2,
+      1
+    ],
+    "light": "north-west",
+    "shadow": [
+      4,
+      3
+    ],
+    "frame": [
+      16,
+      24
+    ],
+    "foot": [
+      8,
+      22
+    ],
+    "topAnchor": [
+      4,
+      10
+    ],
+    "topBounds": [
+      4,
+      10,
+      9,
+      7
+    ],
+    "chest": [
+      8,
+      13
+    ],
+    "directions": [
+      "e",
+      "se",
+      "s",
+      "sw",
+      "w",
+      "nw",
+      "n",
+      "ne"
+    ],
+    "columns": [
+      "idle",
+      "walk-0",
+      "walk-1",
+      "walk-2",
+      "walk-3"
+    ],
+    "frameMs": 150,
+    "sheet": [
+      80,
+      192
+    ]
+  },
+  "arenaModels": {
+    "warriors": "low-oval",
+    "lakers": "dome",
+    "clippers": "glass",
+    "nuggets": "sawtooth",
+    "mavericks": "steps",
+    "bulls": "brick",
+    "celtics": "dome",
+    "knicks": "glass",
+    "spurs": "low-oval",
+    "thunder": "sawtooth",
+    "suns": "steps",
+    "timberwolves": "sawtooth",
+    "bucks": "brick",
+    "sixers": "steps",
+    "heat": "glass",
+    "raptors": "brick"
+  },
+  "people": [
+    "short-cap",
+    "tall-curls",
+    "backpack",
+    "ponytail",
+    "hoodie",
+    "senior",
+    "ball-fan",
+    "seated"
+  ],
+  "props": [
+    "lifering",
+    "bollard",
+    "bench",
+    "fountain",
+    "queue-rail",
+    "container",
+    "planter",
+    "lamp",
+    "crosswalk"
+  ],
+  "files": [
+    {
+      "name": "arenas/warriors",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/warriors-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/lakers",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/lakers-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/clippers",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/clippers-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/nuggets",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/nuggets-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/mavericks",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/mavericks-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/bulls",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/bulls-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/celtics",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/celtics-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/knicks",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/knicks-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/spurs",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/spurs-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/thunder",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/thunder-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/suns",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/suns-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/timberwolves",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/timberwolves-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/bucks",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/bucks-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/sixers",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/sixers-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/heat",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/heat-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/raptors",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "arenas/raptors-night",
+      "width": 80,
+      "height": 66
+    },
+    {
+      "name": "courts/harbor",
+      "width": 55,
+      "height": 64
+    },
+    {
+      "name": "courts/harbor-night",
+      "width": 55,
+      "height": 64
+    },
+    {
+      "name": "courts/park",
+      "width": 55,
+      "height": 64
+    },
+    {
+      "name": "courts/park-night",
+      "width": 55,
+      "height": 64
+    },
+    {
+      "name": "courts/roof",
+      "width": 55,
+      "height": 64
+    },
+    {
+      "name": "courts/roof-night",
+      "width": 55,
+      "height": 64
+    },
+    {
+      "name": "player/body-sheet",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "player/top-neutral-sheet",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "people/short-cap",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "people/tall-curls",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "people/backpack",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "people/ponytail",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "people/hoodie",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "people/senior",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "people/ball-fan",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "people/seated",
+      "width": 80,
+      "height": 192
+    },
+    {
+      "name": "headlight",
+      "width": 32,
+      "height": 16
+    },
+    {
+      "name": "roads",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "roads-night",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "props/lifering",
+      "width": 20,
+      "height": 24
+    },
+    {
+      "name": "props/bollard",
+      "width": 20,
+      "height": 24
+    },
+    {
+      "name": "props/bench",
+      "width": 20,
+      "height": 24
+    },
+    {
+      "name": "props/fountain",
+      "width": 20,
+      "height": 24
+    },
+    {
+      "name": "props/queue-rail",
+      "width": 20,
+      "height": 24
+    },
+    {
+      "name": "props/container",
+      "width": 20,
+      "height": 24
+    },
+    {
+      "name": "props/planter",
+      "width": 20,
+      "height": 24
+    },
+    {
+      "name": "props/lamp",
+      "width": 20,
+      "height": 24
+    },
+    {
+      "name": "props/crosswalk",
+      "width": 20,
+      "height": 24
+    },
+    {
+      "name": "props-world",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "island-map",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "bay-ground",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "bay-lights",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "bay-foreground-arena",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "bay-foreground-pier",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "bay-foreground-court",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "scenery-ground",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "traffic-roads",
+      "width": 800,
+      "height": 500
+    },
+    {
+      "name": "sights/golden-gate",
+      "width": 133,
+      "height": 95
+    },
+    {
+      "name": "sights/golden-gate-night",
+      "width": 133,
+      "height": 95
+    },
+    {
+      "name": "sights/alcatraz",
+      "width": 65,
+      "height": 58
+    },
+    {
+      "name": "sights/alcatraz-night",
+      "width": 65,
+      "height": 58
+    },
+    {
+      "name": "sights/lombard",
+      "width": 55,
+      "height": 63
+    },
+    {
+      "name": "sights/lombard-night",
+      "width": 55,
+      "height": 63
+    },
+    {
+      "name": "sights/hollywood",
+      "width": 65,
+      "height": 40
+    },
+    {
+      "name": "sights/hollywood-night",
+      "width": 65,
+      "height": 40
+    },
+    {
+      "name": "sights/griffith",
+      "width": 53,
+      "height": 50
+    },
+    {
+      "name": "sights/griffith-night",
+      "width": 53,
+      "height": 50
+    },
+    {
+      "name": "sights/santa-monica",
+      "width": 78,
+      "height": 63
+    },
+    {
+      "name": "sights/santa-monica-night",
+      "width": 78,
+      "height": 63
+    },
+    {
+      "name": "sights/grand-canyon",
+      "width": 75,
+      "height": 48
+    },
+    {
+      "name": "sights/grand-canyon-night",
+      "width": 75,
+      "height": 48
+    },
+    {
+      "name": "sights/vegas",
+      "width": 53,
+      "height": 58
+    },
+    {
+      "name": "sights/vegas-night",
+      "width": 53,
+      "height": 58
+    },
+    {
+      "name": "sights/red-rocks",
+      "width": 63,
+      "height": 50
+    },
+    {
+      "name": "sights/red-rocks-night",
+      "width": 63,
+      "height": 50
+    },
+    {
+      "name": "sights/reunion",
+      "width": 45,
+      "height": 68
+    },
+    {
+      "name": "sights/reunion-night",
+      "width": 45,
+      "height": 68
+    },
+    {
+      "name": "sights/alamo",
+      "width": 53,
+      "height": 48
+    },
+    {
+      "name": "sights/alamo-night",
+      "width": 53,
+      "height": 48
+    },
+    {
+      "name": "sights/gateway-arch",
+      "width": 53,
+      "height": 68
+    },
+    {
+      "name": "sights/gateway-arch-night",
+      "width": 53,
+      "height": 68
+    },
+    {
+      "name": "sights/cloud-gate",
+      "width": 50,
+      "height": 38
+    },
+    {
+      "name": "sights/cloud-gate-night",
+      "width": 50,
+      "height": 38
+    },
+    {
+      "name": "sights/willis",
+      "width": 38,
+      "height": 73
+    },
+    {
+      "name": "sights/willis-night",
+      "width": 38,
+      "height": 73
+    },
+    {
+      "name": "sights/navy-pier",
+      "width": 55,
+      "height": 63
+    },
+    {
+      "name": "sights/navy-pier-night",
+      "width": 55,
+      "height": 63
+    },
+    {
+      "name": "sights/liberty",
+      "width": 55,
+      "height": 73
+    },
+    {
+      "name": "sights/liberty-night",
+      "width": 55,
+      "height": 73
+    },
+    {
+      "name": "sights/brooklyn",
+      "width": 70,
+      "height": 53
+    },
+    {
+      "name": "sights/brooklyn-night",
+      "width": 70,
+      "height": 53
+    },
+    {
+      "name": "sights/times-square",
+      "width": 53,
+      "height": 60
+    },
+    {
+      "name": "sights/times-square-night",
+      "width": 53,
+      "height": 60
+    },
+    {
+      "name": "sights/faneuil",
+      "width": 55,
+      "height": 53
+    },
+    {
+      "name": "sights/faneuil-night",
+      "width": 55,
+      "height": 53
+    },
+    {
+      "name": "sights/south-beach",
+      "width": 55,
+      "height": 48
+    },
+    {
+      "name": "sights/south-beach-night",
+      "width": 55,
+      "height": 48
+    },
+    {
+      "name": "cars/car-f40-front",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-f40-side",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-f40-rear",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-488-front",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-488-side",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-488-rear",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-720s-front",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-720s-side",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-720s-rear",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-p1-front",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-p1-side",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-p1-rear",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-aventador-front",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-aventador-side",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-aventador-rear",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-911-front",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-911-side",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "cars/car-911-rear",
+      "width": 26,
+      "height": 20
+    },
+    {
+      "name": "encounters/meet-pier",
+      "width": 240,
+      "height": 160
+    },
+    {
+      "name": "encounters/meet-plaza",
+      "width": 240,
+      "height": 160
+    },
+    {
+      "name": "encounters/meet-garden",
+      "width": 240,
+      "height": 160
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+/* Genuine integer-cell assets; UI text deliberately keeps the system Chinese font. */
+.island-world img,.island-world svg,#avatar-preview svg,.arena-scene svg,.star-portrait,#photo-image,#encounter-scene-image,#star-portrait,#arena-background,.fan-album-card img { image-rendering:pixelated; }
+.pixel-night { display:none; }.pixel-day { display:initial; }
+#island-map[data-theme="night"] .pixel-day { display:none; }
+#island-map[data-theme="night"] .pixel-night { display:initial; }
+.pixel-props { position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none; }
+.island-world { transition:transform .4s steps(10,end); }
+.landmark .arena-halo { stroke-width:3;fill:#f4cc681f;filter:none; }
+.landmark[data-glowing="true"] .arena-halo { animation:pixel-live 1.8s steps(3,end) infinite; }
+.landmark[data-selected="true"] .selection-ring { stroke-dasharray:4 4;stroke-width:3; }
+.scenic-icon,.scenic-label,.district-label,.map-breadcrumb,.explorer-controls,.button { border-radius:3px; }
+.scenic-icon { background:#183a48;border:2px solid #f1d799; }
+.fan-map-marker { width:2%;transform:translate(-50%,-91.6667%);filter:none; }
+.fan-map-marker>div,.sim-pedestrian,.npc-body,.island-encounter-actor .actor-silhouette { filter:none; }
+.fan-map-marker[data-moving="true"] #fan-map-avatar { animation:none; }
+.fan-map-marker>span { border-radius:2px;font-size:8px;top:2%; }
+.fan-map-marker::after { border-radius:0;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);bottom:1%; }
+.sim-pedestrian { width:2%;transform:translate(-50%,-91.6667%);filter:none; }
+.npc-body { transform:none!important; }
+.sim-pedestrian[data-look="dribble"] [data-layer="ball"] { transform:none; }
+.island-car { filter:none; }.island-car img { image-rendering:pixelated; }
+.car-headlight { background:transparent url('./pixel/headlight.svg') no-repeat center/100% 100%;clip-path:none;filter:none; }
+#island-map[data-theme="night"] .scenic-art { filter:brightness(.78); }
+#island-map[data-theme="night"] .fan-map-marker,#island-map[data-theme="night"] .sim-pedestrian { filter:brightness(.9); }
+#island-map[data-theme="night"] .pixel-props { filter:brightness(.75); }
+.pixel-wardrobe-note { padding:12px;border:1px solid #78999c;background:#173b4c;color:#e3d4a5;font-size:12px;line-height:1.8; }
+@keyframes pixel-live { 0%,100%{opacity:.45}50%{opacity:1} }
+@media(max-width:700px){.fan-map-marker,.sim-pedestrian{width:2%}.fan-map-marker>span{font-size:7px}}
+@media(prefers-reduced-motion:reduce){.island-world{transition:none}.landmark[data-glowing="true"] .arena-halo{animation:none;opacity:1}}
