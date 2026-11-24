@@ -5,6 +5,8 @@ from urllib.parse import urljoin, urlparse
 import re
 import xml.etree.ElementTree as ET
 import wave
+import json
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -45,7 +47,7 @@ for node in svg.iter():
     for attr in ("href", "{http://www.w3.org/1999/xlink}href"):
         if attr in node.attrib:
             assert node.attrib[attr].startswith("#") and node.attrib[attr][1:] in svg_ids
-for file in (ROOT / "style.css", ROOT / "assets/policy.css"):
+for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css"):
     css = file.read_text(encoding="utf-8-sig")
     css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
     css = re.sub(r'''"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*' ''', "", css, flags=re.X)
@@ -63,6 +65,10 @@ tags = {tag for tag, attrs in page.tags}
 assert {"a", "dl", "ol", "figure", "img", "figcaption", "audio", "noscript", "form", "label", "fieldset", "legend", "select", "optgroup", "table", "caption", "th"} <= tags
 assert len([1 for tag, attrs in page.tags if tag == "optgroup"]) == 3
 for tag, attrs in page.tags:
+    for attr in ("for", "aria-controls", "aria-labelledby", "aria-describedby"):
+        if attrs.get(attr):
+            for target in attrs[attr].split():
+                assert target in page.ids, f"Missing {attr} target: {target}"
     if tag == "img":
         assert attrs.get("alt"), "Missing image alternative text"
     if tag == "audio":
@@ -80,3 +86,30 @@ print(f"HTML: {len(page.ids)} unique IDs; all local assets and anchors resolve")
 print("SVG: XML parsed, viewBox and local references valid")
 print("Required classroom HTML structures exist; 3 court optgroups; audio has no autoplay")
 print("No inline handlers, remote scripts or root-relative assets")
+
+vectors = list((ROOT / "assets/stars").glob("*.svg")) + list((ROOT / "assets/arenas").glob("*.svg"))
+assert len(vectors) == 16, "Expected eight original stars and eight original arenas"
+for vector in vectors:
+    tree = ET.parse(vector).getroot()
+    assert tree.tag == "{http://www.w3.org/2000/svg}svg"
+    assert tree.find("{http://www.w3.org/2000/svg}title") is not None
+    assert not tree.findall(".//{http://www.w3.org/2000/svg}script")
+    assert not tree.findall(".//{http://www.w3.org/2000/svg}foreignObject")
+    assert not any("href" in name for node in tree.iter() for name in node.attrib), vector
+
+# 直接解析共用渲染器輸出的合影 SVG，不使用瀏覽器或像素擷取。
+node_source = """
+const F=require('./assets/fan-core.js');
+const photos=F.STATIONS.map(s=>F.photoSVG(F.createPhoto(s.teamId,{nickname:'<Fan>&',number:'07'},{pose:'ball',capturedAt:'2026-11-24T06:30:00Z'})));
+photos.push(F.photoSVG(F.createPhoto('lakers',F.DEFAULT_AVATAR,{background:'night'},'live')));
+console.log(JSON.stringify(photos));
+"""
+rendered = json.loads(subprocess.check_output(["node", "-e", node_source], cwd=ROOT).decode("utf-8"))
+for markup in rendered:
+    photo = ET.fromstring(markup)
+    assert photo.attrib["width"] == "960" and photo.attrib["height"] == "640"
+    assert len([node for node in photo.iter() if node.attrib.get("data-layer") == "face"]) == 2
+    assert not any("href" in name for node in photo.iter() for name in node.attrib)
+assert len(rendered) == 9
+print("Fan assets: 16 original SVGs parsed; 9 self-contained photo compositions parsed")
+print("Photo XML has two characters, no external image references; PNG pixel output remains manual QA")

@@ -10,6 +10,7 @@ function initializeIsland() {
   try { storage = window.localStorage; } catch { /* 保留單次頁面功能。 */ }
   const policySession = createPolicySession(storage);
   const state = C.createIslandState();
+  let fanUI = null;
   const adapter = globalThis.NBAOnline.createSupabaseAdapter(globalThis.NBA_SUPABASE_CONFIG, {storage});
   const mapNodes = new Map();
   const listNodes = new Map();
@@ -69,11 +70,15 @@ function initializeIsland() {
         badge.classList.add("complete-label");
         badge.setAttribute("x","52"); badge.setAttribute("y","-43");
         badge.setAttribute("aria-hidden","true");badge.textContent="✓";
-        graphic.append(badge);node.append(graphic);
+        const photoBadge = document.createElementNS(ns,"g");photoBadge.classList.add("photo-badge");
+        photoBadge.setAttribute("aria-hidden","true");photoBadge.setAttribute("transform","translate(-58 -47)");
+        photoBadge.innerHTML='<rect class="photo-badge-bg" x="-11" y="-10" width="22" height="20" rx="5"/><path class="photo-badge-icon" d="M-7-4h4l2-3h4l2 3h3v10H-7Z"/><circle class="photo-badge-icon" r="3" cy="1"/>';
+        photoBadge.setAttribute("visibility","hidden");
+        graphic.append(photoBadge);graphic.append(badge);node.append(graphic);
         node.addEventListener("click",()=>openLandmark(kind,item.id));
         node.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();if(!event.repeat)openLandmark(kind,item.id);}});
         $("landmark-layer").append(node);
-        mapNodes.set(item.id,{node,badge});
+        mapNodes.set(item.id,{node,badge,photoBadge});
         const button = document.createElement("button");
         button.type="button";button.id=`list-${item.id}`;
         button.style.setProperty("--team-color",item.color);
@@ -96,10 +101,11 @@ function initializeIsland() {
   }
   function renderMapAndDirectory() {
     const complete = policySession.getState().completedPlanId !== null;
+    const album = fanUI?.getState().album || {};
     $("open-team-count").textContent=`${C.TEAMS.length}／30`;
     $("filter-nba").setAttribute("aria-pressed",String(state.filter==="nba"));
     $("filter-court").setAttribute("aria-pressed",String(state.filter==="court"));
-    for(const [id,{node,badge}] of mapNodes) {
+    for(const [id,{node,badge,photoBadge}] of mapNodes) {
       const kind=node.dataset.kind;
       const item=C.getLandmark(kind,id);
       const selected=state.kind===kind&&state.id===id;
@@ -107,19 +113,23 @@ function initializeIsland() {
       node.setAttribute("aria-pressed",String(selected));
       const done=kind==="nba"&&id==="warriors"&&complete;
       badge.setAttribute("visibility",done?"visible":"hidden");
+      const photographed=kind==="nba"&&Boolean(album[id]);
+      photoBadge.setAttribute("visibility",photographed?"visible":"hidden");
       let status=courtStatus(id);
       if(kind==="nba"){
         const match=C.gameForTeam(id,state.gameState);
         node.dataset.state=match.state;node.dataset.glowing=String(match.glowing);
         status=`模擬${{idle:"無賽事",scheduled:"待開打",live:"進行中",final:"已完賽"}[match.state]}，${match.isHome?"本場主隊":"本場客隊"}${done?"，政策挑戰已完成":""}`;
+        if(photographed)status+="，已收藏主場合影";
       }
       node.setAttribute("aria-label",`${item.name}，${item.region}，${status}`);
       const entry=listNodes.get(id);
       entry.button.hidden=kind!==state.filter;
       entry.button.setAttribute("aria-pressed",String(selected));
       entry.button.setAttribute("aria-label",`${item.name}，${status}`);
-      entry.button.innerHTML=`<span class="list-symbol" aria-hidden="true">${kind==="nba"?item.abbr:item.type==="harbor"?"港邊":item.type==="park"?"公園":"屋頂"}</span><span class="list-copy"><strong>${escapeHTML(item.name)}${done?" ✓":""}</strong><small>${escapeHTML(kind==="nba"?item.region:status)}</small></span>`;
+      entry.button.innerHTML=`<span class="list-symbol" aria-hidden="true">${kind==="nba"?item.abbr:item.type==="harbor"?"港邊":item.type==="park"?"公園":"屋頂"}</span><span class="list-copy"><strong>${escapeHTML(item.name)}${done?" ✓":""}</strong><small>${escapeHTML(kind==="nba"?item.region:status)}${photographed?"・合影已收藏":""}</small></span>`;
     }
+    fanUI?.updateLocation(state);fanUI?.refreshGame();
   }
   function element(tag,className,text) {
     const node=document.createElement(tag);node.className=className;
@@ -435,7 +445,7 @@ function initializeIsland() {
     const court=C.getLandmark("court",courtId);
     $("game-stage").dataset.scene=court.type;
     $("game-stage").setAttribute("aria-label",`${court.name}，${court.scene}；按空白鍵出手`);
-    $("play-court").hidden=false;$("round-result").hidden=true;
+    $("play-court").hidden=false;$("round-result").hidden=true;$("practice-fan-result").hidden=true;
     $("game-mode-label").textContent=mode==="practice"?"單機練習・非真人連線":"好友 1 對 1・真人房間";
     $("shooting-title").textContent=`${C.getLandmark("court",courtId).name}｜投籃挑戰`;
     $("game-context").textContent=mode==="practice"?"一秒後開始。每次出手間隔至少 0.5 秒；沒有對手，也不會建立房間。":"以伺服器開始時間同步，倒數後雙方各投 30 秒；對手成績會在結算時顯示。";
@@ -453,7 +463,12 @@ function initializeIsland() {
     $("aim-cursor").style.left=`${snapshot.aim*100}%`;
     $("shoot-button").disabled=snapshot.phase!=="playing";
     $("aim-description").textContent=snapshot.phase==="countdown"?`倒數 ${Math.ceil((snapshot.startsAt-now)/1000)} 秒`:`瞄準 ${Math.round(snapshot.aim*100)}%・金色命中區為 36%–64%`;
-    if(snapshot.phase==="finished"&&!gameFinished){gameFinished=true;stopGameTimer();playSound("sound-end");$("shoot-button").disabled=true;$("shot-feedback").textContent="時間到！停止出手。";if(gameMode==="practice"){$("round-result").hidden=false;$("round-result-title").textContent="單機練習結果";$("round-result-content").textContent=`你命中 ${snapshot.hits} 球，出手 ${snapshot.attempts} 次。這是單機練習，沒有真人或模擬對手。`;announce("單機練習時間到，結果已顯示。");}else{pendingScore={roomId:gameRoomId,round:gameRound,score:snapshot.hits,attempts:snapshot.attempts};submitLocalScore();}}
+    if(snapshot.phase==="finished"&&!gameFinished){gameFinished=true;stopGameTimer();playSound("sound-end");$("shoot-button").disabled=true;$("shot-feedback").textContent="時間到！停止出手。";if(gameMode==="practice"){$("round-result").hidden=false;$("round-result-title").textContent="單機練習結果";$("round-result-content").textContent=`你命中 ${snapshot.hits} 球，出手 ${snapshot.attempts} 次。這是單機練習，沒有真人或模擬對手。`;renderPracticeFan();announce("單機練習時間到，結果已顯示。");}else{pendingScore={roomId:gameRoomId,round:gameRound,score:snapshot.hits,attempts:snapshot.attempts};submitLocalScore();}}
+  }
+  function renderPracticeFan(){
+    const visible=Boolean(fanUI&&gameMode==="practice"&&gameFinished);
+    $("practice-fan-result").hidden=!visible;
+    if(visible){const avatar=fanUI.savedAvatar();$("practice-fan-avatar").innerHTML=fanUI.renderAvatar(avatar);$("practice-fan-caption").textContent=`${avatar.nickname}，這一局的努力收進你的球迷故事。`;}
   }
   function shoot(){audioUnlocked=true;if(!game)return;const result=game.shoot(Date.now()+(gameMode==="online"?serverOffset:0));if(result.accepted){$("shot-feedback").textContent=result.hit?"命中！＋1":"差一點，再抓準節奏。";if(result.hit)playSound("sound-hit");}tickGame();}
   $("shoot-button").addEventListener("click",shoot);
@@ -470,6 +485,7 @@ function initializeIsland() {
   }
   $("resubmit-score").addEventListener("click",submitLocalScore);
   function showOnlineResult(snapshot){
+    $("practice-fan-result").hidden=true;
     lastResultToken=`${snapshot.room.id}:${snapshot.room.round}`;
     game=null;gameMode="online";gameCourtId=snapshot.room.court_id;gameRoomId=snapshot.room.id;gameRound=snapshot.room.round;gameFinished=true;
     const own=snapshot.players.find(p=>p.user_id===adapter.userId());
@@ -484,7 +500,9 @@ function initializeIsland() {
     stopGameTimer();pendingScore=null;
   }
 
-  buildLandmarks();renderMapAndDirectory();renderPanel();renderPolicy();renderConnection();
+  buildLandmarks();
+  fanUI=globalThis.NBAFanUI.initializeFan({storage,getSelection:()=>state,getGameState:()=>state.gameState,onVisit:id=>openLandmark("nba",id),onChange:()=>{renderMapAndDirectory();renderPracticeFan();}});
+  renderMapAndDirectory();renderPanel();renderPolicy();renderConnection();
   const invitation=C.parseInvite(window.location.href);
   if(invitation){openLandmark("court",invitation.courtId,false);$("invite-code").value=invitation.invite;$("lobby-notice").textContent="已定位朋友指定的球場；連線後輸入暱稱，按加入朋友房間。";}
   if(adapter.configured){syncOnline();onlineTimer=setInterval(syncOnline,2000);}

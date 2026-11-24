@@ -12,6 +12,18 @@
 - 四面海岸、立體球館、露天球線與籃框、碼頭、橋、環島道路、河道、中央廣場與擴建街廓均由本專案繪製。
 - NBA 目前開放 8／30 隊，長期全聯盟目標包含多倫多暴龍，目前不擺放未開放球隊的球館。
 
+## 我的球迷、主場尋星與合影冊
+
+島圖工具列的「我的球迷」可開啟分層 SVG 試衣間：暱稱、膚色、髮型／髮色、表情、8 隊球衣、背號、球鞋、頭帶、護腕與眼鏡。編輯、隨機、重設只影響試穿預覽，**按儲存才套用**到島圖「我」、合影與單機投籃結算。桌機為側邊試衣間，手機為全螢幕原生 dialog；角色同步至真人房間尚未開放。
+
+點選 NBA 主場後按「尋找球星」，先探索球館合影點，再點球星進入拍照。8 站各有一位代表球星與原創本地插畫／場館。全部標示「隊史球星致敬・非現役名單」，不是即時球員名單；場館為自訂設計。
+
+拍照可選站姿／舉球，一般合影隨時開放。夜場燈光只對模擬 LIVE 的主隊開放：勇士客場打湖人時，湖人可選夜場、勇士仍可拍一般合影。定格後可重拍、收藏或下載 960 × 640 PNG，包含角色、球星、背景、暱稱、隊名、場館及日期。
+
+合影冊每隊收藏一張，更新同隊不重複計站；保存拍攝當時的造型、姿勢、背景及日期，換裝不改動舊照片。localStorage 只存重建資料，不存大型圖片；不支援儲存時顯示提示，本次頁面仍可使用和下載。PNG 用不含外部圖片的 SVG 轉 Canvas，無須讀取 file:// 圖片到 Canvas，兼容本機與 GitHub Pages 子路徑。
+
+詳細操作、8 站對應與手動驗收：[docs/FAN_GUIDE.md](./docs/FAN_GUIDE.md)。
+
 ## NBA 模擬與政策關卡
 
 四種模擬情境套用至四場本地示範對戰，並非即時 NBA 資料。每場只有一份主客隊與比分資料，兩隊面板共用；只有進行中的主隊球館發光，完賽則關燈並保留最終比分。支援 `prefers-reduced-motion` 靜態光圈。
@@ -56,6 +68,10 @@
 | `assets/supabase-config.js` | 只允許公開 publishable／anon 金鑰的設定 |
 | `assets/shot-hit.wav`、`assets/round-end.wav` | 原創進球與終場音效，離線可讀取 |
 | `assets/generate_audio.py` | Python 標準函式庫 WAV 產生器 |
+| `assets/fan-core.js` | 造型、8 站球星、合影快照、儲存與共用 SVG／PNG 渲染 |
+| `assets/fan-ui.js`、`assets/fan.css` | 試衣間、球館探索、拍照、合影冊及手機面板 |
+| `assets/stars/*.svg`、`assets/arenas/*.svg` | 8 個原創 Q 版球星及 8 個原創場館背景 |
+| `assets/generate_fan_assets.cjs` | 依共用渲染器重建 16 個本地 SVG 素材 |
 | `supabase/schema.sql` | 兩人房間、RLS、本人提交成績、就緒與重開 RPC |
 | `tests/*.test.cjs` | Node 政策、島嶼、投籃、連線契約與事件替身測試 |
 | `tests/check-static.py` | HTML 路徑、錨點、SVG XML 與 CSS 括號檢查 |
@@ -71,12 +87,14 @@
 ```powershell
 node --check script.js
 Get-ChildItem assets -Filter *.js | ForEach-Object { node --check $_.FullName }
-node --test tests/policy.test.cjs tests/island.test.cjs tests/ui.test.cjs
+node --test tests/policy.test.cjs tests/island.test.cjs tests/ui.test.cjs tests/fan.test.cjs
 python tests/check-static.py
 git diff --check
 ```
 
 事件測試使用純 Node 元素替身與虛擬計時；不表示已驗證實際瀏覽器鍵盤、排版、觸控或網路同步。SQL 目前僅做 RPC／權限結構契約檢查，沒有執行於資料庫。
+
+目前 62 項 Node 測試通過。PNG 已測自包含 SVG、Canvas 尺寸／繪製／輸出協定及下載按鈕事件；使用替身，未驗證真實瀏覽器光柵化、中文字型或手機儲存行為。這些項目由你手動預覽。
 
 ## 手動預覽
 
@@ -86,6 +104,7 @@ git diff --check
 4. 打開勇士「門票怎麼分？」，對照上表試算、換方案、重設、確認、回到島圖並重新整理。檢查表格選中強調、手機卡片、既有進度與完成勾號；切球隊、公共球場或模擬狀態不能清除它。
 5. 在三種地景的公共球場各試一次單機投籃。開始後聚焦投籃區，再用空白鍵出手；也測觸控出手、按住空白鍵、30 秒截止、重開及離場。勾選音效後聽進球／終場聲，再關閉音效確認仍有文字回饋。確認沒有對手或假房間。
 6. 尚未配置時確認邀戰按鈕不可用，並閱讀 [兩台裝置邀戰驗證](./docs/MULTIPLAYER.md)。套用公開設定與 SQL 後，再驗證雙方就緒、勝負、平手、重開、重複加入、第三人、斷線與本人分數權限。
+7. 依「我的球迷建立造型並儲存 → 勇士主場尋找柯瑞 → 點合影點 → 拍照收藏 → 下載 PNG → 換裝後從合影冊查看舊照片」操作。確認 PNG 包含全部人物與文字、同隊重拍只計一站，以及照片／政策／賽況三種標記互不影響。
 
 ## 擴充
 

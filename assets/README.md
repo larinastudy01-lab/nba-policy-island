@@ -10,6 +10,15 @@
 - `online.js`：原生 fetch 的 Supabase Auth / RPC 介面。
 - `supabase-config.js`：預設留空的公開連線設定，不能填入服務端金鑰。
 
+## 球迷角色、隊史 Q 版球星與球館
+
+- `fan-core.js` 的分層 SVG 渲染器提供陰影、腿、球鞋、手臂、球衣、臉、髮型、配件與籃球圖層。試衣間、島圖「我」、場館、合影及單機結算共用同一渲染器。
+- `stars/`：`curry.svg`、`magic.svg`、`paul.svg`、`jokic.svg`、`dirk.svg`、`jordan.svg`、`bird.svg`、`ewing.svg`，共 8 張原創 Q 版隊史致敬插畫。以抽象比例、球衣配色、背號與髮型表現，沒有官方照片、隊徽或外部取樣。**不代表現役名單**。
+- `arenas/`：`warriors.svg`、`lakers.svg`、`clippers.svg`、`nuggets.svg`、`mavericks.svg`、`bulls.svg`、`celtics.svg`、`knicks.svg`，共 8 個原創自訂場館。共用結構，依隊色、看台與記分板呈現各站；場館名稱為遊戲內設計。
+- 從根目錄執行 `node assets/generate_fan_assets.cjs` 可重建全部 16 個 SVG。產生器與合影共用 `fan-core.js` 圖形來源，測試會確認檔案相符。
+- 合影轉 PNG 時把相同向量圖層直接組成一個自包含 SVG，不透過 fetch 讀 file:// 素材，不含外部 image、foreignObject 或字型下載。SVG `<text>` 含暱稱、球星、隊名、場館與日期，隨 Canvas 一起匯出。
+- 各頁圖片提供 alt、SVG title／desc 及場館圖說。像素品質、字型與觸控下載行為仍需手動驗收。
+
 ## 本地原創音效
 
 - `shot-hit.wav`：0.36 秒，籃網沙沙聲與上行音符，用於命中。
