@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b111c">
+  <meta name="description" content="NBA 政策島｜美國客場巡迴。從美國地圖探索金州勇士站，體驗四種本地模擬賽事狀態。">
+  <title>NBA 政策島｜美國客場巡迴</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%23f5c451'/%3E%3Cpath d='M2 24h44M24 2v44M8 8q32 16 0 32M40 8Q8 24 40 40' fill='none' stroke='%231d4d97' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#tour-map">跳至巡迴地圖</a>
+  <header class="site-header">
+    <a class="brand" href="./index.html" aria-label="NBA 政策島首頁">
+      <svg class="brand-ball" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18"/><path d="M2 20h36M20 2v36M7 7q26 13 0 26M33 7Q7 20 33 33"/></svg>
+      <span>NBA 政策島<span class="brand-subtitle">COURTSIDE ATLAS</span></span>
+    </a>
+    <nav aria-label="主要導覽"><a class="nav-current" href="#tour-map" aria-current="page">美國客場巡迴<span>01</span></a></nav>
+    <span class="local-indicator"><i aria-hidden="true"></i>本地模擬展示</span>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow"><span></span> FOLLOW THE GAME. EXPLORE THE CITY.</p>
+        <h1 id="page-title">美國客場<span>巡迴</span><span class="title-period">。</span></h1>
+        <p class="intro-copy">從一座球場，走進一座城市。<br class="mobile-break">你的 NBA 旅程，從舊金山灣區出發。</p>
+      </div>
+      <div class="tour-count" aria-label="目前開放一個球隊站點"><strong>01<span>/ 30</span></strong><p>球隊站點，陸續點亮<span>THE JOURNEY STARTS HERE</span></p></div>
+    </section>
+
+    <section class="atlas" id="tour-map" aria-labelledby="map-title">
+      <div class="map-panel">
+        <div class="map-heading"><div><span class="section-index">01 — EXPLORE</span><h2 id="map-title">下一站，灣區主場</h2></div><span class="map-scope">美國本土 48 州<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8V3h5M12 3h5v5M17 12v5h-5M8 17H3v-5"/></svg></span></div>
+        <div class="map-stage">
+          <span class="ocean-label" aria-hidden="true">PACIFIC<br>OCEAN</span>
+          <div class="map-canvas" id="map-canvas">
+            <img class="us-map" src="./assets/us-map.svg" width="1000" height="620" alt="美國本土 48 州輪廓，加州位於西岸，勇士站位於舊金山灣區。" draggable="false">
+            <div id="station-markers"></div>
+          </div>
+          <div class="map-scoreboard scoreboard" id="map-scoreboard" aria-label="勇士站模擬賽事記分牌"></div>
+          <div class="map-compass" aria-hidden="true"><span>N</span><svg viewBox="0 0 30 36"><path d="m15 2 9 28-9-6-9 6Z"/><path d="M15 2v22"/></svg></div>
+          <span class="map-region-label" aria-hidden="true">UNITED STATES OF AMERICA</span>
+        </div>
+        <div class="map-bottom"><p class="map-instruction"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 2 1 12 3-3 3 6 3-2-4-5 4-1Z"/></svg>點選籃球，探索球隊站點</p><ul class="map-legend" aria-label="地圖狀態圖例"><li><i class="legend-idle"></i>無賽事</li><li><i class="legend-scheduled"></i>待開打</li><li><i class="legend-live"></i>進行中</li><li><i class="legend-final"></i>已完賽</li></ul></div>
+      </div>
+
+      <aside class="station-panel" aria-label="勇士站資訊">
+        <div id="station-card" class="station-card">
+          <div class="station-kicker"><span>STATION 01 / CALIFORNIA</span><button class="icon-button" id="close-station" type="button" aria-label="收合勇士站資訊卡" title="收合資訊卡"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg></button></div>
+          <div class="team-emblem" aria-hidden="true"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="53"/><circle class="emblem-inner" cx="60" cy="60" r="45"/><path class="bridge-line" d="M19 77h82M25 72h70M40 30v47M76 40v37M36 30h8M72 40h8M22 59q17-3 18-25 12 26 36 11 9 15 22 19M29 56v16M49 48v24M59 50v22M68 49v23M85 57v15M93 62v10"/><path class="emblem-wave" d="m38 87 6-5 6 5 6-5 6 5 6-5 6 5 6-5"/></svg></div>
+          <p class="team-english" id="station-english">GOLDEN STATE WARRIORS</p>
+          <h2 id="station-title" tabindex="-1">金州勇士<span>勇士站</span></h2>
+          <p class="station-city"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8c0 4-5.5 9-5.5 9S4.5 12 4.5 8a5.5 5.5 0 0 1 11 0Z"/><circle cx="10" cy="8" r="1.8"/></svg><span id="station-city">舊金山・加州</span><span class="city-english">San Francisco, CA</span></p>
+          <div class="station-divider"></div>
+          <div class="station-game" id="station-game"></div>
+          <div class="station-note"><span class="note-mark" aria-hidden="true">↗</span><p>第一站，從灣區開始。<span>把籃球熱情，放進下一趟旅程。</span></p></div>
+          <div class="station-footer"><span>西部聯盟 · 太平洋組</span><span class="station-number">GSW / 01</span></div>
+        </div>
+        <div id="station-placeholder" class="station-placeholder" hidden><span class="placeholder-orbit" aria-hidden="true">01</span><p class="eyebrow">YOUR NEXT DESTINATION</p><h2>灣區，等你入場。</h2><p>在地圖上選取藍金籃球，<br>查看金州勇士站與模擬賽況。</p><button class="open-station" id="open-station" type="button">探索勇士站 <span aria-hidden="true">↗</span></button></div>
+      </aside>
+    </section>
+
+    <section class="simulation" aria-labelledby="simulation-title">
+      <div class="simulation-heading"><span class="simulation-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4v16M12 4v16M19 4v16"/><path d="M2 8h6M9 16h6M16 10h6"/></svg></span><div><h2 id="simulation-title">模擬賽事<span>DEMO CONTROL</span></h2><p>切換情境，即時預覽球場狀態</p></div></div>
+      <fieldset class="state-controls"><legend class="sr-only">選擇模擬賽事狀態</legend><label><input type="radio" name="game-state" value="idle"><span><i class="control-dot idle-dot" aria-hidden="true"></i>今日無賽事</span></label><label><input type="radio" name="game-state" value="scheduled"><span><i class="control-dot scheduled-dot" aria-hidden="true"></i>尚未開打</span></label><label><input type="radio" name="game-state" value="live" checked><span><i class="control-dot live-dot" aria-hidden="true"></i>比賽進行中</span></label><label><input type="radio" name="game-state" value="final"><span><svg class="control-check" viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg>比賽結束</span></label></fieldset>
+    </section>
+    <p class="demo-disclaimer"><span aria-hidden="true">ⓘ</span> 本頁為互動原型，所有賽事與比分皆為本地模擬資料，非即時 NBA 賽況。開打時間以台灣時間（UTC+8）顯示。</p>
+    <p class="sr-only" id="game-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
+    <noscript><p class="noscript-notice">請啟用 JavaScript，以查看模擬記分牌、選取勇士站及切換賽事狀態。</p></noscript>
+  </main>
+  <footer class="site-footer"><span>NBA 政策島<span class="footer-separator">/</span>美國客場巡迴</span><span>一座城市，一場好球。<span class="footer-ball" aria-hidden="true">◉</span></span></footer>
+</body>
+</html>
