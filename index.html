@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b111c">
-  <meta name="description" content="NBA 政策島｜美國客場巡迴。從美國地圖探索金州勇士站，體驗四種本地模擬賽事狀態。">
+  <meta name="description" content="NBA 政策島｜美國客場巡迴。探索金州勇士站，扮演主場營運人員，挑戰門票分配與票房收入的取捨。">
   <title>NBA 政策島｜美國客場巡迴</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Ccircle cx='24' cy='24' r='22' fill='%23f5c451'/%3E%3Cpath d='M2 24h44M24 2v44M8 8q32 16 0 32M40 8Q8 24 40 40' fill='none' stroke='%231d4d97' stroke-width='3'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="./style.css">
@@ -31,9 +31,10 @@
       <div class="tour-count" aria-label="目前開放一個球隊站點"><strong>01<span>/ 30</span></strong><p>球隊站點，陸續點亮<span>THE JOURNEY STARTS HERE</span></p></div>
     </section>
 
-    <section class="atlas" id="tour-map" aria-labelledby="map-title">
+    <section class="atlas" id="tour-map" aria-labelledby="map-title" tabindex="-1">
       <div class="map-panel">
         <div class="map-heading"><div><span class="section-index">01 — EXPLORE</span><h2 id="map-title">下一站，灣區主場</h2></div><span class="map-scope">美國本土 48 州<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8V3h5M12 3h5v5M17 12v5h-5M8 17H3v-5"/></svg></span></div>
+        <p class="map-policy-progress" id="map-policy-progress" role="status" aria-atomic="true">已完成 0／1 個政策挑戰</p>
         <div class="map-stage">
           <span class="ocean-label" aria-hidden="true">PACIFIC<br>OCEAN</span>
           <div class="map-canvas" id="map-canvas">
@@ -56,6 +57,7 @@
           <p class="station-city"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8c0 4-5.5 9-5.5 9S4.5 12 4.5 8a5.5 5.5 0 0 1 11 0Z"/><circle cx="10" cy="8" r="1.8"/></svg><span id="station-city">舊金山・加州</span><span class="city-english">San Francisco, CA</span></p>
           <div class="station-divider"></div>
           <div class="station-game" id="station-game"></div>
+          <div class="station-policy"><span id="station-policy-status">政策挑戰・尚未完成</span><a class="policy-entry" href="#policy-challenge">進入政策挑戰 <span aria-hidden="true">↗</span></a></div>
           <div class="station-note"><span class="note-mark" aria-hidden="true">↗</span><p>第一站，從灣區開始。<span>把籃球熱情，放進下一趟旅程。</span></p></div>
           <div class="station-footer"><span>西部聯盟 · 太平洋組</span><span class="station-number">GSW / 01</span></div>
         </div>
@@ -68,8 +70,53 @@
       <fieldset class="state-controls"><legend class="sr-only">選擇模擬賽事狀態</legend><label><input type="radio" name="game-state" value="idle"><span><i class="control-dot idle-dot" aria-hidden="true"></i>今日無賽事</span></label><label><input type="radio" name="game-state" value="scheduled"><span><i class="control-dot scheduled-dot" aria-hidden="true"></i>尚未開打</span></label><label><input type="radio" name="game-state" value="live" checked><span><i class="control-dot live-dot" aria-hidden="true"></i>比賽進行中</span></label><label><input type="radio" name="game-state" value="final"><span><svg class="control-check" viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg>比賽結束</span></label></fieldset>
     </section>
     <p class="demo-disclaimer"><span aria-hidden="true">ⓘ</span> 本頁為互動原型，所有賽事與比分皆為本地模擬資料，非即時 NBA 賽況。開打時間以台灣時間（UTC+8）顯示。</p>
+
+    <section class="policy-challenge" id="policy-challenge" aria-labelledby="policy-title" tabindex="-1">
+      <header class="policy-header">
+        <div><p class="eyebrow">WARRIORS STATION / POLICY CHALLENGE 01</p><h2 id="policy-title">熱門對戰，門票該怎麼分？</h2></div>
+        <span class="policy-simulation-tag">自訂模擬情境</span>
+      </header>
+      <p class="policy-intro">你是勇士主場的營運人員。熱門對戰只有 60 張票，卻有 80 人登記；你會如何兼顧學生入場機會與票房收入？</p>
+      <p class="policy-scenario-note">以下人數、價格與規則皆為本關自訂，不代表 NBA 或球隊的實際售票政策。</p>
+      <dl class="policy-facts">
+        <div><dt>可售門票</dt><dd>60 <span>張</span></dd></div>
+        <div><dt>學生登記</dt><dd>20 <span>人</span></dd><small>每人預算 30 點</small></div>
+        <div><dt>一般球迷登記</dt><dd>60 <span>人</span></dd><small>每人都付得起原價 45 點</small></div>
+        <div><dt>購票上限</dt><dd>1 <span>張／人</span></dd><small>一人一票，不重複購買</small></div>
+      </dl>
+      <div class="policy-goals" id="policy-goals"><strong>本關兩項目標</strong><span>學生至少 <b>15</b> 人入場</span><span>票房至少 <b>2,000</b> 點</span></div>
+
+      <form id="policy-form" aria-describedby="policy-goals policy-trial-hint">
+        <fieldset class="policy-options" id="policy-options"><legend>01 — 選擇售票方案</legend>
+          <div class="policy-options-grid">
+            <label class="policy-option-label"><input id="plan-regular" type="radio" name="policy-plan" value="regular" required checked><span class="policy-option"><span class="policy-option-top"><span class="policy-option-number">A</span><span class="policy-radio" aria-hidden="true"></span></span><strong>原價售票</strong><span class="policy-option-formula">60 張 × 45 點</span><span class="policy-option-description">全數以原價售票。學生預算不足，由一般球迷購票入場。</span></span></label>
+            <label class="policy-option-label"><input id="plan-reserved" type="radio" name="policy-plan" value="reserved" required><span class="policy-option"><span class="policy-option-top"><span class="policy-option-number">B</span><span class="policy-radio" aria-hidden="true"></span></span><strong>學生保留席</strong><span class="policy-option-formula">20 張 × 30 點 ＋ 40 張 × 45 點</span><span class="policy-option-description">保留 20 張學生票，其餘 40 張以原價售予一般球迷。</span></span></label>
+            <label class="policy-option-label"><input id="plan-lottery" type="radio" name="policy-plan" value="lottery" required><span class="policy-option"><span class="policy-option-top"><span class="policy-option-number">C</span><span class="policy-radio" aria-hidden="true"></span></span><strong>全場降價抽籤</strong><span class="policy-option-formula">60 張 × 30 點</span><span class="policy-option-description">80 人同池、等機率、不重複抽出 60 人；試算顯示各組入場期望值。</span></span></label>
+          </div>
+        </fieldset>
+        <div class="policy-trial-actions"><button class="policy-button policy-button-primary" type="submit">試算 <span aria-hidden="true">→</span></button><p id="policy-trial-hint">選擇一個方案，按「試算」查看結果。</p></div>
+      </form>
+
+      <section class="policy-results" id="policy-results" aria-labelledby="policy-result-title" hidden>
+        <div class="policy-result-heading"><span class="section-index">02 — RESULT</span><h3 id="policy-result-title" tabindex="-1">試算結果</h3></div>
+        <div id="policy-result-content"></div>
+        <div class="policy-decision-actions"><button class="policy-button policy-button-primary" id="confirm-policy" type="button">確認決策</button><button class="policy-button policy-button-secondary" id="retry-policy" type="button">重新試算</button></div>
+        <p class="policy-confirm-note">確認決策後即記錄完成；是否達成兩項目標會另外標示。重新試算不會清除已完成進度。</p>
+      </section>
+
+      <section class="policy-comparison" id="policy-comparison" aria-labelledby="policy-comparison-title" hidden>
+        <h3 id="policy-comparison-title">三方案並排比較</h3>
+        <p class="policy-comparison-note">抽籤的人數是多次抽籤的平均期望值，單次結果不保證恰好有 15 名學生；總入場人數仍為 60 人。</p>
+        <div class="policy-comparison-grid" id="policy-comparison-cards"></div>
+      </section>
+      <p class="policy-completion-message" id="policy-completion-message" role="status" aria-atomic="true" tabindex="-1" hidden></p>
+      <p class="policy-storage-message" id="policy-storage-message" role="status" hidden></p>
+      <div class="policy-bottom"><span>勇士站・第一個政策挑戰</span><a class="policy-back" href="#tour-map">↑ 回到地圖</a></div>
+      <p class="sr-only" id="policy-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
+    </section>
+
     <p class="sr-only" id="game-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
-    <noscript><p class="noscript-notice">請啟用 JavaScript，以查看模擬記分牌、選取勇士站及切換賽事狀態。</p></noscript>
+    <noscript><p class="noscript-notice">請啟用 JavaScript，以查看模擬記分牌、切換賽事狀態，以及試算與完成政策挑戰。</p></noscript>
   </main>
   <footer class="site-footer"><span>NBA 政策島<span class="footer-separator">/</span>美國客場巡迴</span><span>一座城市，一場好球。<span class="footer-ball" aria-hidden="true">◉</span></span></footer>
 </body>
