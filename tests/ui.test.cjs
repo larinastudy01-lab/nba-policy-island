@@ -43,6 +43,19 @@ function boot(initial={},adapterFixture=null,options={}){
   return {resizeMap(width){nodes.get("island-map").clientWidth=width;badgeResize();},badgeObserving:()=>badgeObserving,blockStorageWrites(value){options.storageWriteBlocked=value;},startPractice(withTutorial=false){nodes.get("practice-start").emit("click");if(!withTutorial&&!nodes.get("tutorial-controls").hidden)nodes.get("tutorial-skip").emit("click");},ready(){nodes.get("ready-toggle").emit("click");if(!nodes.get("tutorial-controls").hidden)nodes.get("tutorial-skip").emit("click");},mapVisibility(isIntersecting){intersection([{isIntersecting}]);},visibility(hidden){document.hidden=hidden;for(const cb of docEvents.get("visibilitychange")||[])cb();},get(name){assert.ok(nodes.has(name),`Missing ${name}`);return nodes.get(name);},nodes,document,records,downloads,revoked,setPNGExporter:handler=>{context.NBAFan.exportPNG=handler;},network:()=>fetchCalls,now:()=>clock,timerCount:(delay=50)=>[...timers.values()].filter(item=>item.delay===delay).length,windowEvent:(name,extra)=>windowSurface.emit(name,extra),reduceMotion(value){motion.matches=value;motion.emit("change");},select(name,value){for(const input of inputs.filter(i=>i.name===name))input.checked=input.value===value;inputs.find(i=>i.name===name&&i.value===value).emit("change");},advance(ms){clock+=ms;for(const timer of [...timers.values()])timer.callback();}};
 }
 function logoFrames(node){const result=[];function visit(n){if(n.className?.split(' ').includes('team-logo'))result.push(n);for(const child of n.children||[])visit(child);}visit(node);return result;}
+
+test('Bay uses one proximity action, retracts while walking and returns the matching target after arrival',()=>{
+  const app=boot({},null,{reducedMotion:false});app.get('district-island-warriors').emit('click');assert.equal(app.get('bay-interaction').dataset.target,'warriors');
+  app.get('landmark-harbor-01').emit('click');assert.equal(app.get('bay-interaction').hidden,true);assert.equal(app.get('island-map').dataset.view,'venue');app.advance(5000);
+  assert.equal(app.get('bay-interaction').hidden,false);assert.equal(app.get('bay-interaction').dataset.target,'harbor-01');assert.match(app.get('bay-interaction').textContent,/Enter/);
+  app.get('camera-overview').emit('click');assert.equal(app.get('bay-interaction').hidden,true);
+});
+test('Bay proximity button and map Enter reuse the original shop action; repeated Enter is ignored',()=>{
+  const app=boot();app.get('shop-go-warriors').emit('click');assert.equal(app.get('bay-interaction').dataset.target,'shop-warriors');
+  app.get('island-map').emit('keydown',{key:'Enter',repeat:true});assert.equal(Boolean(app.get('shop-dialog').open),false);
+  app.get('bay-interaction').emit('click');assert.equal(app.get('shop-dialog').open,true);app.get('shop-close').emit('click');
+  app.get('island-map').emit('keydown',{key:'Enter'});assert.equal(app.get('shop-dialog').open,true);
+});
 test('overview hover, focus and selection name the full team outside the roof without changing keyboard navigation',()=>{
   const app=boot();app.get('landmark-clippers').emit('mouseenter');assert.equal(app.get('map-team-name').textContent,C.getLandmark('nba','clippers').name);assert.equal(app.get('island-map').dataset.view,'island');
   app.get('landmark-clippers').emit('mouseleave');assert.equal(app.get('map-team-name').textContent,C.getLandmark('nba','warriors').name);
@@ -58,7 +71,7 @@ test('only live simulated home arenas get overview corner tags; night and final 
 test('phone-sized badges resize to 20px, neighboring LA islands reuse one sign, and the observer cleans up on pagehide',()=>{
   const app=boot({},null,{mapWidth:294});assert.equal(app.get('island-world').style['--overview-logo-size'],'20px');assert(Number.parseFloat(app.get('arena-logo-pistons').style['--overview-shift-x'])>0);assert.equal(app.badgeObserving(),true);
   const logo=logoFrames(app.get('arena-logo-lakers'))[0];app.get('landmark-lakers').emit('click',{target:app.get('arena-logo-lakers')});assert.equal(app.get('arena-logo-lakers').dataset.mode,'sign');assert.equal(logoFrames(app.get('arena-logo-lakers'))[0],logo);app.get('list-clippers').emit('click');assert.equal(app.get('arena-logo-lakers').hidden,true);assert.equal(app.get('arena-logo-clippers').dataset.mode,'sign');
-  app.get('list-warriors').emit('click');assert.equal(logoFrames(app.get('arena-logo-warriors')).length,1);assert.equal(app.get('arena-logo-warriors').style['--sign-x'],'70%');app.get('camera-overview').emit('click');app.resizeMap(1400);assert.equal(app.get('island-world').style['--overview-logo-size'],'22px');assert.equal(app.get('arena-logo-pistons').style['--overview-shift-x'],'0px');
+  app.get('list-warriors').emit('click');assert.equal(logoFrames(app.get('arena-logo-warriors')).length,1);assert.equal(app.get('arena-logo-warriors').style['--sign-x'],`${41/80*100}%`);app.get('camera-overview').emit('click');app.resizeMap(1400);assert.equal(app.get('island-world').style['--overview-logo-size'],'22px');assert.equal(app.get('arena-logo-pistons').style['--overview-shift-x'],'0px');
   app.windowEvent('pagehide');assert.equal(app.badgeObserving(),false);app.windowEvent('pageshow',{persisted:true});assert.equal(app.badgeObserving(),true);
 });
 test('all thirty search rows use stable lazy decorative logos from shared team data',()=>{
@@ -157,7 +170,7 @@ test("competitive history is labeled recreation; all four match states preserve 
 test("camera controls cover island, district and venue, returning without moving the saved fan",()=>{
   const app=boot();assert.equal(app.get("island-map").dataset.view,"island");assert.equal(app.get("district-layer").children.length,30);
   const origin=app.get("fan-map-marker").style.left;app.get("district-island-warriors").emit("click");assert.equal(app.get("island-map").dataset.view,"district");assert.equal(app.get("fan-map-marker").style.left,origin);
-  app.get("landmark-warriors").emit("click");assert.equal(app.get("island-map").dataset.view,"venue");assert.match(app.get("island-world").style.transform,/scale\(6.4285/);
+  app.get("landmark-warriors").emit("click");assert.equal(app.get("island-map").dataset.view,"venue");assert.match(app.get("island-world").style.transform,/scale\(6.9230/);
   app.get("camera-back").emit("click");assert.equal(app.get("island-map").dataset.view,"district");assert.equal(app.get("island-map").dataset.district,"west");
   app.get("camera-overview").emit("click");assert.equal(app.get("island-map").dataset.view,"island");assert.equal(app.get("fan-map-marker").style.left,origin);assert.equal(app.get("landmark-warriors").getAttribute("aria-pressed"),"true");
 });
@@ -546,5 +559,5 @@ test('team-island UI navigates Warriors across sea bridges to Lakers, enters the
 });
 test('overview team names expose only home LIVE; keyboard expands a secondary sight without moving the fan',()=>{
   const app=boot();assert.equal(app.get('district-island-lakers').dataset.live,'true');assert.equal(app.get('district-island-warriors').dataset.live,'false');app.select('game-state','final');assert.equal(app.get('district-island-lakers').dataset.live,'false');
-  app.get('district-island-warriors').emit('click');assert.equal(app.get('landmark-sight-lombard').dataset.interactive,'false');const position=app.get('fan-map-marker').style.left;app.get('landmark-sight-lombard').emit('focus');assert.equal(app.get('landmark-sight-lombard').dataset.interactive,'true');assert.equal(app.get('fan-map-marker').style.left,position);app.get('landmark-sight-lombard').emit('keydown',{key:'Enter'});assert.equal(app.get('sight-panel').hidden,false);assert.equal(app.get('fan-map-marker').style.left,position);
+  app.get('district-island-warriors').emit('click');assert.equal(app.get('landmark-sight-alcatraz').dataset.interactive,'false');const position=app.get('fan-map-marker').style.left;app.get('landmark-sight-alcatraz').emit('focus');assert.equal(app.get('landmark-sight-alcatraz').dataset.interactive,'true');assert.equal(app.get('fan-map-marker').style.left,position);app.get('landmark-sight-alcatraz').emit('keydown',{key:'Enter'});assert.equal(app.get('sight-panel').hidden,false);assert.equal(app.get('fan-map-marker').style.left,position);
 });

@@ -10,7 +10,7 @@ test('two team shops have four distinct merch types each, local pixel art and ex
 });
 test('shop doors use the island road graph, have non-overlapping building hot areas and retain cross-sea access',()=>{
   for(const shop of S.SHOPS){assert.equal(C.getLandmark('shop',shop.id).id,shop.id);assert(A.contains(A.owner(shop.id),shop.entrance));assert.deepEqual(E.entrance(shop.id),shop.entrance);assert.deepEqual(E.roadPath(E.entrance(shop.teamId),shop.id).at(-1),shop.entrance);const cam=E.createCamera();assert.equal(E.interactiveVisible(cam,shop.id),false);E.focusVenue(cam,shop.id);assert.equal(E.interactiveVisible(cam,shop.id),true);assert.equal(cam.islandId,shop.islandId);
-    const arena=C.getLandmark('nba',shop.teamId),court=C.COURTS.find(p=>p.teamIslandId===shop.teamId);assert(shop.x-shop.width/2>arena.x+80);assert(shop.y<court.y-52);}
+    const arena=C.getLandmark('nba',shop.teamId),court=C.COURTS.find(p=>p.teamIslandId===shop.teamId);if(shop.teamId!=="warriors")assert(shop.x-shop.width/2>arena.x+80);else assert.match(A.bayHitShape(shop.id),/^polygon/);assert(shop.y<court.y-52);}
   const route=E.roadPath(E.entrance('shop-warriors'),'shop-lakers');for(const id of ['sea-west-560','sea-west-910'])assert(route.some(p=>p.x===A.ROAD_NODES[id].x&&p.y===A.ROAD_NODES[id].y));assert.equal(C.TEAMS.length,30);assert.equal(C.COURTS.length,15);
 });
 test('first configurable grant is persisted once; zero is valid and later config changes do not refill',()=>{

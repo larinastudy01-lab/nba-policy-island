@@ -4,6 +4,11 @@
   function initialize({getSelection,getGameState,getEncounter,getBayFixture=()=>"away",onPosition,onAnnounce,onView}){
     const A=root.NBAArchipelago,E=root.NBAExplorer,C=root.NBAIsland,P=root.NBAPixel,$=id=>document.getElementById(id);
     const camera=E.createCamera(),walker=E.createWalker();
+    const prompt=document.createElement('button');prompt.id='bay-interaction';prompt.type='button';prompt.hidden=true;prompt.setAttribute('aria-controls','station-panel');$('island-map').append(prompt);
+    function refreshInteraction(){const target=E.nearestBayInteraction(camera,walker);prompt.hidden=!target;prompt.dataset.target=target?.id||'';prompt.textContent=target?`${target.name} · Enter／點此互動`:'';}
+    function activateInteraction(){const target=E.nearestBayInteraction(camera,walker);if(target)$('landmark-'+target.id)?.click();}
+    prompt.addEventListener('click',activateInteraction);
+    $('island-map').addEventListener('keydown',event=>{if(event.target===$('island-map')&&event.key==='Enter'&&!event.repeat&&!prompt.hidden){event.preventDefault();activateInteraction();}});
     const motion=window.matchMedia?.("(prefers-reduced-motion: reduce)");
     const B=root.NBABay,crowd=B.createCrowd(),npcNodes=new Map();
     const S=root.NBASights,T=root.NBATraffic,traffic=T.createTraffic(),carNodes=new Map();
@@ -54,7 +59,7 @@
       for(const [id,button] of districtButtons){button.hidden=!(level==="district"&&!camera.islandId&&A.getIsland(id).district===camera.districtId);button.setAttribute("aria-pressed",String(camera.islandId===id));}
       for(const button of regionButtons.values())button.hidden=level!=="island";
       refreshLabels();
-      refreshEncounter();renderCrowd();renderTraffic();syncLoop();onView?.(camera);
+      refreshEncounter();refreshInteraction();renderCrowd();renderTraffic();syncLoop();onView?.(camera);
     }
     function refreshLabels(){
       const glowingIds=C.TEAMS.filter(item=>C.gameForTeam(item.id,getGameState(),getBayFixture()).glowing).map(item=>item.id);
@@ -80,7 +85,7 @@
       $("district-clue").textContent=local?({"meet-pier":"今日線索：海邊觀景平台，有位熟悉的籃球好手正在吹風。","meet-plaza":"今日線索：廣場步道附近，好像有人正抱著球散步。","meet-garden":"今日線索：湖岸樹蔭下，似乎有位熟悉的身影在休息。"}[daily.locationId]):"";
       const visible=selected.kind==="encounter"&&selected.id===daily.locationId&&E.hasArrived(walker,daily.locationId);
       const actor=$("island-encounter-actor");actor.hidden=!visible;
-      if(visible){const p=E.entrance(daily.locationId);actor.style.left=`${(p.x-44)/C.MAP.width*100}%`;actor.style.top=`${(p.y-22)/C.MAP.height*100}%`;
+      if(visible){const p=E.entrance(daily.locationId);actor.style.left=`${(p.x-(daily.locationId==='meet-pier'?18:44))/C.MAP.width*100}%`;actor.style.top=`${(p.y-(daily.locationId==='meet-pier'?2:22))/C.MAP.height*100}%`;
         const key=`${daily.date}:${daily.starId}:${daily.locationId}`;
         if(key!==actorKey){actorFigure.innerHTML=root.NBAFan.starSVG(daily.teamId);actorKey=key;}
         const revealed=$("encounter-character").dataset.revealed==="true";actor.dataset.revealed=String(revealed);
@@ -93,12 +98,12 @@
       const status=walker.moving?`沿道路前往${places.find(p=>p.id===walker.targetId)?.name||"目的地"}…`:`已抵達 ${places.find(p=>p.id===walker.locationId)?.name||"島上"}`;
       if($("movement-status").textContent!==status)$("movement-status").textContent=status;
       route.setAttribute("points",walker.moving?walker.route.map(p=>`${p.x},${p.y}`).join(" "):"");
-      onPosition?.({...walker.position},walker);refreshLabels();refreshEncounter();
+      onPosition?.({...walker.position},walker);refreshLabels();refreshEncounter();refreshInteraction();
     }
     function nearBay(){return camera.level!=="island"&&(camera.islandId?camera.islandId==="island-warriors":camera.districtId==="west");}
     function crowdActive(){return nearBay()&&mapVisible&&!motion?.matches&&!document.hidden&&!pageHidden;}
     function renderCrowd(delta=0){
-      const active=crowdActive(),people=B.advanceCrowd(crowd,delta,C.gameForTeam("warriors",getGameState(),getBayFixture()),{active,reducedMotion:Boolean(motion?.matches),overview:!nearBay()});
+      const active=crowdActive(),people=B.advanceCrowd(crowd,delta,C.gameForTeam("warriors",getGameState(),getBayFixture()),{active,reducedMotion:Boolean(motion?.matches),overview:!nearBay(),player:walker.position});
       $("island-map").dataset.crowdActive=String(active);$("island-map").dataset.crowdMode=crowd.mode;
       const message=`模擬路人・非真人玩家｜${{ambient:"灣區散步（勇士客場不觸發進散場）",enter:"勇士主場進場動線",live:"主場進行中・少量廣場路人",exit:"勇士主場散場動線"}[crowd.mode]}`;
       if($("crowd-status").textContent!==message)$("crowd-status").textContent=message;
@@ -120,7 +125,7 @@
     function tick(){const now=Date.now(),delta=Math.max(0,Math.min(100,now-lastFrame));lastFrame=now;const wasMoving=walker.moving,arrived=E.tick(walker,now);if(wasMoving||arrived)renderWalker();renderCrowd(delta);renderTraffic(delta);if(arrived){if(arrivalFocus===walker.token){E.focusVenue(camera,walker.targetId);renderCamera();}onAnnounce?.($("movement-status").textContent);}syncLoop();}
     function visit(id){
       stop();E.focusVenue(camera,id);E.walk(walker,id,Date.now(),Boolean(motion?.matches));arrivalFocus=walker.token;
-      if(walker.moving)camera.view=E.journeyFrame(walker.route);
+      if(walker.moving){const bay=A.BAY.camera,local=camera.islandId==='island-warriors'&&walker.route.every(p=>p.x>=bay.x&&p.x<=bay.x+bay.width&&p.y>=bay.y&&p.y<=bay.y+bay.height);if(!local)camera.view=E.journeyFrame(walker.route);}
       renderCamera();renderWalker();
       syncLoop();
     }

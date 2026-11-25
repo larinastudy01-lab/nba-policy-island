@@ -34,12 +34,12 @@ test('every logo resolves within both a local file folder and the GitHub Pages s
 });
 const overlaps=(a,b)=>a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&&a.y+a.height>b.y;
 test('roof anchors belong to arena pixel frames and near signs stay clear of each front door',()=>{
-  for(const team of C.TEAMS){const branding=P.arenaBranding(team),[x,y,w,h]=branding.sign,door={x:57,y:39,width:5,height:7};
+  for(const team of C.TEAMS){const branding=P.arenaBranding(team),[x,y,w,h]=branding.sign,door=team.id==='warriors'?{x:36,y:40,width:10,height:9}:{x:57,y:39,width:5,height:7};
     assert(branding.roof.every(Number.isInteger));assert(branding.roof[0]>=0&&branding.roof[0]<=80);assert(branding.roof[1]>0&&branding.roof[1]<50);
     assert.deepEqual(E.arenaLogoAnchor(team),{x:team.x+branding.roof[0]*2-80,y:team.y+branding.roof[1]*2-68});
     assert.notDeepEqual(E.arenaLogoAnchor(team),{x:A.owner(team.id).x,y:A.owner(team.id).y});assert.equal(overlaps({x:x-w/2,y:y-h/2,width:w,height:h},door),false,team.id);
   }
-  assert.deepEqual(P.arenaBranding(C.getLandmark('nba','clippers')).sign,[46,25,16,12]);assert.deepEqual(P.arenaBranding(C.getLandmark('nba','celtics')).sign,[45,28,15,12]);assert.deepEqual(P.arenaBranding(C.getLandmark('nba','warriors')).sign,[56,33,12,9]);
+  assert.deepEqual(P.arenaBranding(C.getLandmark('nba','clippers')).sign,[46,25,16,12]);assert.deepEqual(P.arenaBranding(C.getLandmark('nba','celtics')).sign,[45,28,15,12]);assert.deepEqual(P.arenaBranding(C.getLandmark('nba','warriors')).sign,[41,34,15,10]);
 });
 test('20/22px overview emblems fit nine map widths without overlapping one another, entrances or bridgeheads',()=>{
   const points=[...C.TEAMS.map(t=>t.entrance),...Object.entries(A.ROAD_NODES).filter(([id])=>id.startsWith('gate-')).map(([,p])=>p)];

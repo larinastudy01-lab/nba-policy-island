@@ -1,0 +1,22 @@
+/* 唯一局部規則；不改動其他 29 島的標籤或入口。 */
+#island-map[data-team-island="island-warriors"] .landmark-label,
+#island-map[data-team-island="island-warriors"] .landmark-game-label,
+#island-map[data-team-island="island-warriors"] .shop-map-label,
+#island-map[data-team-island="island-warriors"] .scenic-label,
+#island-map[data-team-island="island-warriors"] .scenic-icon,
+#island-map[data-team-island="island-warriors"] .memory-hint-label{visibility:hidden!important}
+#island-map[data-team-island="island-warriors"] .fan-map-marker,
+#island-map[data-team-island="island-warriors"] .sim-pedestrian{width:.666667%}
+#island-map[data-team-island="island-warriors"] .sim-pedestrian{width:.611111%}
+#island-map[data-team-island="island-warriors"] #fan-map-name{width:9px;height:9px;padding:0;border:1px solid #e2ca74;background:#f8e4a3;color:transparent;font-size:0;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+#island-map[data-team-island="island-warriors"] #landmark-meet-pier>svg{opacity:0}
+#island-map[data-team-island="island-warriors"] #landmark-meet-pier:focus-visible{outline:1px dashed #e6d297}
+#island-map[data-team-island="island-warriors"] .memory-symbol{width:12px;height:12px;font-size:8px;opacity:.7}
+#island-map[data-team-island="island-warriors"] .landmark[data-selected="true"] .selection-ring{stroke-width:1.5;stroke-dasharray:none;opacity:.65}
+#island-map[data-team-island="island-warriors"] #landmark-warriors .arena-logo-sign[data-mode="sign"]{background:#e6d594;border:0;box-shadow:none}
+#island-map[data-team-island="island-warriors"] .car-headlight{width:95%;height:40%;opacity:.6}
+#island-map[data-team-island="island-warriors"] .fan-map-marker{pointer-events:none}
+#island-map[data-team-island="island-warriors"] #landmark-warriors,
+#island-map[data-team-island="island-warriors"] #landmark-meet-pier,
+#island-map[data-team-island="island-warriors"] #landmark-shop-warriors{clip-path:var(--bay-hit-shape)}
+@media(max-width:700px){#bay-interaction{font-size:11px;bottom:6px;left:6px}}

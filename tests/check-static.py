@@ -61,7 +61,7 @@ for node in svg.iter():
     for attr in ("href", "{http://www.w3.org/1999/xlink}href"):
         if attr in node.attrib:
             assert node.attrib[attr].startswith("#") and node.attrib[attr][1:] in svg_ids
-for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css", ROOT / "assets/bay.css", ROOT / "assets/scenery.css", ROOT / "assets/pixel.css", ROOT / "assets/archipelago.css", ROOT / "assets/memory.css", ROOT / "assets/shop.css", ROOT / "assets/team-logo.css"):
+for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css", ROOT / "assets/bay.css", ROOT / "assets/scenery.css", ROOT / "assets/pixel.css", ROOT / "assets/archipelago.css", ROOT / "assets/memory.css", ROOT / "assets/shop.css", ROOT / "assets/team-logo.css", ROOT / "assets/warriors-bay.css"):
     css = file.read_text(encoding="utf-8-sig")
     css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
     css = re.sub(r'''"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*' ''', "", css, flags=re.X)
@@ -191,7 +191,7 @@ print("Scenery XML: 20 day/night landmarks, 6 cars x 3 views, 2 traffic lanes, 8
 import struct
 import zlib
 manifest = json.loads((ROOT / "assets/pixel/manifest.json").read_text(encoding="utf-8"))
-assert len(manifest["files"]) == 186
+assert len(manifest["files"]) == 188
 assert set(manifest["arenaModels"]) == {p.stem for p in (ROOT / "assets/pixel/arenas").glob("*.svg") if not p.stem.endswith("-night")}
 assert {p.stem for p in (ROOT / "assets/arenas").glob("*.svg")} <= set(manifest["arenaModels"]), "All 16 old photo venues retained"
 assert len(manifest["arenaModels"]) == 30
@@ -220,7 +220,7 @@ for item in manifest["files"]:
             assert float(rect.attrib.get(key,0)).is_integer()
 for image in (ROOT/"docs/pixel-preview").glob("*.png"):
     assert image.read_bytes().startswith(b"\x89PNG")
-print("Pixel: 186 PNG/SVG pairs; valid native grids/CRC/pixels; 6 arena, 3 court, 6 car, 8 pedestrian, 9 prop models")
+print("Pixel: 188 PNG/SVG pairs; valid native grids/CRC/pixels; 6 arena, 3 court, 6 car, 8 pedestrian, 9 prop models")
 
 memory_files = list((ROOT / "assets/memories").glob("*.svg"))
 assert len(memory_files) == 10, "5 memory scenes + 5 physical props required"

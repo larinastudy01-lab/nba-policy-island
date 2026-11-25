@@ -76,6 +76,7 @@ function initializeIsland() {
         node.style.height=`${frame.h/C.MAP.height*100}%`;
         node.style.zIndex=String(Math.round(item.y)-(item.id==="harbor-01"?35:0));
         node.dataset.x=String(item.x);node.dataset.y=String(item.y);
+        if(['warriors','meet-pier'].includes(item.id))node.style.setProperty('--bay-hit-shape',globalThis.NBAArchipelago.bayHitShape(item.id));
         node.setAttribute("tabindex","0");
         node.setAttribute("role","button");
         node.setAttribute("aria-controls","station-panel");

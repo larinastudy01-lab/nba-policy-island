@@ -2,7 +2,7 @@
 (function(root,factory){const api=factory(typeof module==="object"&&module.exports?require("./pixel-core.js"):root.NBAPixel);if(typeof module==="object"&&module.exports)module.exports=api;else root.NBABay=api;})(globalThis,function(P){
   "use strict";
   const A=typeof module==="object"&&module.exports?require("./archipelago-core.js"):globalThis.NBAArchipelago;
-  const STYLE={lightDirection:"upper-left",personWidth:25,playerWidth:29,shadow:{x:8,y:5},waterLevel:0,pierLevel:8,plazaLevel:18};
+  const STYLE={lightDirection:"upper-left",personWidth:A.BAY.npcWidth,playerWidth:A.BAY.playerWidth,shadow:{x:8,y:5},waterLevel:0,pierLevel:8,plazaLevel:18};
   const BAY_IDS=["warriors","meet-pier","harbor-01"];
   const svg=(title,body)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img"><title>${title}</title>${body}</svg>`;
   function groundSVG(){return svg("西岸灣區：球館廣場、石板步道、木棧道與潮汐球場",`
@@ -56,42 +56,36 @@
     <path class="court-floodlight" d="M-46-19v-40h12m78 63v-40H31" fill="none" stroke="#b7e5f4" stroke-width="2"/>
     <path d="m-47 0 26 13v8l-26-13Zm2 7 26 13v5l-26-13Z" fill="#9bab9f" stroke="#d7d1ae"/>
     <text class="landmark-label court-label" y="46">潮汐一號</text><ellipse class="selection-ring" cy="-8" rx="51" ry="42"/><rect class="hit-area" x="-52" y="-50" width="104" height="117"/>`;}
+  const bridgeNames=['bridge-east-walk','sight-golden-gate','bridge-west-walk','bay-entry','bay-junction','bay-shore','pier-approach','meet-pier'];
+  const bridgeRoute=[...bridgeNames,...bridgeNames.slice(1,-1).reverse()].map(id=>[A.ROAD_NODES[id].x,A.ROAD_NODES[id].y]);
   const PEOPLE=[
-    {id:"fan-ticket",area:"arena",look:"jersey",jersey:"warriors",route:[[350,425],[320,398],[285,375],[264,367],[285,375],[320,398]],speed:12,wait:1300,delay:0},
-    {id:"fan-cap",area:"arena",look:"cap",jersey:"lakers",route:[[313,412],[300,388],[287,372],[300,388]],speed:10,wait:2100,delay:1100},
-    {id:"fan-bag",area:"arena",look:"bag",jersey:"warriors",route:[[340,432],[329,413],[307,391],[329,413]],speed:13,wait:1600,delay:2300},
-    {id:"pier-walker",area:"pier",look:"cap",jersey:"knicks",route:[[293,679],[266,669],[237,651],[210,640],[237,651],[266,669]],speed:10,wait:2500,delay:300},
-    {id:"pier-bag",area:"pier",look:"bag",jersey:"celtics",route:[[145,330],[128,293],[353,192],[128,293],[145,330],[299,573],[280,645],[254,680],[280,645],[299,573]],speed:14,wait:3100,delay:1700},
-    {id:"pier-bench",area:"pier",look:"sit",jersey:"bulls",route:[[224,699]],speed:0,wait:0,delay:0},
-    {id:"court-ball",area:"court",look:"ball",jersey:"warriors",route:[[397,739],[383,730],[365,714],[383,730]],speed:11,wait:900,delay:700},
-    {id:"court-dribble",area:"court",look:"dribble",jersey:"clippers",route:[[353,697]],speed:0,wait:0,delay:0},
-    {id:"court-seat-a",area:"court",look:"sit",jersey:"heat",route:[[311,722]],speed:0,wait:0,delay:0},
-    {id:"court-seat-b",area:"court",look:"sit",jersey:"bucks",route:[[324,729]],speed:0,wait:0,delay:0}
-  ].map((p,i)=>({...p,pixelModel:["ball-fan","short-cap","backpack","tall-curls","ponytail","seated","hoodie","ball-fan","senior","seated"][i]}));
-  for(const p of PEOPLE){
-    if(p.area==='arena')p.route=p.route.map(([x,y])=>[x-2,y+133]);
-    else if(p.area==='pier')p.route=p.route.map(([x,y])=>[x+59,y-77]);
-    else p.route=p.route.map(([x,y])=>[x+32,y-200]);
-  }
-  PEOPLE.find(p=>p.id==='fan-ticket').route=[[300,552],[285,540],[280,524],[285,540]];
-  PEOPLE.find(p=>p.id==='fan-cap').route=[[260,555],[288,542],[308,535],[288,542]];
-  PEOPLE.find(p=>p.id==='fan-bag').route=[[345,570],[328,550],[308,535],[328,550]];
-  PEOPLE.find(p=>p.id==='court-seat-a').route=[[424,491]];
-  PEOPLE.find(p=>p.id==='court-seat-b').route=[[430,503]];
-  PEOPLE.find(p=>p.id==='court-dribble').route=[[385,500]];
-  PEOPLE.find(p=>p.id==='court-ball').route=[[404,557],[403,548],[390,537],[382,520],[390,537],[403,548]];
-  const bridgeVisitor=PEOPLE.find(p=>p.id==='pier-bag');const names=['bridge-east-walk','sight-golden-gate','bridge-west-walk','bay-north-walk','warriors','bay-junction','bay-shore','pier-approach','meet-pier'];
-  bridgeVisitor.route=[...names,...names.slice(1,-1).reverse()].map(id=>[A.ROAD_NODES[id].x,A.ROAD_NODES[id].y]);
+    {id:'fan-ticket',area:'arena',look:'jersey',jersey:'warriors',pixelModel:'ball-fan',route:[[302,510],[270,516],[238,510],[184,508],[184,490],[184,508],[238,510],[270,516]],speed:12,wait:1300,delay:0},
+    {id:'fan-cap',area:'arena',look:'cap',jersey:'lakers',pixelModel:'short-cap',route:[[369,490],[350,502],[324,514],[300,524],[324,514],[350,502]],speed:10,wait:2100,delay:1100},
+    {id:'fan-bag',area:'arena',look:'bag',jersey:'warriors',pixelModel:'backpack',route:[[306,538],[287,550],[267,540],[252,527],[267,540],[287,550]],speed:13,wait:1600,delay:2300},
+    {id:'pier-walker',area:'pier',look:'cap',jersey:'knicks',pixelModel:'tall-curls',route:[[276,554],[251,577],[226,591],[213,590],[226,591],[251,577]],speed:10,wait:2500,delay:300},
+    {id:'pier-bag',area:'pier',look:'bag',jersey:'celtics',pixelModel:'ponytail',route:bridgeRoute,speed:14,wait:3100,delay:1700,stops:[0,7]},
+    {id:'pier-bench',area:'pier',look:'sit',jersey:'bulls',pixelModel:'seated',route:[[199,608]],speed:0,wait:0,delay:0},
+    {id:'court-ball',area:'court',look:'ball',jersey:'warriors',pixelModel:'hoodie',route:[[347,526],[346,544],[354,565],[370,559],[354,565],[346,544]],speed:11,wait:900,delay:700},
+    {id:'court-dribble',area:'court',look:'dribble',jersey:'clippers',pixelModel:'ball-fan',route:[[385,558]],speed:0,wait:0,delay:0},
+    {id:'court-seat-a',area:'court',look:'sit',jersey:'heat',pixelModel:'senior',route:[[425,572]],speed:0,wait:0,delay:0},
+    {id:'court-seat-b',area:'court',look:'sit',jersey:'bucks',pixelModel:'seated',route:[[416,584]],speed:0,wait:0,delay:0}
+  ].map(p=>({...p,stops:p.stops||(p.speed>0?[0,Math.floor(p.route.length/2)]:[])}));
   const modeFor=match=>!match?.isHome?"ambient":({scheduled:"enter",live:"live",final:"exit"}[match.state]||"ambient");
   const near=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   function createCrowd(){return {mode:"ambient",elapsed:0,people:PEOPLE.map(p=>({...p,position:{x:p.route[0][0],y:p.route[0][1]},path:p.route.map(([x,y])=>({x,y})),index:1%p.route.length,pause:p.delay,walking:false,facing:1,direction:"se"}))};}
-  function advanceCrowd(crowd,delta,match,{active=true,reducedMotion=false,overview=false}={}){
+  function advanceCrowd(crowd,delta,match,{active=true,reducedMotion=false,overview=false,player=null}={}){
     const mode=modeFor(match);
     if(mode!==crowd.mode){for(const p of crowd.people.filter(p=>p.area==="arena")){p.path=(mode==="exit"?[...p.route].reverse():p.route).map(([x,y])=>({x,y}));let nearest=0;for(let i=1;i<p.path.length;i++)if(near(p.position,p.path[i])<near(p.position,p.path[nearest]))nearest=i;p.index=nearest;p.pause=0;}crowd.mode=mode;}
     if(active&&!reducedMotion){crowd.elapsed+=Math.max(0,delta);for(const p of crowd.people){let ms=Math.max(0,delta),guard=0;p.walking=false;
       while(ms>0&&p.speed>0&&p.path.length>1&&guard++<100){if(p.pause>0){const used=Math.min(ms,p.pause);p.pause-=used;ms-=used;continue;}
         const goal=p.path[p.index],length=near(p.position,goal),speed=p.speed*(p.area==="arena"&&["enter","exit"].includes(mode)?1.25:1),needed=length/speed*1000;
-        if(needed<=ms){p.position={...goal};ms-=needed;p.index=(p.index+1)%p.path.length;p.pause=p.wait;}else{const t=ms/needed,dx=goal.x-p.position.x;p.position={x:p.position.x+(goal.x-p.position.x)*t,y:p.position.y+(goal.y-p.position.y)*t};p.direction=P.direction(goal.x-p.position.x,goal.y-p.position.y,p.direction);if(Math.abs(dx)>.1)p.facing=dx<0?-1:1;p.walking=true;ms=0;}
+        const t=needed?Math.min(1,ms/needed):1,dx=goal.x-p.position.x,dy=goal.y-p.position.y,next={x:p.position.x+dx*t,y:p.position.y+dy*t};
+        // 路人讓出玩家的腳底範圍；只有平台／廣場邊緣的指定點停留。
+        const approaching=player&&near(next,player)<18&&near(next,player)<near(p.position,player);
+        if(approaching){ms=0;continue;}
+        p.direction=P.direction(dx,dy,p.direction);if(Math.abs(dx)>.1)p.facing=dx<0?-1:1;
+        p.position=next;p.walking=needed>0;
+        if(needed<=ms){ms-=needed;const reached=p.index;p.index=(p.index+1)%p.path.length;p.pause=p.stops.includes(reached)?p.wait:0;}else ms=0;
       }
     }}else for(const p of crowd.people)p.walking=false;
     return crowd.people.map((p,i)=>({id:p.id,area:p.area,look:p.look,jersey:p.jersey,...p.position,facing:p.facing,direction:p.direction,frame:p.walking?Math.floor(crowd.elapsed/P.SPEC.frameMs)%4:0,walking:p.walking,

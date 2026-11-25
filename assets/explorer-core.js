@@ -60,12 +60,19 @@
   const entrance=id=>{const item=landmarks.find(p=>p.id===id);if(!item||Sights.get(id)&&!item.photo)throw new Error('Unknown destination');return {...item.entrance};};
   const ROAD_NODES=A.ROAD_NODES,ROAD_EDGES=A.ROAD_EDGES;
   const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  function edgeClear(edge){
+    if(edge.islandId!=='island-warriors')return true;
+    const a=ROAD_NODES[edge.from],b=ROAD_NODES[edge.to],steps=Math.ceil(distance(a,b)/3);
+    for(let n=0;n<=steps;n++){const t=steps?n/steps:0;if(!A.bayClear({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t}))return false;}return true;
+  }
   function roadPath(start,targetId){
     if(!ROAD_NODES[targetId])throw new Error("Unknown destination");
     // 轉向時先走回目前道路的最近端點，避免穿越街區或水面抄近路。
     let first=null,projection=null,best=Infinity;
     for(const edge of ROAD_EDGES){
+      if(!edgeClear(edge))continue;
       const a=ROAD_NODES[edge.from],b=ROAD_NODES[edge.to],dx=b.x-a.x,dy=b.y-a.y;
+      if(!dx&&!dy)continue;
       const t=Math.max(0,Math.min(1,((start.x-a.x)*dx+(start.y-a.y)*dy)/(dx*dx+dy*dy)));
       const p={x:a.x+t*dx,y:a.y+t*dy},cost=distance(start,p);
       if(cost<best){best=cost;projection=p;first=edge;}
@@ -78,11 +85,12 @@
       const id=[...pending].sort((a,b)=>costs[a]-costs[b])[0];pending.delete(id);
       if(id===targetId)break;
       for(const edge of ROAD_EDGES){const next=edge.from===id?edge.to:edge.to===id?edge.from:null;
-        if(!next||!pending.has(next))continue;
+        if(!next||!pending.has(next)||!edgeClear(edge))continue;
         const cost=costs[id]+distance(ROAD_NODES[id],ROAD_NODES[next]);
         if(cost<costs[next]){costs[next]=cost;previous[next]=id;}
       }
     }
+    if(!Number.isFinite(costs[targetId]))throw new Error('No clear pedestrian route');
     const ids=[targetId];while(previous[ids[0]])ids.unshift(previous[ids[0]]);
     const points=[{...start},projection,...ids.map(id=>({...ROAD_NODES[id]}))];
     return points.filter((p,i)=>!i||distance(p,points[i-1])>.01);
@@ -102,9 +110,9 @@
   function overviewLogoOffset(team,viewportWidth,size=22){return team.id==='pistons'?Math.max(0,(A.ROAD_NODES['bridge-raptors'].x-arenaLogoAnchor(team).x)*viewportWidth/OVERVIEW_VIEW.width+size/2+2):0;}
   function overviewLogoRect(team,viewportWidth,size=22){const anchor=worldToViewport(arenaLogoAnchor(team),OVERVIEW_VIEW),scale=viewportWidth/OVERVIEW_VIEW.width;return {x:anchor.x*viewportWidth-size/2+overviewLogoOffset(team,viewportWidth,size),y:(arenaLogoAnchor(team).y-OVERVIEW_VIEW.y)*scale-size,width:size,height:size};}
   function createCamera(){return {level:"island",districtId:null,islandId:null,selectedId:"warriors",view:{...OVERVIEW_VIEW}};}
-  function focusIsland(camera,id){const island=A.getIsland(id);if(!island)throw new Error('Unknown island');camera.level='district';camera.islandId=island.id;camera.districtId=island.district;camera.view=frame({x:island.x+10,y:island.y+5},660);return camera;}
+  function focusIsland(camera,id){const island=A.getIsland(id);if(!island)throw new Error('Unknown island');camera.level='district';camera.islandId=island.id;camera.districtId=island.district;camera.view=island.teamId==='warriors'?{...A.BAY.camera}:frame({x:island.x+10,y:island.y+5},660);return camera;}
   function focusDistrict(camera,id){if(A.getIsland(id))return focusIsland(camera,id);const district=DISTRICTS.find(d=>d.id===id);if(!district)throw new Error('Unknown district');camera.level='district';camera.islandId=null;camera.districtId=id;camera.view=frame(district.center,district.width);return camera;}
-  function focusVenue(camera,id){const district=districtFor(id);if(!district)throw new Error('Unknown venue');camera.level='venue';camera.districtId=district.id;camera.islandId=A.owner(id).id;camera.selectedId=id;camera.view=frame({x:A.owner(id).x+10,y:A.owner(id).y+12},560);return camera;}
+  function focusVenue(camera,id){const district=districtFor(id);if(!district)throw new Error('Unknown venue');camera.level='venue';camera.districtId=district.id;camera.islandId=A.owner(id).id;camera.selectedId=id;camera.view=camera.islandId==='island-warriors'?{...A.BAY.camera}:frame({x:A.owner(id).x+10,y:A.owner(id).y+12},560);return camera;}
   function fullIsland(camera){camera.level='island';camera.view={...OVERVIEW_VIEW};return camera;}
   function back(camera){return camera.level==='venue'?focusIsland(camera,camera.islandId):fullIsland(camera);}
   function worldToViewport(point,view){return {x:(point.x-view.x)/view.width,y:(point.y-view.y)/view.height};}
@@ -115,10 +123,12 @@
     if(Memory.get(id))return Memory.hintVisible(camera,item,position);
     if(camera.level==='island')return TEAMS.includes(item);
     if(camera.islandId?A.owner(id).id!==camera.islandId:districtFor(id)?.id!==camera.districtId)return false;
+    if(camera.islandId==='island-warriors'&&id==='meet-pier')return true;
     if(TEAMS.includes(item)||COURTS.includes(item)||id===camera.selectedId)return true;
     const p=item.entrance||item;return Boolean(position&&distance(position,p)<90);
   }
   function labelVisible(camera,id,glowing=false,position=null){
+    if(camera.islandId==='island-warriors')return false;
     if(camera.level==='island')return false;
     if(camera.level==='district'&&!camera.islandId&&TEAMS.some(t=>t.id===id))return false;
     if(!interactiveVisible(camera,id,position))return false;
@@ -161,5 +171,10 @@
     return false;
   }
   const hasArrived=(walker,id)=>!walker.moving&&walker.locationId===id&&distance(walker.position,entrance(id))<.01;
-  return {OVERVIEW_VIEW,arenaLogoAnchor,overviewLogoOffset,overviewLogoRect,ISLANDS:A.ISLANDS,islandFor,focusIsland,interactiveVisible,DISTRICTS,ROAD_NODES,ROAD_EDGES,districtFor,entrance,roadPath,journeyFrame,createCamera,focusDistrict,focusVenue,fullIsland,back,worldToViewport,viewportToWorld,labelVisible,visibleLabels,createWalker,walk,tick,hasArrived};
+  function nearestBayInteraction(camera,walker){
+    if(camera.level==='island'||camera.islandId!=='island-warriors'||walker.moving)return null;
+    const eligible=A.BAY.entrances.map(id=>({id,distance:distance(walker.position,entrance(id)),name:A.BAY.prompts[id]})).filter(p=>p.distance<=A.BAY.radii[p.id]);
+    return eligible.sort((a,b)=>a.distance-b.distance||a.id.localeCompare(b.id))[0]||null;
+  }
+  return {edgeClear,nearestBayInteraction,OVERVIEW_VIEW,arenaLogoAnchor,overviewLogoOffset,overviewLogoRect,ISLANDS:A.ISLANDS,islandFor,focusIsland,interactiveVisible,DISTRICTS,ROAD_NODES,ROAD_EDGES,districtFor,entrance,roadPath,journeyFrame,createCamera,focusDistrict,focusVenue,fullIsland,back,worldToViewport,viewportToWorld,labelVisible,visibleLabels,createWalker,walk,tick,hasArrived};
 });

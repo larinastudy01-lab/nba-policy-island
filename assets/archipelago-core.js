@@ -23,11 +23,27 @@
   const CITY_SCENES={nets:['brownstone','褐石街屋與屋頂水塔'],cavaliers:['steel-river','鋼橋、河岸與工業煙囪'],jazz:['salt-peaks','鹽湖步道與雪色山脊'],rockets:['space-plaza','太空艙與航太廣場'],blazers:['rose-bridge','玫瑰花圃與鋼橋'],kings:['river-clock','河船與鐘樓'],grizzlies:['blues-street','音符店招與藍調街'],pelicans:['french-balcony','拱廊、鐵藝陽台與河船'],pistons:['motor-works','齒輪立面與汽車工坊'],pacers:['speedway','格旗與賽道廣場'],wizards:['monument-walk','石色紀念碑與步道'],hawks:['rail-brick','鐵道月台與紅磚拱門'],hornets:['crown-pavilion','王冠形都會亭與高樓'],magic:['palm-lake','棕櫚、湖面與幻想塔']};
   const COURT_OWNERS={'harbor-01':'warriors','harbor-02':'lakers','harbor-03':'suns','harbor-04':'spurs','harbor-05':'heat','park-01':'nuggets','park-02':'timberwolves','park-03':'thunder','park-04':'mavericks','park-05':'bulls','roof-01':'raptors','roof-02':'bucks','roof-03':'knicks','roof-04':'sixers','roof-05':'clippers'};
   const ENCOUNTER_OWNERS={'meet-pier':'warriors','meet-plaza':'mavericks','meet-garden':'bulls'};
-  const SHOP_PLACES={'shop-warriors':['warriors',112,-48,108,-40,96,84],'shop-lakers':['lakers',112,-48,108,-40,96,84]};
+  const SHOP_PLACES={'shop-warriors':['warriors',44,-56,56,-26,96,84],'shop-lakers':['lakers',112,-48,108,-40,96,84]};
+  // 勇士海灣：像素模型、腳底碰撞、步道與互動入口共同使用世界座標。
+  const BAY={playerWidth:24,npcWidth:22,footRadius:7,pathWidth:48,
+    camera:{x:65,y:325,width:520,height:325},
+    arena:{x:216,y:455,entrance:{x:240,y:509}},
+    court:{x:377,y:533,entrance:{x:354,y:565}},
+    pier:{x:218,y:586,entrance:{x:226,y:590}},
+    solids:[{id:'arena-wall',x:151,y:417,width:130,height:62},{id:'shop-wall',x:280,y:394,width:87,height:42},
+      {id:'pier-bench',x:190,y:597,width:18,height:8},{id:'court-stand',x:414,y:566,width:20,height:8},
+      {id:'court-hoop',x:397,y:509,width:8,height:8}],
+    entrances:['warriors','harbor-01','shop-warriors','meet-pier'],
+    prompts:{warriors:'勇士球館', 'harbor-01':'潮汐一號｜30 秒投籃','shop-warriors':'勇士周邊商店','meet-pier':'灣岸碼頭'},
+    hitShapes:{warriors:{frame:[80,66],points:[[22,15],[56,15],[72,23],[73,41],[50,55],[27,55],[8,43],[7,25]]},'shop-warriors':{frame:[48,42],points:[[20,4],[44,16],[44,34],[27,42],[2,24],[1,18]]},'meet-pier':{frame:[90,95],points:[[66,17],[90,29],[74,68],[21,83],[1,62],[22,34]]}},
+    radii:{warriors:27,'harbor-01':24,'shop-warriors':23,'meet-pier':25}
+  };
+  function bayClear(point,radius=BAY.footRadius){return !BAY.solids.some(r=>{const x=Math.max(r.x,Math.min(point.x,r.x+r.width)),y=Math.max(r.y,Math.min(point.y,r.y+r.height));return Math.hypot(point.x-x,point.y-y)<radius;});}
+  function bayHitShape(id){const s=BAY.hitShapes[id];return s?'polygon('+s.points.map(([x,y])=>`${x/s.frame[0]*100}% ${y/s.frame[1]*100}%`).join(',')+')':'none';}
   // Art bases are separate from photo entrances; the statue remains offshore.
   const SIGHT_PLACES={
     'golden-gate':['warriors',200,-20,240,180,155,-63],
-    'alcatraz':['warriors',-210,-25,105,92], 'lombard':['warriors',-108,40,80,90],
+    'alcatraz':['warriors',-210,-25,105,92], 'lombard':['warriors',-150,65,80,90],
     'hollywood':['lakers',-105,-45,110,68], 'griffith':['clippers',-100,-35,92,88],
     'santa-monica':['lakers',-117,76,112,90,-72,81],
     'grand-canyon':['suns',-103,-20,122,78], 'vegas':['suns',20,-50,80,90],
@@ -41,7 +57,7 @@
   const MEMORY_PLACES={
     'memory-lakers-2020':['lakers',5,105,38,98,96,64,'street-lakers'],
     'memory-bulls-1998':['bulls',110,18,120,58,48,32,'park-05'],
-    'memory-warriors-2015':['warriors',-55,65,-38,78,56,48,'bay-junction'],
+    'memory-warriors-2015':['warriors',-106,42,-90,52,56,48,'bay-shore'],
     'memory-knicks-1970':['knicks',-60,80,-35,94,64,48,'street-knicks'],
     'memory-raptors-2019':['raptors',110,18,120,58,48,32,'roof-01'],
     // Reserved architecture only: unpublished histories have no map hint or reader.
@@ -59,6 +75,10 @@
     if(kind==='sight'){const spec=SIGHT_PLACES[id.replace(/^sight-/,'')];[,dx,dy,width,height,ex,ey]=spec;}
     if(kind==='memory'){[,dx,dy,ex,ey,width,height]=MEMORY_PLACES[id];}
     if(kind==='shop'){[,dx,dy,ex,ey,width,height]=SHOP_PLACES[id];}
+    if(id==='warriors'||id==='harbor-01'||id==='meet-pier'){
+      const p=id==='warriors'?BAY.arena:id==='harbor-01'?BAY.court:BAY.pier;
+      return {...p,entrance:{...p.entrance},islandId:island.id,teamIslandId:island.teamId};
+    }
     return {x:island.x+dx,y:island.y+dy,islandId:island.id,teamIslandId:island.teamId,entrance:Number.isFinite(ex)?{x:island.x+ex,y:island.y+ey}:null,...(width?{width,height}:{})};
   }
   // Stepped coast, with a shared shoreline/land test used by the generator and tests.
@@ -91,16 +111,25 @@
   }
   for(const [kind,owners]of [['court',COURT_OWNERS],['encounter',ENCOUNTER_OWNERS]])for(const [id,t]of Object.entries(owners)){const p=place(kind,id).entrance;node(id,p.x,p.y);if(id==='meet-pier')continue;edge('street-'+t,id,{surface:kind==='encounter'&&id==='meet-pier'?'wood':'stone',islandId:'island-'+t});}
   for(const key of ['santa-monica','cloud-gate','liberty']){const id='sight-'+key,p=place('sight',id).entrance;node(id,p.x,p.y);edge('street-'+owner(id).teamId,id,{surface:key==='santa-monica'?'wood':'stone',islandId:owner(id).id});}
-  node('bay-junction',343,562);node('bay-shore',307,579);node('pier-approach',307,591);
-  edge('warriors','bay-junction',{islandId:'island-warriors'});edge('bay-junction','bay-shore',{islandId:'island-warriors'});edge('bay-shore','pier-approach',{islandId:'island-warriors',surface:'wood'});edge('pier-approach','meet-pier',{islandId:'island-warriors',surface:'wood'});edge('meet-pier','harbor-01',{bridge:true,surface:'wood',islandId:'island-warriors'});
+  // 三岔廣場接四個獨立入口，球場不再成為往碼頭的必經通道。
+  node('bay-junction',333,493);node('bay-shore',289,542);node('pier-approach',252,566);
+  node('bay-entry',376,478);node('bay-arena-walk',272,499);node('bay-court-turn',342,544);
+  edge('warriors','bay-arena-walk',{islandId:'island-warriors'});edge('bay-arena-walk','bay-junction',{islandId:'island-warriors'});
+  edge('bay-junction','bay-entry',{islandId:'island-warriors'});edge('bay-junction','bay-court-turn',{islandId:'island-warriors'});
+  edge('bay-court-turn','harbor-01',{islandId:'island-warriors'});
+  edge('bay-junction','bay-shore',{islandId:'island-warriors'});edge('bay-shore','pier-approach',{islandId:'island-warriors'});edge('pier-approach','meet-pier',{islandId:'island-warriors',surface:'wood'});
   // Golden Gate: the lane is north of the pedestrian side, never in the foot graph.
-  node('bridge-west-walk',390,460);node('sight-golden-gate',435,437);node('bridge-east-walk',570,370);node('bay-north-walk',365,461);
-  edge('warriors','bay-north-walk',{islandId:'island-warriors'});edge('bay-north-walk','bridge-west-walk',{islandId:'island-warriors'});edge('bridge-west-walk','sight-golden-gate',{bridge:true});edge('sight-golden-gate','bridge-east-walk',{bridge:true});node('nuggets-walk',600,420);edge('bridge-east-walk','nuggets-walk',{bridge:true});edge('nuggets-walk','nuggets',{islandId:'island-nuggets'});
-  for(const e of ROAD_EDGES){if(e.from==='street-warriors')e.from='bay-junction';if(e.to==='street-warriors')e.to='bay-junction';}
+  node('bridge-west-walk',390,460);node('sight-golden-gate',435,437);node('bridge-east-walk',570,370);node('bay-north-walk',376,478);
+  edge('bay-entry','bridge-west-walk',{islandId:'island-warriors'});edge('bridge-west-walk','sight-golden-gate',{bridge:true});edge('sight-golden-gate','bridge-east-walk',{bridge:true});node('nuggets-walk',600,420);edge('bridge-east-walk','nuggets-walk',{bridge:true});edge('nuggets-walk','nuggets',{islandId:'island-nuggets'});
+  ROAD_NODES['gate-warriors']={x:420,y:480};
+  for(let i=ROAD_EDGES.length-1;i>=0;i--){const e=ROAD_EDGES[i];if([e.from,e.to].includes('street-warriors')){if([e.from,e.to].includes('gate-warriors')){e.from='bay-entry';e.to='gate-warriors';}else ROAD_EDGES.splice(i,1);}}
   delete ROAD_NODES['street-warriors'];
   for(const id of Object.keys(SHOP_PLACES)){const island=owner(id),p=place('shop',id).entrance;node(id,p.x,p.y);node('shop-side-'+island.teamId,island.x+48,island.y+40);node('shop-walk-'+island.teamId,island.x+48,island.y-30);edge(island.teamId,'shop-side-'+island.teamId,{islandId:island.id,shop:true});edge('shop-side-'+island.teamId,'shop-walk-'+island.teamId,{islandId:island.id,shop:true});edge('shop-walk-'+island.teamId,id,{islandId:island.id,shop:true});}
+  for(let i=ROAD_EDGES.length-1;i>=0;i--)if(ROAD_EDGES[i].shop&&ROAD_EDGES[i].islandId==='island-warriors')ROAD_EDGES.splice(i,1);
+  delete ROAD_NODES['shop-side-warriors'];delete ROAD_NODES['shop-walk-warriors'];
+  node('shop-walk-warriors',336,490);edge('bay-junction','shop-walk-warriors',{islandId:'island-warriors',shop:true});edge('shop-walk-warriors','shop-warriors',{islandId:'island-warriors',shop:true});
   for(const [id,spec]of Object.entries(MEMORY_PLACES)){const p=place('memory',id).entrance;node(id,p.x,p.y);edge(spec[7],id,{islandId:owner(id).id,surface:'stone',memory:true});}
   const seenEdges=new Set();for(let n=ROAD_EDGES.length-1;n>=0;n--){const e=ROAD_EDGES[n],key=[e.from,e.to].sort().join('|');if(seenEdges.has(key))ROAD_EDGES.splice(n,1);else seenEdges.add(key);}
   const CAR_ROUTES=[{id:'bay-cruise',district:'west',speed:38,points:[{x:390,y:438},{x:570,y:348},{x:605,y:370},{x:565,y:395},{x:508,y:550},{x:508,y:665},{x:528,y:665},{x:528,y:540},{x:430,y:470}]},{id:'vegas-cruise',district:'desert',speed:32,points:[{x:550,y:1260},{x:508,y:1260},{x:508,y:1340},{x:528,y:1340},{x:528,y:1280},{x:600,y:1280},{x:755,y:1245},{x:740,y:1225}]}];
-  return {MAP,ISLANDS,CITY_SCENES,COURT_OWNERS,ENCOUNTER_OWNERS,SHOP_PLACES,SIGHT_PLACES,MEMORY_PLACES,ROAD_NODES,ROAD_EDGES,CAR_ROUTES,getIsland,owner,place,coast,contains};
+  return {MAP,ISLANDS,BAY,bayClear,bayHitShape,CITY_SCENES,COURT_OWNERS,ENCOUNTER_OWNERS,SHOP_PLACES,SIGHT_PLACES,MEMORY_PLACES,ROAD_NODES,ROAD_EDGES,CAR_ROUTES,getIsland,owner,place,coast,contains};
 });

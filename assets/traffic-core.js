@@ -12,7 +12,7 @@
   ];
   // 金門橋車道／橋側步道均由群島布局配置；兩條路線分流。
   const ROUTES=A.CAR_ROUTES;
-  const parking={"car-f40":["warriors",-110,-70],"car-488":["lakers",-110,95],"car-p1":["warriors",-55,90],"car-911":["nuggets",-125,60]};
+  const parking={"car-f40":["warriors",-141,29],"car-488":["lakers",-110,95],"car-p1":["warriors",34,103],"car-911":["nuggets",-125,60]};
   CARS.forEach(c=>{const p=parking[c.id];if(p){const i=A.getIsland(p[0]);c.x=i.x+p[1];c.y=i.y+p[2];c.islandId=i.id;}else c.islandId=c.id==="car-720s"?"island-warriors":"island-suns";});
   const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),lerp=(a,b,t)=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
   function roundedRoute(points){const out=[];for(let i=0;i<points.length;i++){const p=points[i],before=points[(i+points.length-1)%points.length],after=points[(i+1)%points.length],radius=Math.min(14,distance(p,before)/5,distance(p,after)/5),a=lerp(p,before,radius/distance(p,before)),b=lerp(p,after,radius/distance(p,after));for(let j=0;j<=8;j++){const t=j/8;out.push({...lerp(lerp(a,p,t),lerp(p,b,t),t),corner:true});}out.push({...b,corner:false});}return out;}

@@ -13,6 +13,7 @@ function art(){
     poly(terrain,c.map(p=>({x:p.x,y:p.y+12})),wall);
     poly(terrain,c.map(p=>({x:p.x,y:p.y+3})),'#e0d4ad');poly(terrain,c,top);
     for(let i=6;i<c.length-1;i++){const a=c[i],b=c[i+1];terrain.line(a.x/2,a.y/2+7,b.x/2,b.y/2+7,'#738f83');}
+    if(island.teamId==='warriors'){require('./warriors-bay-art.cjs').paint({ground,lights,frontArena,frontPier,frontCourt});continue;}
     // Arena plaza is broad and kept empty; forecourt connects to the island street.
     ground.polygon([[x-54,y+4],[x-12,y-16],[x+48,y+13],[x+8,y+37]],island.theme==='city'?'#b9c2b7':'#c2c8ae');
     for(let k=0;k<4;k++)ground.line(x-37+k*12,y+12-k*2,x+6+k*9,y+34-k*2,'#a0b0a3');
@@ -22,14 +23,6 @@ function art(){
     for(const [dx,dy]of [[-67,-34],[31,-45],[70,36]]){if(['sand','beach','la'].includes(island.theme)){ground.line(x+dx,y+dy,x+dx,y+dy-16,'#8f8260',2);ground.line(x+dx,y+dy-15,x+dx-7,y+dy-19,'#668e6a',2);ground.line(x+dx,y+dy-15,x+dx+7,y+dy-17,'#80a574',2);}else P.tree(ground,x+dx,y+dy);}
     lights.ellipse(x+21,y+27,11,4,'#c3c09a');lights.line(x+15,y+23,x+31,y+31,'#ffedc7',2);
     if(['sand','rock'].includes(island.theme)){ground.polygon([[x-76,y-24],[x-71,y-42],[x-61,y-34],[x-58,y-21]],'#b58a67');ground.polygon([[x-76,y-24],[x-71,y-42],[x-67,y-23]],'#d5b087');}
-    if(island.teamId==='warriors'){
-      const dock=[[x-26,y+45],[x+15,y+43],[x+33,y+68],[x-20,y+75]];ground.polygon(dock,'#786b51');ground.polygon(dock.map(([x,y])=>[x,y-4]),'#c1a172');
-      for(let i=0;i<8;i++)ground.line(x-23+i*7,y+43,x-23+i*7,y+66,'#987d59');
-      for(const [dx,dy]of [[-24,50],[21,61]]){ground.line(x+dx,y+dy,x+dx,y+dy+13,'#6b6654',3);lights.ellipse(x+dx,y+dy,8,3,'#ad9e69');lights.rect(x+dx,y+dy-9,2,2,'#ffe4a0');}
-      ground.polygon([[x-44,y+76],[x-25,y+70],[x-30,y+80],[x-39,y+83]],'#e7cfa0');
-      frontPier.line(x-23,y+68,x+20,y+63,'#dcc9a5');for(let dx=-23;dx<20;dx+=9)frontPier.line(x+dx,y+68,x+dx,y+61,'#b3a58b');
-      P.tree(frontArena,x+44,y+29);frontCourt.line(x+35,y+34,x+58,y+46,'#9dbec1');
-    }
     if(island.teamId==='bulls'){ground.polygon([[x-80,y+28],[x-51,y+15],[x-30,y+28],[x-60,y+43]],'#d6d6c0');for(let k=0;k<3;k++)ground.line(x-76+k*7,y+30-k*3,x-55+k*7,y+40-k*3,'#a7b9af');}
     if(island.teamId==='knicks'){for(let k=0;k<3;k++){ground.polygon([[x-67+k*7,y+29+k*3],[x-61+k*7,y+26+k*3],[x-59+k*7,y+28+k*3],[x-65+k*7,y+31+k*3]],'#ecdfb8');}P.block(ground,x-67,y-15,10,9,17,'#748fa5');}
   }
@@ -39,11 +32,11 @@ function art(){
 function roads(night=false){
   const t=new P.Tile(W,H);
   for(const e of A.ROAD_EDGES){const a=A.ROAD_NODES[e.from],b=A.ROAD_NODES[e.to],len=Math.hypot(b.x-a.x,b.y-a.y);if(!len)continue;
-    const wide=e.trunk?11:e.bridge?8:5,deck=night?'#839c9d':e.surface==='wood'?'#c9ad7c':e.trunk?'#a4b9b8':'#c4cbb2';
+    const bay=e.islandId==='island-warriors',wide=bay?(e.surface==='wood'?16:e.memory?9:e.shop?16:24):e.trunk?11:e.bridge?8:5,deck=night?'#839c9d':e.surface==='wood'?'#c9ad7c':bay?'#ccd1c6':e.trunk?'#a4b9b8':'#c4cbb2';
     t.line(a.x/2,a.y/2+4,b.x/2,b.y/2+4,'#375d70',wide+3);t.line(a.x/2,a.y/2,b.x/2,b.y/2,deck,wide);
     if(e.bridge){for(const sign of [-1,1]){const nx=-(b.y-a.y)/len*wide/2*sign,ny=(b.x-a.x)/len*wide/2*sign;t.line(a.x/2+nx,a.y/2+ny,b.x/2+nx,b.y/2+ny,night?'#e8ce91':'#e1d7b7');}for(let d=30;d<len;d+=75){const f=d/len,x=(a.x+(b.x-a.x)*f)/2,y=(a.y+(b.y-a.y)*f)/2;t.line(x,y+3,x,y+14,'#577b82',2);}}
-    for(let d=12;d<len;d+=e.trunk?22:18){const f=d/len,x=(a.x+(b.x-a.x)*f)/2,y=(a.y+(b.y-a.y)*f)/2;t.dot(x,y,e.trunk?'#f1d59d':'#e2d9b6');}
-    for(let d=25;d<len;d+=70){const f=d/len,x=(a.x+(b.x-a.x)*f)/2+5,y=(a.y+(b.y-a.y)*f)/2;t.line(x,y,x,y-8,'#57767c');t.rect(x,y-9,3,1,night?'#ffe5a2':'#cdd2b9');if(night)t.ellipse(x+1,y+2,6,2,'#b4b591');}
+    for(let d=12;d<len;d+=e.trunk?22:18){const f=d/len,x=(a.x+(b.x-a.x)*f)/2,y=(a.y+(b.y-a.y)*f)/2;if(!bay)t.dot(x,y,e.trunk?'#f1d59d':'#e2d9b6');else if(e.surface==='wood')t.line(x-5,y-2,x+5,y+2,'#a58b65');else t.line(x-3,y-1,x+3,y+1,'#b3c0b6');}
+    if(!bay)for(let d=25;d<len;d+=70){const f=d/len,x=(a.x+(b.x-a.x)*f)/2+5,y=(a.y+(b.y-a.y)*f)/2;t.line(x,y,x,y-8,'#57767c');t.rect(x,y-9,3,1,night?'#ffe5a2':'#cdd2b9');if(night)t.ellipse(x+1,y+2,6,2,'#b4b591');}
   }
   return t;
 }

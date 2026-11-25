@@ -7,10 +7,12 @@ test("bay has a shared scale/light standard, 10 independent simulated visitors a
   assert.equal(B.PEOPLE.length,10);assert.equal(new Set(B.PEOPLE.map(p=>p.id)).size,10);assert.deepEqual(["arena","pier","court"].map(a=>B.PEOPLE.filter(p=>p.area===a).length),[3,3,4]);
   for(const [file,markup] of [["bay-ground.svg",B.groundSVG()],["bay-lights.svg",B.lightsSVG()],...["arena","pier","court"].map(part=>[`bay-foreground-${part}.svg`,B.foregroundSVG(part)])])assert.equal(fs.readFileSync(path.join(root,"assets",file),"utf8"),markup);
 });
-test("Warriors -> bay boardwalk -> Tidal has connected explicit pedestrian junctions and a wooden bridge",()=>{
+test("Warriors boardwalk and Tidal have independent branches from the bridgehead plaza",()=>{
   const route=E.roadPath(E.entrance("warriors"),"meet-pier");assert.ok(route.some(p=>p.x===E.ROAD_NODES["bay-shore"].x&&p.y===E.ROAD_NODES["bay-shore"].y));
   assert.deepEqual(E.roadPath(E.entrance("meet-pier"),"harbor-01").at(-1),E.entrance("harbor-01"));
-  assert.ok(E.ROAD_EDGES.some(e=>e.from==="meet-pier"&&e.to==="harbor-01"&&e.bridge&&e.surface==="wood"));
+  assert.ok(E.ROAD_EDGES.some(e=>e.from==="pier-approach"&&e.to==="meet-pier"&&e.surface==="wood"));
+  assert.ok(E.ROAD_EDGES.some(e=>e.from==="bay-court-turn"&&e.to==="harbor-01"));
+  assert.equal(E.ROAD_EDGES.some(e=>[e.from,e.to].includes('harbor-01')&&[e.from,e.to].includes('meet-pier')),false);
 });
 test("away Warriors never trigger home crowd flow; home fixture shares scores and swaps glow/night eligibility",()=>{
   for(const status of C.GAME_STATES)assert.equal(B.modeFor(C.gameForTeam("warriors",status,"away")),"ambient");

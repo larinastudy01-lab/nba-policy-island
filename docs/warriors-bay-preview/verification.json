@@ -1,0 +1,242 @@
+{
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "view": {
+    "x": 65,
+    "y": 325,
+    "width": 520,
+    "height": 325
+  },
+  "baseline": "2565ad06b8491b5d443999f472e53232be68543d",
+  "results": [
+    "keyboard arrival + correct panel/prompt: shop-warriors",
+    "Warriors shop add to cart: 120 coins",
+    "keyboard arrival + correct panel/prompt: meet-pier",
+    "keyboard arrival + correct panel/prompt: harbor-01",
+    "Tidal tutorial, formal shot and leave",
+    "keyboard arrival + correct panel/prompt: warriors",
+    "reserved ticket policy: 2400",
+    "animated clear pedestrian route + retracting prompt: warriors",
+    "animated clear pedestrian route + retracting prompt: harbor-01",
+    "animated clear pedestrian route + retracting prompt: shop-warriors",
+    "animated clear pedestrian route + retracting prompt: meet-pier",
+    "28 seconds of concurrent NPC motion observed in 4 captures",
+    "home LIVE -> final stops glow; night remains",
+    "overview preserves player position",
+    "no page errors or missing local assets at /nba-policy-island/"
+  ],
+  "errors": [],
+  "missing": [],
+  "npcSamples": [
+    [
+      {
+        "id": "npc-fan-ticket",
+        "x": 184,
+        "y": 490
+      },
+      {
+        "id": "npc-fan-cap",
+        "x": 310.3035256792647,
+        "y": 519.7068643003073
+      },
+      {
+        "id": "npc-fan-bag",
+        "x": 287.59908715314555,
+        "y": 549.6216291664344
+      },
+      {
+        "id": "npc-pier-walker",
+        "x": 242.11839088739725,
+        "y": 581.9737011030574
+      },
+      {
+        "id": "npc-pier-bag",
+        "x": 438.0488161805658,
+        "y": 435.486883821497
+      },
+      {
+        "id": "npc-pier-bench",
+        "x": 199,
+        "y": 608
+      },
+      {
+        "id": "npc-court-ball",
+        "x": 346.715941477285,
+        "y": 531.1130534088644
+      },
+      {
+        "id": "npc-court-dribble",
+        "x": 385,
+        "y": 558
+      },
+      {
+        "id": "npc-court-seat-a",
+        "x": 425,
+        "y": 572
+      },
+      {
+        "id": "npc-court-seat-b",
+        "x": 416,
+        "y": 584
+      }
+    ],
+    [
+      {
+        "id": "npc-fan-ticket",
+        "x": 245.83808028811396,
+        "y": 511.46964005402134
+      },
+      {
+        "id": "npc-fan-cap",
+        "x": 369,
+        "y": 490
+      },
+      {
+        "id": "npc-fan-bag",
+        "x": 261.23146323353706,
+        "y": 535.0006014690653
+      },
+      {
+        "id": "npc-pier-walker",
+        "x": 242.11839088739725,
+        "y": 581.9737011030574
+      },
+      {
+        "id": "npc-pier-bag",
+        "x": 351.83250593749466,
+        "y": 486.4305211845951
+      },
+      {
+        "id": "npc-pier-bench",
+        "x": 199,
+        "y": 608
+      },
+      {
+        "id": "npc-court-ball",
+        "x": 370,
+        "y": 559
+      },
+      {
+        "id": "npc-court-dribble",
+        "x": 385,
+        "y": 558
+      },
+      {
+        "id": "npc-court-seat-a",
+        "x": 425,
+        "y": 572
+      },
+      {
+        "id": "npc-court-seat-b",
+        "x": 416,
+        "y": 584
+      }
+    ],
+    [
+      {
+        "id": "npc-fan-ticket",
+        "x": 287.4776835163156,
+        "y": 512.7229343406908
+      },
+      {
+        "id": "npc-fan-cap",
+        "x": 316.6371152698979,
+        "y": 517.0678686375422
+      },
+      {
+        "id": "npc-fan-bag",
+        "x": 303.5571523476653,
+        "y": 539.5428511488428
+      },
+      {
+        "id": "npc-pier-walker",
+        "x": 242.11839088739725,
+        "y": 581.9737011030574
+      },
+      {
+        "id": "npc-pier-bag",
+        "x": 275.32439595768335,
+        "y": 550.8706620815033
+      },
+      {
+        "id": "npc-pier-bench",
+        "x": 199,
+        "y": 608
+      },
+      {
+        "id": "npc-court-ball",
+        "x": 346.41001397575053,
+        "y": 536.6197484364939
+      },
+      {
+        "id": "npc-court-dribble",
+        "x": 385,
+        "y": 558
+      },
+      {
+        "id": "npc-court-seat-a",
+        "x": 425,
+        "y": 572
+      },
+      {
+        "id": "npc-court-seat-b",
+        "x": 416,
+        "y": 584
+      }
+    ],
+    [
+      {
+        "id": "npc-fan-ticket",
+        "x": 200.87335120930624,
+        "y": 508.6249389336779
+      },
+      {
+        "id": "npc-fan-cap",
+        "x": 331.16058396705927,
+        "y": 510.6951150921267
+      },
+      {
+        "id": "npc-fan-bag",
+        "x": 252,
+        "y": 527
+      },
+      {
+        "id": "npc-pier-walker",
+        "x": 242.11839088739725,
+        "y": 581.9737011030574
+      },
+      {
+        "id": "npc-pier-bag",
+        "x": 239.23169997542882,
+        "y": 577.7861230996047
+      },
+      {
+        "id": "npc-pier-bench",
+        "x": 199,
+        "y": 608
+      },
+      {
+        "id": "npc-court-ball",
+        "x": 351.77106060282114,
+        "y": 559.1490340824063
+      },
+      {
+        "id": "npc-court-dribble",
+        "x": 385,
+        "y": 558
+      },
+      {
+        "id": "npc-court-seat-a",
+        "x": 425,
+        "y": 572
+      },
+      {
+        "id": "npc-court-seat-b",
+        "x": 416,
+        "y": 584
+      }
+    ]
+  ]
+}

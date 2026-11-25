@@ -32,7 +32,7 @@ test('island camera contains the arena, land gate and coast, and returning to ov
 });
 test('near view exposes only this island; secondary points expand on approach or explicit keyboard focus',()=>{
   const camera=E.createCamera();E.focusIsland(camera,'warriors');assert.equal(E.interactiveVisible(camera,'lakers',E.entrance('warriors')),false);assert.equal(E.interactiveVisible(camera,'harbor-01'),true);assert.equal(E.interactiveVisible(camera,'sight-lombard'),false);assert.equal(E.interactiveVisible(camera,'sight-lombard',{x:S.get('sight-lombard').x,y:S.get('sight-lombard').y}),true);
-  E.focusVenue(camera,'sight-lombard');assert.equal(E.interactiveVisible(camera,'sight-lombard'),true);assert.ok(E.visibleLabels(camera).includes('sight-lombard'));
+  E.focusVenue(camera,'sight-lombard');assert.equal(E.interactiveVisible(camera,'sight-lombard'),true);assert.deepEqual(E.visibleLabels(camera),[]);
 });
 test('terrain contains sea between coasts, while day/night roads and LIVE are independent',()=>{
   const drawings=Art.art();assert.equal(drawings['island-map'].width,C.MAP.width/2);assert.equal(drawings['island-map'].height,C.MAP.height/2);

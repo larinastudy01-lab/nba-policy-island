@@ -14,8 +14,8 @@
     steps:{roof:[40,34],sign:[37,27,14,10]},
     brick:{roof:[40,34],sign:[45,29,14,10]}
   };
-  const ARENA_ROOF_POINTS={knicks:[40,36],bulls:[40,36],cavaliers:[40,36],mavericks:[40,36],magic:[40,36],sixers:[40,42],pacers:[55,34],spurs:[55,34],grizzlies:[55,31],rockets:[55,34],pelicans:[55,34],heat:[55,33]};
-  function arenaBranding(team){const spec=ARENA_BRANDING[ARENAS[team.id]];if(!spec)throw new RangeError('Unknown arena branding');return {roof:[...(ARENA_ROOF_POINTS[team.id]||spec.roof)],sign:[...spec.sign]};}
+  const ARENA_ROOF_POINTS={warriors:[18,34],knicks:[40,36],bulls:[40,36],cavaliers:[40,36],mavericks:[40,36],magic:[40,36],sixers:[40,42],pacers:[55,34],spurs:[55,34],grizzlies:[55,31],rockets:[55,34],pelicans:[55,34],heat:[55,33]};
+  function arenaBranding(team){const spec=ARENA_BRANDING[ARENAS[team.id]];if(!spec)throw new RangeError('Unknown arena branding');return {roof:[...(ARENA_ROOF_POINTS[team.id]||spec.roof)],sign:team.id==='warriors'?[41,34,15,10]:[...spec.sign]};}
   const PEOPLE=["short-cap","tall-curls","backpack","ponytail","hoodie","senior","ball-fan","seated"];
   const xml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"})[c]);
   class Tile{
@@ -33,6 +33,20 @@
   function block(t,x,y,w,d,h,color){const roof=[[x,y-h],[x+w,y+d/2-h],[x+w-d,y+d-h],[x-d,y+d/2-h]];t.polygon([[x-d,y+d/2-h],[x+w-d,y+d-h],[x+w-d,y+d],[x-d,y+d/2]],shade(color,-30));t.polygon([[x+w-d,y+d-h],[x+w,y+d/2-h],[x+w,y+d/2],[x+w-d,y+d]],shade(color,-55));t.polygon(roof,color);}
   function arena(team,night=false){
     const model=ARENAS[team.id];if(!model)throw new RangeError("Unknown pixel arena");const t=new Tile(80,66),c=team.expansion?'#718c96':team.color,a=team.expansion?'#b8b9a5':team.accent,glass=night?"#f5d998":"#93c6cf",dark="#263c50";
+    if(team.id==='warriors'){
+      // 寬低橢圓屋頂＋朝鏡頭的門廳，招牌位於門上，兩者不共用像素。
+      t.ellipse(43,52,34,9,'#48605e');t.ellipse(40,38,32,13,'#1c4169');t.rect(8,29,65,11,'#285986');
+      t.ellipse(40,32,32,13,'#ddb956');t.ellipse(40,30,32,13,'#2464b9');t.ellipse(37,27,28,11,'#3b80c7');
+      t.line(16,27,32,20,'#6dadd2');t.line(34,20,55,23,'#6dadd2');
+      for(let x=13;x<68;x+=7)t.rect(x,37,4,6,glass);
+      t.polygon([[28,41],[40,37],[54,42],[42,48]],'#87b9c8');t.line(29,42,41,47,'#d4e1d6');
+      t.rect(36,40,10,9,'#193951');t.rect(37,41,3,7,glass);t.rect(42,41,3,7,glass);t.line(41,40,41,48,'#e7d5a3');
+      t.rect(33,38,16,2,'#e2bf60');
+      for(let i=0;i<3;i++)t.polygon([[33-i,49+i*2],[48+i,49+i*2],[52+i,51+i*2],[29-i,51+i*2]],i%2?'#a4b0a5':'#dedac2');
+      t.rect(17,41,9,5,'#183b56');t.rect(18,41,7,2,glass);t.rect(17,40,9,1,a);
+      if(night){t.polygon([[34,49],[47,49],[56,57],[26,57]],'#e4d7aa');t.line(32,51,49,51,'#ffe4ab');}
+      return t;
+    }
     t.ellipse(42,48,33,12,"#24404a");t.polygon([[6,38],[39,21],[73,38],[40,55]],"#a7b3a0");t.line(9,40,40,55,"#d4c89e");
     if(model==="low-oval"){t.ellipse(40,33,32,14,shade(c,-48));t.rect(8,29,65,7,shade(c,-28));t.ellipse(40,27,32,14,a);t.ellipse(40,25,30,13,c);t.ellipse(37,22,25,10,shade(c,25));for(let x=17;x<64;x+=6)t.rect(x,34,3,7,glass);t.polygon([[50,35],[65,29],[65,40],[50,47]],glass);}
     if(model==="dome"){block(t,38,26,31,27,12,shade(c,-8));t.ellipse(40,23,29,18,a);t.ellipse(40,21,27,17,c);t.ellipse(36,15,20,10,shade(c,30));for(let x=18;x<65;x+=7)t.line(x,32,x,37,glass,2);for(let x=25;x<60;x+=8)t.line(x,7,x-5,22,shade(c,45));}
@@ -46,7 +60,25 @@
     if(night){t.polygon([[57,44],[63,41],[73,47],[63,52]],"#c5ba86");for(let x=16;x<53;x+=8)t.rect(x,33,2,3,"#e9ce8b");}
     return t;
   }
-  function court(type,night=false){
+  function court(type,night=false,id=null){
+    if(id==='harbor-01'){
+      const t=new Tile(55,64),surface='#c77e50',ink='#fff0ce',iso=(u,v)=>[27+u-v,28+(u+v)/2];
+      t.ellipse(29,45,25,7,'#35525b');block(t,24,29,25,23,3,'#b59c79');
+      t.polygon([iso(-14,-10),iso(14,-10),iso(14,10),iso(-14,10)],surface);
+      const line=(a,b)=>t.line(...iso(...a),...iso(...b),ink);
+      line([-14,-10],[14,-10]);line([14,-10],[14,10]);line([14,10],[-14,10]);line([-14,10],[-14,-10]);
+      // 只有一個籃框的半場：底線在右上，禁區與罰球弧完整可見。
+      line([14,-5],[3,-5]);line([3,-5],[3,5]);line([3,5],[14,5]);
+      for(let i=0;i<12;i++){const a=-Math.PI/2+i*Math.PI/12,b=-Math.PI/2+(i+1)*Math.PI/12;line([3-5*Math.cos(a),5*Math.sin(a)],[3-5*Math.cos(b),5*Math.sin(b)]);}
+      t.line(43,24,43,10,'#829fa8',2);t.rect(38,7,11,6,'#dce4d6');t.rect(41,9,5,3,'#688b9e');t.line(37,15,43,15,'#f6c363',2);t.line(38,17,42,17,'#fff1d2');
+      // 低圍網在後方與邊緣；左下入口 13–21 不架欄。
+      for(const [x,y]of [[4,25],[14,20],[25,15],[51,29]])t.line(x,y,x,y-7,'#8eaaa8');t.line(4,18,25,8,'#a2b7ad');t.line(25,8,48,19,'#a2b7ad');
+      t.line(4,35,11,39,'#b9c7bc');t.line(23,45,48,33,'#b9c7bc');
+      for(const [x,y]of [[5,35],[11,38],[24,44],[36,38],[48,32]])t.line(x,y,x,y-5,'#8ba5a2');
+      t.line(48,44,54,41,'#b9aa83',3);t.line(48,47,54,44,'#d8c7a0',2);
+      t.line(3,23,3,7,'#718b91');t.rect(1,5,6,2,night?'#e5f4f1':'#a1bab9');t.line(51,35,51,17,'#718b91');t.rect(49,15,6,2,night?'#e5f4f1':'#a1bab9');
+      if(night){t.line(7,27,18,32,'#dce3c6');t.line(30,40,44,33,'#dce3c6');}return t;
+    }
     const t=new Tile(55,64),ink="#cbd4bc",surface={harbor:"#477c8b",park:"#4e8975",roof:"#5d6f98"}[type];if(!surface)throw new RangeError("Unknown court scene");t.ellipse(28,43,25,8,"#203b48");block(t,23,27,27,21,type==="roof"?16:4,type==="roof"?"#65748e":"#819886");
     const iso=(x,y)=>[27+x-y,24+(x+y)/2];t.polygon([iso(-14,-10),iso(14,-10),iso(14,10),iso(-14,10)],surface);
     const l=(a,b)=>t.line(...iso(...a),...iso(...b),ink);l([-14,-10],[14,-10]);l([14,-10],[14,10]);l([14,10],[-14,10]);l([-14,10],[-14,-10]);l([0,-10],[0,10]);for(const s of [-1,1]){l([s*14,-4],[s*7,-4]);l([s*7,-4],[s*7,4]);l([s*7,4],[s*14,4]);}t.ellipse(27,24,4,2,ink);t.ellipse(27,24,3,1,surface);
@@ -90,6 +122,6 @@
   function scenicBackdrop(id,night=false){const entry=tiles().sights[id+(night?":night":"")];if(!entry)throw new RangeError("Unknown pixel photo backdrop");const t=new Tile(240,160);t.rect(0,0,240,160,night?"#172e49":"#92bec8");t.rect(0,75,240,85,night?"#264d62":"#477f8a");t.polygon([[0,115],[90,85],[240,120],[240,160],[0,160]],night?"#536b73":"#9ba58f");return `<g shape-rendering="crispEdges"><g transform="scale(4)">${t.markup()}</g><svg x="185" y="25" width="650" height="440" viewBox="0 0 ${entry.width} ${entry.height}">${entry.markup}</svg></g>`;}
   function encounterBackdrop(id){const entry=tiles().encounters[id];if(!entry)throw new RangeError("Unknown pixel encounter");return `<g transform="scale(4)" shape-rendering="crispEdges">${entry.markup}</g>`;}
   function arenaMarkup(team){const day=arena(team),night=arena(team,true);return `<path class="arena-halo" d="M-76-10-38-50 38-50 76-10 38 36-38 36Z"/><g transform="translate(-80 -68) scale(2)" shape-rendering="crispEdges"><g class="pixel-day">${day.markup()}</g><g class="pixel-night">${night.markup()}</g></g><text class="roof-text" y="-23">${xml(team.abbr)}</text><text class="arena-live-tag" y="10">模擬 LIVE</text><text class="landmark-label" y="55">${xml(team.shortName)}主場</text><path class="selection-ring" d="M-78-12-39-58 39-58 78-12 39 46-39 46Z"/><rect class="hit-area" x="-78" y="-65" width="156" height="124"/>`;}
-  function courtMarkup(c){return `<g transform="translate(-55 -52) scale(2)" shape-rendering="crispEdges"><g class="pixel-day">${court(c.type).markup()}</g><g class="pixel-night">${court(c.type,true).markup()}</g></g><text class="landmark-label court-label" y="48">${xml(c.name)}</text><path class="selection-ring" d="M-52-8 0-42 52-8 0 39Z"/><rect class="hit-area" x="-52" y="-50" width="104" height="117"/>`;}
+  function courtMarkup(c){return `<g transform="translate(-55 -52) scale(2)" shape-rendering="crispEdges"><g class="pixel-day">${court(c.type,false,c.id).markup()}</g><g class="pixel-night">${court(c.type,true,c.id).markup()}</g></g><text class="landmark-label court-label" y="48">${xml(c.name)}</text><path class="selection-ring" d="M-52-8 0-42 52-8 0 39Z"/><rect class="hit-area" x="-52" y="-50" width="104" height="117"/>`;}
   return {SPEC,ARENAS,ARENA_BRANDING,arenaBranding,MODELS,PEOPLE,Tile,shade,block,tree,arena,court,direction,actor,actorMarkup,actorSVG,interior,scenicBackdrop,encounterBackdrop,arenaMarkup,courtMarkup};
 });

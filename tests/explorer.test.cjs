@@ -13,7 +13,7 @@ test("8 districts partition 30 NBA arenas, 15 unchanged court/game IDs and 3 enc
 test("island -> west district -> Warriors venue -> original district -> island retains selection",()=>{
   const camera=E.createCamera();assert.equal(camera.level,"island");assert.deepEqual(camera.view,E.OVERVIEW_VIEW);
   E.focusDistrict(camera,"west");assert.equal(camera.level,"district");assert.ok(camera.view.width<C.MAP.width);
-  E.focusVenue(camera,"warriors");assert.equal(camera.level,"venue");assert.equal(camera.districtId,"west");assert.equal(camera.view.width,560);
+  E.focusVenue(camera,"warriors");assert.equal(camera.level,"venue");assert.equal(camera.districtId,"west");assert.equal(camera.view.width,520);
   E.back(camera);assert.equal(camera.level,"district");assert.equal(camera.districtId,"west");assert.equal(camera.selectedId,"warriors");
   E.back(camera);assert.equal(camera.level,"island");assert.equal(camera.selectedId,"warriors");
   assert.throws(()=>E.focusDistrict(camera,"missing"));assert.throws(()=>E.focusVenue(camera,"missing"));
@@ -29,8 +29,8 @@ test("all district/venue camera frames are bounded, preserve aspect and round-tr
 test("overview labels are sparse; district names open up, selected label always has priority",()=>{
   const camera=E.createCamera();const glowing=C.TEAMS.filter(t=>C.gameForTeam(t.id,"live").glowing).map(t=>t.id);
   assert.deepEqual(E.visibleLabels(camera,glowing),[]);assert.equal(E.ISLANDS.length,30);assert.equal(E.labelVisible(camera,"harbor-01"),false);
-  E.focusIsland(camera,"warriors");assert.equal(E.labelVisible(camera,"harbor-01"),true);assert.equal(E.labelVisible(camera,"knicks"),false);
-  for(const item of all){E.focusVenue(camera,item.id);assert.deepEqual(E.visibleLabels(camera,glowing),[item.id]);}
+  E.focusIsland(camera,"warriors");assert.equal(E.labelVisible(camera,"harbor-01"),false);assert.equal(E.labelVisible(camera,"knicks"),false);
+  for(const item of all){E.focusVenue(camera,item.id);assert.deepEqual(E.visibleLabels(camera,glowing),E.islandFor(item.id).teamId==="warriors"?[]:[item.id]);}
 });
 test("district framing contains every assigned landmark including its full building/button bounds",()=>{
   const camera=E.createCamera();

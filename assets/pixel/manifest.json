@@ -582,6 +582,16 @@
       "height": 64
     },
     {
+      "name": "courts/harbor-01",
+      "width": 55,
+      "height": 64
+    },
+    {
+      "name": "courts/harbor-01-night",
+      "width": 55,
+      "height": 64
+    },
+    {
       "name": "player/body-sheet",
       "width": 80,
       "height": 192
