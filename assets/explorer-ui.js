@@ -59,6 +59,11 @@
       for(const [kind,items] of [["nba",C.TEAMS],["court",C.COURTS],["encounter",C.ENCOUNTERS],["sight",S.SIGHTS]])for(const item of items){
         const node=$(`landmark-${item.id}`);if(!node)continue;
         node.dataset.label=String(visible.has(item.id));node.dataset.interactive=String(E.interactiveVisible(camera,item.id,walker.position));
+        if(kind==="nba"){
+          const sign=$("arena-logo-"+item.id),show=camera.level!=="island"&&camera.islandId===item.islandId;
+          sign.hidden=!show;node.dataset.showLogo=String(show);
+          if(show&&!sign.children.length)sign.append(root.NBATeamLogo.create(item,{variant:"sign",eager:true}));
+        }
         // 全部場地仍可用清單與鍵盤進入；Tab 聚焦時把該地標帶進鏡頭。
       }
     }

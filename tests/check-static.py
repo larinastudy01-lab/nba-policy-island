@@ -61,7 +61,7 @@ for node in svg.iter():
     for attr in ("href", "{http://www.w3.org/1999/xlink}href"):
         if attr in node.attrib:
             assert node.attrib[attr].startswith("#") and node.attrib[attr][1:] in svg_ids
-for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css", ROOT / "assets/bay.css", ROOT / "assets/scenery.css", ROOT / "assets/pixel.css", ROOT / "assets/archipelago.css", ROOT / "assets/memory.css", ROOT / "assets/shop.css"):
+for file in (ROOT / "style.css", ROOT / "assets/policy.css", ROOT / "assets/fan.css", ROOT / "assets/games.css", ROOT / "assets/explorer.css", ROOT / "assets/bay.css", ROOT / "assets/scenery.css", ROOT / "assets/pixel.css", ROOT / "assets/archipelago.css", ROOT / "assets/memory.css", ROOT / "assets/shop.css", ROOT / "assets/team-logo.css"):
     css = file.read_text(encoding="utf-8-sig")
     css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
     css = re.sub(r'''"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*' ''', "", css, flags=re.X)
@@ -247,3 +247,23 @@ for file in shop_files:
             if key in node.attrib:
                 assert float(node.attrib[key]).is_integer()
 print("Shops: 2 day/night storefronts + 8 original pixel products, XML and integer grid valid")
+
+# Supplied files are RGBA PNGs despite their .webp suffix; runtime uses exact PNG copies.
+import hashlib
+from importlib.util import spec_from_file_location, module_from_spec
+logo_spec = spec_from_file_location("prepare_team_logos", ROOT / "assets/prepare_team_logos.py")
+logo_tool = module_from_spec(logo_spec)
+logo_spec.loader.exec_module(logo_tool)
+logos = json.loads((ROOT / "assets/team/logo-manifest.json").read_text(encoding="utf-8"))["logos"]
+assert len(logos) == 30 and len({row["teamId"] for row in logos}) == 30
+assert len({row["source"] for row in logos}) == len({row["path"] for row in logos}) == 30
+for row in logos:
+    original = (ROOT / row["source"]).read_bytes()
+    supplied_copy = (ROOT / row["path"]).read_bytes()
+    assert original == supplied_copy
+    info = logo_tool.png_info(supplied_copy)
+    assert all(row[key] == value for key, value in info.items())
+    assert hashlib.sha256(supplied_copy).hexdigest() == row["sha256"]
+    assert (ROOT / row["path"]).name in {p.name for p in (ROOT / "assets/team/logos").iterdir()}
+    assert urlparse(urljoin("https://example.github.io/nba-policy-island/", row["path"])).path.startswith("/nba-policy-island/assets/team/logos/")
+print("Team logos: 30 unique mappings; original bytes/alpha/CRC/dimensions and Pages subpaths valid")

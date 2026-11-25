@@ -5,6 +5,7 @@ function initializeIsland() {
   const F = globalThis.NBAFan;
   const S = globalThis.NBASights;
   const G = globalThis.NBAGames;
+  const L = globalThis.NBATeamLogo;
   const { POLICY_CHALLENGE, calculatePolicy, createPolicySession } = globalThis.NBAPolicy;
   const $ = (id) => document.getElementById(id);
   const escapeHTML = (value) => String(value).replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
@@ -91,6 +92,10 @@ function initializeIsland() {
         photoBadge.innerHTML='<rect class="photo-badge-bg" x="-11" y="-10" width="22" height="20" rx="5"/><path class="photo-badge-icon" d="M-7-4h4l2-3h4l2 3h3v10H-7Z"/><circle class="photo-badge-icon" r="3" cy="1"/>';
         photoBadge.setAttribute("visibility","hidden");
         graphic.append(photoBadge);graphic.append(badge);node.append(graphic);
+        if(kind==="nba"){
+          const sign=element("span","arena-logo-sign");sign.id="arena-logo-"+item.id;sign.hidden=true;
+          sign.setAttribute("aria-hidden","true");node.append(sign);
+        }
         node.addEventListener("click",()=>openLandmark(kind,item.id));
         node.addEventListener("focus",()=>explorer?.focusOnly(item.id));
         node.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();if(!event.repeat)openLandmark(kind,item.id);}});
@@ -103,7 +108,11 @@ function initializeIsland() {
         button.setAttribute("aria-controls","station-panel");
         button.addEventListener("click",()=>openLandmark(kind,item.id));
         $("station-list").append(button);
-        listNodes.set(item.id,{button,kind,item});
+        const symbol=kind==="nba"?L.create(item,{variant:"list"}):element("span","list-symbol",kind==="encounter"?"偶遇":item.type==="harbor"?"港邊":item.type==="park"?"公園":"屋頂");
+        symbol.setAttribute("aria-hidden","true");
+        const copy=element("span","list-copy"),title=element("strong",""),details=element("small","");
+        copy.append(title,details);button.append(symbol,copy);
+        listNodes.set(item.id,{button,kind,item,title,details});
         if(kind==="court"){
           const option=document.createElement("option");option.value=item.id;option.textContent=item.name+" · "+C.TEAMS.find(t=>t.id===item.teamIslandId).shortName+"島";
           $(`court-group-${item.type}`).append(option);
@@ -167,7 +176,8 @@ function initializeIsland() {
       entry.button.hidden=kind!==state.filter||(kind==="nba"&&!matching.has(id));
       entry.button.setAttribute("aria-pressed",String(selected));
       entry.button.setAttribute("aria-label",`${item.name}${kind==="court"?"，"+item.gameName:""}，${status}`);
-      entry.button.innerHTML=`<span class="list-symbol" aria-hidden="true">${kind==="nba"?item.abbr:kind==="encounter"?"偶遇":item.type==="harbor"?"港邊":item.type==="park"?"公園":"屋頂"}</span><span class="list-copy"><strong>${escapeHTML(item.name)}${done?" ✓":""}</strong><small>${escapeHTML(kind==="nba"?item.region:kind==="court"?item.gameName+"・"+status:status)}${photographed?"・合影已收藏":""}</small></span>`;
+      entry.title.textContent=item.name+(done?" ✓":"");
+      entry.details.textContent=(kind==="nba"?item.region:kind==="court"?item.gameName+"・"+status:status)+(photographed?"・合影已收藏":"");
     }
     fanUI?.updateLocation(state);fanUI?.refreshGame();explorer?.refreshScene();explorer?.refreshEncounter();
   }
@@ -187,8 +197,9 @@ function initializeIsland() {
     if(match.state==="idle"){container.append(element("div","scoreboard-idle","今日無賽事，先逛逛這座島。"));return;}
     const rows=element("div","scoreboard-rows");
     for(const [side,team,score] of [["主隊",match.home,match.homeScore],["客隊",match.away,match.awayScore]]){
-      const row=element("div","scoreboard-row");const name=element("strong","",team.shortName+" ");
-      name.append(element("small","",team.abbr));row.append(element("span","side-label",side));row.append(name);row.append(element("b","",score===null?"—":score));rows.append(row);
+      const row=element("div","scoreboard-row"),name=element("strong","scoreboard-team"),copy=element("span","scoreboard-team-name",team.shortName+" ");
+      copy.append(element("small","",team.abbr));name.append(L.create(team,{variant:"score",eager:true}),copy);
+      row.append(element("span","side-label",side));row.append(name);row.append(element("b","",score===null?"—":score));rows.append(row);
     }
     container.append(rows);
     const footer=element("div","scoreboard-footer");
@@ -213,7 +224,7 @@ function initializeIsland() {
     if(state.kind==="shop"){$("panel-category").textContent="球隊周邊 / TEAM SHOP";$("map-scoreboard").hidden=true;shopUI?.refreshEntrance();renderPolicyProgress();return;}
     if(state.kind==="nba"){
       const match=matchForTeam(item.id);
-      $("team-badge").textContent=item.abbr;
+      L.mount($("team-badge"),item,{variant:"panel",eager:true});
       $("team-badge").style.setProperty("--team-color",item.color);
       $("team-badge").style.setProperty("--team-accent",item.accent);
       $("team-english").textContent=item.englishName;

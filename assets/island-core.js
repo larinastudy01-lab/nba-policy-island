@@ -36,6 +36,24 @@
     {id:"hornets",name:"夏洛特黃蜂",shortName:"黃蜂",abbr:"CHA",englishName:"Charlotte Hornets",region:"東南海濱",city:"夏洛特",color:"#41838a",accent:"#ba9dd1",venue:"王冠黃蜂球館",expansion:true},
     {id:"magic",name:"奧蘭多魔術",shortName:"魔術",abbr:"ORL",englishName:"Orlando Magic",region:"東南海濱",city:"奧蘭多",color:"#3e75a8",accent:"#d2dfec",venue:"湖濱魔術球館",expansion:true}
   ];
+  // 以圖案核對，不能依相近檔名推斷：牛頭是 CHI，金邊 C 是 CLE。
+  // 使用者原檔副檔名為 WebP，實際內容是 PNG；執行 prepare_team_logos.py 只複製位元組，不改圖。
+  const TEAM_LOGO_FILES = {
+    warriors:"金州勇士隊.webp",lakers:"洛杉磯湖人隊.webp",clippers:"洛杉磯快艇隊.webp",
+    nuggets:"丹佛金塊隊.webp",mavericks:"達拉斯獨行俠隊.webp",bulls:"芝加哥公牛.webp",
+    celtics:"波士頓塞爾提克隊.webp",knicks:"紐約尼克隊.webp",spurs:"聖安東尼奧馬刺隊.webp",
+    thunder:"奧克拉荷馬城雷霆隊.webp",suns:"鳳凰城太陽隊.webp",timberwolves:"明尼蘇達灰狼隊.webp",
+    bucks:"密爾瓦基公鹿隊.webp",sixers:"費城 76 人隊.webp",heat:"邁阿密熱火隊.webp",
+    raptors:"多倫多暴龍隊.webp",nets:"籃網.webp",cavaliers:"芝加哥公牛隊.webp",
+    jazz:"猶他爵士隊.webp",rockets:"休士頓火箭隊.webp",blazers:"波特蘭拓荒者隊.webp",
+    kings:"沙加緬度國王隊.webp",grizzlies:"曼菲斯灰熊隊.webp",pelicans:"紐奧良鵜鶘隊.webp",
+    pistons:"底特律活塞隊.webp",pacers:"印第安納溜馬隊.webp",wizards:"華盛頓巫師隊.webp",
+    hawks:"亞特蘭大老鷹隊.webp",hornets:"夏洛特黃蜂隊.webp",magic:"奧蘭多魔術.webp"
+  };
+  TEAMS.forEach(team=>{
+    team.logoSource=TEAM_LOGO_FILES[team.id]?`./assets/team/${TEAM_LOGO_FILES[team.id]}`:null;
+    team.logo=team.logoSource?`./assets/team/logos/${team.abbr}.png`:null;
+  });
   const courtGroups = [
     {prefix:"harbor",region:"港邊",color:"#367d94",names:["潮汐一號","燈塔半場","海風球場","貨櫃碼頭","日落棧橋"]},
     {prefix:"park",region:"公園",color:"#478668",names:["榕樹球場","綠丘半場","溪畔球場","中央草地","環島花園"]},

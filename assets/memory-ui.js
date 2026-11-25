@@ -2,7 +2,7 @@
 (function(root){
   'use strict';
   function initialize({storage,onNavigate,onFocus,onAnnounce}){
-    const M=root.NBAMemory,A=root.NBAArchipelago,C=root.NBAIsland,$=id=>document.getElementById(id),book=M.createBook(storage),dialog=$('memory-dialog');
+    const M=root.NBAMemory,A=root.NBAArchipelago,C=root.NBAIsland,L=root.NBATeamLogo,$=id=>document.getElementById(id),book=M.createBook(storage),dialog=$('memory-dialog');
     const motion=window.matchMedia?.('(prefers-reduced-motion: reduce)');
     let camera=null,position=null,walker=null,pending=null,current=null,timer=null,shot=null,opener=null;
     const nodes=new Map(),entries=new Map();
@@ -20,7 +20,8 @@
     }
     for(const event of M.EVENTS){
       const row=el('li',undefined,'memory-book-entry'),team=C.TEAMS.find(t=>t.id===event.teamId);
-      row.append(el('small',team.shortName+'島 · '+event.season),el('h3',event.title),el('p',event.form));
+      const teamLine=el('div',undefined,'team-logo-line');teamLine.append(L.create(team),el('small',team.shortName+'島 · '+event.season));
+      row.append(teamLine,el('h3',event.title),el('p',event.form));
       const status=el('span',undefined,'memory-read-label'),review=el('button','回看','button secondary');review.type='button';review.id='memory-review-'+event.id;row.append(status);
       M.forEvent(event.id).forEach((point,i)=>{const go=el('button',M.forEvent(event.id).length>1?'前往'+C.TEAMS.find(t=>t.id===point.teamId).shortName+'島':'前往島上','button secondary');go.type='button';go.id='memory-go-'+(i===0?event.id:point.id);go.addEventListener('click',()=>{dialog.close();navigate(point.id,false);});row.append(go);});
       review.addEventListener('click',()=>{if(book.has(event.id))showEvent(event.id);});row.append(review);$('memory-book-list').append(row);entries.set(event.id,{status,review});
@@ -35,7 +36,7 @@
     function resetShot(){stopShot();shot=null;$('memory-manual-aim').value='0';$('memory-aim-cursor').style.left='0%';$('memory-shot-start').disabled=false;$('memory-shoot').disabled=true;$('memory-shot-feedback').textContent='可跳過，不影響閱讀紀錄。每次一球，最長 8 秒；游標在金色區間時出手。';$('memory-shot-clock').textContent='8.0';$('memory-shot-stage').dataset.result='idle';$('memory-shot-stage').dataset.bounces='0';}
     function showBook(){current=null;resetShot();$('memory-reader').hidden=true;$('memory-book').hidden=false;refreshBook();$('memory-heading').textContent='球迷記憶簿';if(!dialog.open)dialog.showModal();$('memory-heading').focus();}
     function showEvent(id){const event=M.get(id),point=M.getEntrance(id)||M.forEvent(event?.id)[0];if(!event||!point)return;current=event;resetShot();$('memory-read-notice').textContent='';$('memory-book').hidden=true;$('memory-reader').hidden=false;$('memory-heading').textContent=event.title;
-      const team=C.TEAMS.find(t=>t.id===point.teamId);$('memory-meta').textContent=`${team.name}島 · ${event.season} 賽季 · ${event.form}`;
+      const team=C.TEAMS.find(t=>t.id===point.teamId);L.mount($('memory-team-logo'),team,{variant:'heading',eager:true});$('memory-meta').textContent=`${team.name}島 · ${event.season} 賽季 · ${event.form}`;
       $('memory-date').textContent=event.date+'（事件當地日期）';$('memory-date').setAttribute('datetime',event.date);$('memory-place').textContent=point.point;
       $('memory-scene').src=point.asset;$('memory-scene').alt=point.point+'的原創等距像素場景，非歷史影像';
       $('memory-scene-caption').textContent=event.presentation==='memorial'?'原創靜態紀念場景・九束花悼念九位罹難者。沒有動畫、音效或過關要求。':event.presentation==='newspaper'?'原創像素場景與重新編排的展板，非歷史報紙原件或歷史影像。':'原創像素重現畫面，非歷史影像；島上位置不是實際比賽場地。';
