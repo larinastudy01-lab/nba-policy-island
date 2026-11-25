@@ -1,6 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const C=require('../assets/island-core.js'),root=path.resolve(__dirname,'..');
+const A=require('../assets/archipelago-core.js'),E=require('../assets/explorer-core.js'),P=require('../assets/pixel-core.js');
 const manifest=JSON.parse(fs.readFileSync(path.join(root,'assets/team/logo-manifest.json'),'utf8'));
 test('thirty unique teams use thirty exact transparent PNG copies while all provided originals remain intact',()=>{
   assert.equal(C.TEAMS.length,30);assert.equal(manifest.logos.length,30);
@@ -28,6 +29,34 @@ test('every logo resolves within both a local file folder and the GitHub Pages s
     for(const base of ['file:///project/nba-policy-island/index.html','https://larinastudy01-lab.github.io/nba-policy-island/']){
       const url=new URL(team.logo,base);assert(url.pathname.endsWith('/nba-policy-island/assets/team/logos/'+team.abbr+'.png'));
       assert.equal(url.search,'');assert.equal(url.hash,'');
+    }
+  }
+});
+const overlaps=(a,b)=>a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&&a.y+a.height>b.y;
+test('roof anchors belong to arena pixel frames and near signs stay clear of each front door',()=>{
+  for(const team of C.TEAMS){const branding=P.arenaBranding(team),[x,y,w,h]=branding.sign,door={x:57,y:39,width:5,height:7};
+    assert(branding.roof.every(Number.isInteger));assert(branding.roof[0]>=0&&branding.roof[0]<=80);assert(branding.roof[1]>0&&branding.roof[1]<50);
+    assert.deepEqual(E.arenaLogoAnchor(team),{x:team.x+branding.roof[0]*2-80,y:team.y+branding.roof[1]*2-68});
+    assert.notDeepEqual(E.arenaLogoAnchor(team),{x:A.owner(team.id).x,y:A.owner(team.id).y});assert.equal(overlaps({x:x-w/2,y:y-h/2,width:w,height:h},door),false,team.id);
+  }
+  assert.deepEqual(P.arenaBranding(C.getLandmark('nba','clippers')).sign,[46,25,16,12]);assert.deepEqual(P.arenaBranding(C.getLandmark('nba','celtics')).sign,[45,28,15,12]);assert.deepEqual(P.arenaBranding(C.getLandmark('nba','warriors')).sign,[56,33,12,9]);
+});
+test('20/22px overview emblems fit nine map widths without overlapping one another, entrances or bridgeheads',()=>{
+  const points=[...C.TEAMS.map(t=>t.entrance),...Object.entries(A.ROAD_NODES).filter(([id])=>id.startsWith('gate-')).map(([,p])=>p)];
+  for(const width of [294,320,360,390,640,700,701,900,1400]){const size=width<=700?20:22,scale=width/E.OVERVIEW_VIEW.width,rects=C.TEAMS.map(t=>({id:t.id,...E.overviewLogoRect(t,width,size)}));
+    for(const [i,rect]of rects.entries()){assert(rect.x>=0&&rect.y>=0&&rect.x+size<=width&&rect.y+size<=width/1.6,rect.id);
+      for(const other of rects.slice(i+1))assert.equal(overlaps(rect,other),false,`${width}: ${rect.id}/${other.id}`);
+      for(const p of points){const x=(p.x-E.OVERVIEW_VIEW.x)*scale,y=(p.y-E.OVERVIEW_VIEW.y)*scale;assert.equal(x>rect.x&&x<rect.x+size&&y>rect.y&&y<rect.y+size,false,`${width}: ${rect.id} blocks an entrance/bridgehead`);}
+    }
+  }
+});
+function segmentCrosses(a,b,r){let low=0,high=1;for(const [p,q]of [[a.x-b.x,a.x-r.x],[b.x-a.x,r.x+r.width-a.x],[a.y-b.y,a.y-r.y],[b.y-a.y,r.y+r.height-a.y]]){if(p===0){if(q<0)return false;}else{const t=q/p;if(p<0)low=Math.max(low,t);else high=Math.min(high,t);if(low>high)return false;}}return true;}
+test('eight small region tags sit on open water, outside roof emblems and road segments at mobile and desktop sizes',()=>{
+  for(const width of [294,320,390,700,900,1400]){const scale=width/E.OVERVIEW_VIEW.width,size=width<=700?20:22,icons=C.TEAMS.map(t=>E.overviewLogoRect(t,width,size)),tags=[];
+    for(const d of E.DISTRICTS){const p=d.label,r={x:(p.x-E.OVERVIEW_VIEW.x)*scale-14,y:(p.y-E.OVERVIEW_VIEW.y)*scale-7,width:28,height:14},world={x:p.x-14/scale,y:p.y-7/scale,width:28/scale,height:14/scale};
+      assert.equal(A.ISLANDS.some(i=>A.contains(i,p)),false,d.id);assert(r.x>=0&&r.y>=0&&r.x+28<=width&&r.y+14<=width/1.6,d.id);
+      assert.equal(icons.some(icon=>overlaps(icon,r)),false,`${width}: ${d.id}`);assert.equal(tags.some(tag=>overlaps(tag,r)),false,d.id);tags.push(r);
+      assert.equal(A.ROAD_EDGES.some(edge=>segmentCrosses(A.ROAD_NODES[edge.from],A.ROAD_NODES[edge.to],world)),false,`${width}: ${d.id} blocks road`);
     }
   }
 });

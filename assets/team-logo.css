@@ -17,11 +17,27 @@
 .scoreboard-team-name{min-width:0;overflow-wrap:anywhere;}
 .scoreboard-team-name small{white-space:nowrap;}
 .team-identity #team-badge{width:auto;height:auto;background:none;border:0;box-shadow:none;padding:0;border-radius:0;flex-shrink:0;}
-.arena-logo-sign{position:absolute;left:50%;top:33%;width:22%;height:24%;transform:translate(-50%,-50%);box-sizing:border-box;pointer-events:none;border:1px solid #89a2a6;border-bottom:2px solid #263e50;background:#e8eff0;box-shadow:2px 2px #1c34484d;}
-.arena-logo-sign>.team-logo{width:100%;height:100%;padding:1px;border-radius:0;}
-.arena-logo-sign .team-logo-fallback{font-size:9px;}
-.arena-logo-sign[hidden],#island-map[data-view="island"] .arena-logo-sign{display:none;}
+.arena-logo-sign{position:absolute;box-sizing:border-box;border:1px solid transparent;pointer-events:none;}
+.arena-logo-sign[data-mode="overview"]{left:var(--roof-x);top:var(--roof-y);width:var(--overview-logo-size,22px);height:var(--overview-logo-size,22px);transform:scale(calc(1 / var(--camera-scale,1))) translate(calc(-50% + var(--overview-shift-x,0px)),-100%);transform-origin:0 0;pointer-events:auto;cursor:pointer;}
+.arena-logo-sign[data-mode="overview"]::after{content:"";position:absolute;left:calc(50% - var(--overview-shift-x,0px));top:100%;width:var(--overview-shift-x,0px);height:1px;background:#c7ddd6;pointer-events:none;}
+.arena-logo-sign[data-mode="sign"]{left:var(--sign-x);top:var(--sign-y);width:var(--sign-width);height:var(--sign-height);transform:translate(-50%,-50%);background:#e8eff0;border-color:#89a2a6;border-bottom:2px solid #263e50;box-shadow:1px 1px #1c34484d;}
+.arena-logo-sign>.team-logo{width:100%;height:100%;padding:1px;border-radius:0;background:transparent;overflow:visible;}
+.arena-logo-sign img{image-rendering:pixelated;}
+.arena-logo-sign[data-mode="overview"] img{filter:drop-shadow(1px 0 0 #e8efdf) drop-shadow(-1px 0 0 #e8efdf) drop-shadow(0 1px 0 #e8efdf);}
+.arena-logo-sign[data-mode="overview"] .team-logo-fallback{background:#e8eff0;font-size:8px;}
+.arena-logo-sign[data-mode="sign"] .team-logo-fallback{font-size:7px;}
+.arena-logo-sign[hidden]{display:none;}
+.landmark[data-kind="nba"][data-selected="true"] .arena-logo-sign{border:1px solid #f3c45b;}
+.landmark[data-kind="nba"]:focus-visible .arena-logo-sign{outline:1px solid #fff1b5;outline-offset:1px;}
+.arena-logo-live{position:absolute;right:0;top:-1px;padding:0 1px;color:#142c42;background:#f4cf70;font:700 5px/1.2 ui-monospace,monospace;letter-spacing:0;pointer-events:none;}
+.arena-logo-live[hidden],.arena-logo-sign[data-mode="sign"] .arena-logo-live{display:none;}
+#island-map[data-view="island"] .landmark[data-kind="nba"]:focus-visible{outline:none;}
+#island-map[data-view="island"] .landmark[data-kind="nba"] .landmark-label{visibility:hidden;}
+.map-breadcrumb{flex-wrap:wrap;}
+.map-breadcrumb .map-team-name{color:#f1dfaa;font-size:12px;min-width:0;overflow-wrap:anywhere;}
+#island-map[data-theme="night"]{background:#244b59;}
 .landmark[data-show-logo="true"] .roof-text{visibility:hidden;}
 .shop-cart-row>.team-logo-line{margin:4px 0 10px;}
 .memory-book-entry>.team-logo-line{margin-bottom:8px;}
 @media(max-width:700px){.team-logo--list{--logo-size:30px;}.team-logo--panel{--logo-size:48px;}.team-logo--heading{--logo-size:34px;}.team-logo--score{--logo-size:21px;}.scoreboard-team{gap:5px;}.team-logo-heading{gap:8px;}}
+@media(max-width:700px){.map-breadcrumb .map-team-name{font-size:11px;}}

@@ -45,7 +45,8 @@
   const Memory=typeof module==='object'&&module.exports?require('./memory-core.js'):globalThis.NBAMemory;
   const Shop=typeof module==='object'&&module.exports?require('./shop-core.js'):globalThis.NBAShop;
   const landmarks=[...TEAMS,...COURTS,...ENCOUNTERS,...Sights.SIGHTS,...Memory.ENTRANCES,...Shop.SHOPS];
-  const regionLabels={west:[380,760,'西岸'],desert:[640,1350,'西南'],highland:[720,400,'山區'],south:[1300,1400,'中南'],north:[1320,80,'北境'],lakes:[1800,600,'湖區'],east:[2920,750,'東岸'],coast:[3100,1940,'東南']};
+  // 空水面標籤，避開屋頂徽章與跨海路網；不是球隊島中心或移動目的地。
+  const regionLabels={west:[100,1325,'西岸'],desert:[700,1400,'西南'],highland:[1450,-50,'山區'],south:[1300,1950,'中南'],north:[2275,75,'北境'],lakes:[2050,1075,'湖區'],east:[3075,300,'東岸'],coast:[3275,1950,'東南']};
   for(const district of DISTRICTS){
     const [x,y,short]=regionLabels[district.id];district.label={x,y,short};
     district.ids=[...TEAMS,...COURTS,...ENCOUNTERS].filter(p=>A.owner(p.id).district===district.id).map(p=>p.id);
@@ -95,11 +96,16 @@
     const left=Math.min(...xs),right=Math.max(...xs),top=Math.min(...ys),bottom=Math.max(...ys);
     return frame({x:(left+right)/2,y:(top+bottom)/2},Math.min(MAP.width,Math.max(720,right-left+220,(bottom-top+150)*MAP.width/MAP.height)));
   }
-  function createCamera(){return {level:"island",districtId:null,islandId:null,selectedId:"warriors",view:frame({x:MAP.width/2,y:MAP.height/2},MAP.width)};}
+  // 總覽保留額外海面，讓北側屋頂上方的 20–22px 隊徽在手機也不會被裁掉。
+  const OVERVIEW_VIEW=Object.freeze({x:-150,y:-187.5,width:3900,height:2437.5});
+  function arenaLogoAnchor(team){const [x,y]=Pixel.arenaBranding(team).roof;return {x:team.x+x*2-80,y:team.y+y*2-68};}
+  function overviewLogoOffset(team,viewportWidth,size=22){return team.id==='pistons'?Math.max(0,(A.ROAD_NODES['bridge-raptors'].x-arenaLogoAnchor(team).x)*viewportWidth/OVERVIEW_VIEW.width+size/2+2):0;}
+  function overviewLogoRect(team,viewportWidth,size=22){const anchor=worldToViewport(arenaLogoAnchor(team),OVERVIEW_VIEW),scale=viewportWidth/OVERVIEW_VIEW.width;return {x:anchor.x*viewportWidth-size/2+overviewLogoOffset(team,viewportWidth,size),y:(arenaLogoAnchor(team).y-OVERVIEW_VIEW.y)*scale-size,width:size,height:size};}
+  function createCamera(){return {level:"island",districtId:null,islandId:null,selectedId:"warriors",view:{...OVERVIEW_VIEW}};}
   function focusIsland(camera,id){const island=A.getIsland(id);if(!island)throw new Error('Unknown island');camera.level='district';camera.islandId=island.id;camera.districtId=island.district;camera.view=frame({x:island.x+10,y:island.y+5},660);return camera;}
   function focusDistrict(camera,id){if(A.getIsland(id))return focusIsland(camera,id);const district=DISTRICTS.find(d=>d.id===id);if(!district)throw new Error('Unknown district');camera.level='district';camera.islandId=null;camera.districtId=id;camera.view=frame(district.center,district.width);return camera;}
   function focusVenue(camera,id){const district=districtFor(id);if(!district)throw new Error('Unknown venue');camera.level='venue';camera.districtId=district.id;camera.islandId=A.owner(id).id;camera.selectedId=id;camera.view=frame({x:A.owner(id).x+10,y:A.owner(id).y+12},560);return camera;}
-  function fullIsland(camera){camera.level='island';camera.view=frame({x:MAP.width/2,y:MAP.height/2},MAP.width);return camera;}
+  function fullIsland(camera){camera.level='island';camera.view={...OVERVIEW_VIEW};return camera;}
   function back(camera){return camera.level==='venue'?focusIsland(camera,camera.islandId):fullIsland(camera);}
   function worldToViewport(point,view){return {x:(point.x-view.x)/view.width,y:(point.y-view.y)/view.height};}
   function viewportToWorld(point,view){return {x:view.x+point.x*view.width,y:view.y+point.y*view.height};}
@@ -155,5 +161,5 @@
     return false;
   }
   const hasArrived=(walker,id)=>!walker.moving&&walker.locationId===id&&distance(walker.position,entrance(id))<.01;
-  return {ISLANDS:A.ISLANDS,islandFor,focusIsland,interactiveVisible,DISTRICTS,ROAD_NODES,ROAD_EDGES,districtFor,entrance,roadPath,journeyFrame,createCamera,focusDistrict,focusVenue,fullIsland,back,worldToViewport,viewportToWorld,labelVisible,visibleLabels,createWalker,walk,tick,hasArrived};
+  return {OVERVIEW_VIEW,arenaLogoAnchor,overviewLogoOffset,overviewLogoRect,ISLANDS:A.ISLANDS,islandFor,focusIsland,interactiveVisible,DISTRICTS,ROAD_NODES,ROAD_EDGES,districtFor,entrance,roadPath,journeyFrame,createCamera,focusDistrict,focusVenue,fullIsland,back,worldToViewport,viewportToWorld,labelVisible,visibleLabels,createWalker,walk,tick,hasArrived};
 });

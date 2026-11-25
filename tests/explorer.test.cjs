@@ -11,7 +11,7 @@ test("8 districts partition 30 NBA arenas, 15 unchanged court/game IDs and 3 enc
   for(const item of all){assert.equal(E.districtFor(item.id).ids.includes(item.id),true);assert.deepEqual(E.entrance(item.id),item.entrance);}
 });
 test("island -> west district -> Warriors venue -> original district -> island retains selection",()=>{
-  const camera=E.createCamera();assert.equal(camera.level,"island");assert.deepEqual(camera.view,{x:0,y:0,width:C.MAP.width,height:C.MAP.height});
+  const camera=E.createCamera();assert.equal(camera.level,"island");assert.deepEqual(camera.view,E.OVERVIEW_VIEW);
   E.focusDistrict(camera,"west");assert.equal(camera.level,"district");assert.ok(camera.view.width<C.MAP.width);
   E.focusVenue(camera,"warriors");assert.equal(camera.level,"venue");assert.equal(camera.districtId,"west");assert.equal(camera.view.width,560);
   E.back(camera);assert.equal(camera.level,"district");assert.equal(camera.districtId,"west");assert.equal(camera.selectedId,"warriors");
@@ -22,7 +22,7 @@ test("all district/venue camera frames are bounded, preserve aspect and round-tr
   const camera=E.createCamera();const frames=[camera.view];
   for(const district of E.DISTRICTS){E.focusDistrict(camera,district.id);frames.push(camera.view);}
   for(const item of all){E.focusVenue(camera,item.id);frames.push(camera.view);const p=E.worldToViewport(E.entrance(item.id),camera.view);assert.ok(p.x>0&&p.x<1&&p.y>0&&p.y<1);}
-  for(const view of frames){assert.ok(view.x>=0&&view.y>=0&&view.x+view.width<=C.MAP.width&&view.y+view.height<=C.MAP.height);near(view.width/view.height,1.6);
+  for(const view of frames){if(view.width>C.MAP.width)assert.ok(view.x<=0&&view.y<=0&&view.x+view.width>=C.MAP.width&&view.y+view.height>=C.MAP.height);else assert.ok(view.x>=0&&view.y>=0&&view.x+view.width<=C.MAP.width&&view.y+view.height<=C.MAP.height);near(view.width/view.height,1.6);
     for(const item of all){const point=E.viewportToWorld(E.worldToViewport(item,view),view);near(point.x,item.x);near(point.y,item.y);}
   }
 });

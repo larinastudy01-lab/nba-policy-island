@@ -10,7 +10,7 @@
     const places=[...C.TEAMS,...C.COURTS,...C.ENCOUNTERS,...S.SIGHTS,...root.NBAMemory.ENTRANCES,...root.NBAShop.SHOPS];
     for(const car of T.CARS){const node=document.createElement("span");node.id=car.id;node.className="island-car";node.dataset.model=car.id;node.dataset.parked=String(car.parked);node.setAttribute("title",`${car.name}｜${car.feature}`);
       const beam=document.createElement("span");beam.className="car-headlight";const image=document.createElement("img");image.alt="";image.width=130;image.height=100;node.append(beam,image);$("traffic-layer").append(node);carNodes.set(car.id,{node,image,beam});}
-    let timer=null,theme="day",actorKey=null,arrivalFocus=null,pageHidden=false,mapVisible=true,visibilityObserver=null,lastFrame=Date.now();
+    let timer=null,theme="day",actorKey=null,arrivalFocus=null,pageHidden=false,mapVisible=true,visibilityObserver=null,badgeResizeObserver=null,lastFrame=Date.now();
     for(const person of B.PEOPLE){const node=document.createElement("span");node.id=`npc-${person.id}`;node.className="sim-pedestrian";node.dataset.look=person.look;node.dataset.pixelModel=person.pixelModel;
       const body=document.createElement("span");body.className="npc-body";body.innerHTML=B.npcSVG(person,root.NBAFan);node.append(body);$("npc-layer").append(node);npcNodes.set(person.id,{node,body});}
     const actorFigure=document.createElement("span");actorFigure.className="actor-silhouette";actorFigure.setAttribute("aria-hidden","true");$("island-encounter-actor").append(actorFigure);
@@ -34,10 +34,15 @@
       const button=document.createElement("button");button.id=`region-${d.id}`;button.type="button";button.className="region-label";button.style.left=d.label.x/C.MAP.width*100+"%";button.style.top=d.label.y/C.MAP.height*100+"%";button.setAttribute("title",d.name);button.setAttribute("aria-controls","island-map");button.addEventListener("click",()=>districtView(d.id));$("region-layer").append(button);regionButtons.set(d.id,button);
     }
     function stop(){if(timer!==null){clearInterval(timer);timer=null;}}
+    function sizeRoofBadges(){const width=$("island-map").clientWidth||1000,size=width<=700?20:22;
+      $("island-world").style.setProperty("--overview-logo-size",size+"px");
+      const team=C.TEAMS.find(t=>t.id==="pistons");$("arena-logo-pistons").style.setProperty("--overview-shift-x",E.overviewLogoOffset(team,width,size)+"px");
+    }
     function renderCamera(){
       const {view,level}=camera,scale=C.MAP.width/view.width;
       $("island-world").style.transform=`translate(${-view.x/view.width*100}%, ${-view.y/view.height*100}%) scale(${scale})`;
       $("island-world").style.setProperty("--camera-scale",String(scale));
+      sizeRoofBadges();
       $("island-map").dataset.view=level;$("island-map").dataset.district=camera.districtId||"";
       $("island-map").dataset.selected=camera.selectedId;$("island-map").dataset.teamIsland=camera.islandId||"";
       $("district-select").value=level==="island"?"":camera.islandId||camera.districtId;
@@ -60,9 +65,10 @@
         const node=$(`landmark-${item.id}`);if(!node)continue;
         node.dataset.label=String(visible.has(item.id));node.dataset.interactive=String(E.interactiveVisible(camera,item.id,walker.position));
         if(kind==="nba"){
-          const sign=$("arena-logo-"+item.id),show=camera.level!=="island"&&camera.islandId===item.islandId;
-          sign.hidden=!show;node.dataset.showLogo=String(show);
-          if(show&&!sign.children.length)sign.append(root.NBATeamLogo.create(item,{variant:"sign",eager:true}));
+          const sign=$("arena-logo-"+item.id),overview=camera.level==="island"||!camera.islandId;
+          const show=camera.level==="island"||(camera.islandId?camera.islandId===item.islandId:E.districtFor(item.id)?.id===camera.districtId);
+          sign.hidden=!show;sign.dataset.mode=overview?"overview":"sign";node.dataset.showLogo=String(show);
+          $("arena-logo-live-"+item.id).hidden=!show||!glowingIds.includes(item.id);
         }
         // 全部場地仍可用清單與鍵盤進入；Tab 聚焦時把該地標帶進鏡頭。
       }
@@ -129,13 +135,15 @@
     $("island-encounter-actor").addEventListener("click",()=>{const daily=getEncounter();if(!E.hasArrived(walker,daily.locationId)||getSelection().id!==daily.locationId)return;
       $("encounter-character").click();refreshEncounter();$("encounter-star-name").focus();});
     motion?.addEventListener?.("change",()=>{if(motion.matches&&walker.moving){const focus=arrivalFocus===walker.token;stop();E.walk(walker,walker.targetId,Date.now(),true);renderWalker();if(focus){E.focusVenue(camera,walker.targetId);renderCamera();}}renderCrowd();renderTraffic();syncLoop();});
-    window.addEventListener("pagehide",()=>{pageHidden=true;stop();visibilityObserver?.disconnect();});
-    window.addEventListener("pageshow",event=>{if(event.persisted){pageHidden=false;lastFrame=Date.now();visibilityObserver?.observe($("island-map"));tick();}});
+    window.addEventListener("pagehide",()=>{pageHidden=true;stop();visibilityObserver?.disconnect();badgeResizeObserver?.disconnect();});
+    window.addEventListener("pageshow",event=>{if(event.persisted){pageHidden=false;lastFrame=Date.now();visibilityObserver?.observe($("island-map"));badgeResizeObserver?.observe($("island-map"));sizeRoofBadges();tick();}});
     document.addEventListener?.("visibilitychange",()=>{lastFrame=Date.now();if(document.hidden)stop();else tick();});
     if(typeof window.IntersectionObserver==="function"){visibilityObserver=new window.IntersectionObserver(entries=>{mapVisible=entries.some(entry=>entry.isIntersecting);lastFrame=Date.now();renderCrowd();renderTraffic();syncLoop();},{threshold:.05});visibilityObserver.observe($("island-map"));}
+    window.addEventListener("resize",sizeRoofBadges);
+    if(typeof window.ResizeObserver==="function"){badgeResizeObserver=new window.ResizeObserver(sizeRoofBadges);badgeResizeObserver.observe($("island-map"));}
     renderCamera();setTheme("day");renderWalker();
     $("encounter-star-name").setAttribute("tabindex","-1");
-    return {visit,districtView,inspect:id=>{arrivalFocus=null;E.focusVenue(camera,id);renderCamera();},refreshLabels,refreshEncounter,refreshScene:()=>{refreshLabels();renderCrowd();renderTraffic();syncLoop();},backToDistrict:()=>districtView(camera.islandId||A.owner(getSelection().id).id),focusOnly:id=>{arrivalFocus=null;E.focusVenue(camera,id);renderCamera();},
+    return {visit,districtView,inspect:id=>{arrivalFocus=null;E.focusVenue(camera,id);renderCamera();},refreshLabels,refreshEncounter,refreshScene:()=>{refreshLabels();renderCrowd();renderTraffic();syncLoop();},backToDistrict:()=>districtView(camera.islandId||A.owner(getSelection().id).id),focusOnly:id=>{if(camera.level==="island"&&C.TEAMS.some(t=>t.id===id))return;arrivalFocus=null;E.focusVenue(camera,id);renderCamera();},
       position:()=>({...walker.position,locationId:walker.locationId,targetId:walker.targetId,direction:walker.direction,frame:walker.frame,moving:walker.moving}),hasArrived:id=>E.hasArrived(walker,id)};
   }
   root.NBAExplorerUI={initialize};

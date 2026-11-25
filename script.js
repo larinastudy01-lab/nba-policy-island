@@ -19,6 +19,8 @@ function initializeIsland() {
   let memoryUI = null;
   let shopUI = null;
   let teamQuery = "";
+  let hoveredArena=null,focusedArena=null;
+  function renderMapTeamName(){const team=C.TEAMS.find(t=>t.id===(hoveredArena||focusedArena||(state.kind==="nba"?state.id:null)));$("map-team-name").textContent=team?team.name:"指向或聚焦隊徽，查看完整隊名";$("map-team-name").dataset.teamId=team?.id||"";}
   let bayFixture="away",panelRequested=false,pendingPanelFocus=false;
   const practicedGames=new Set();let tutorialContinuation=null;
   const matchForTeam=id=>C.gameForTeam(id,state.gameState,bayFixture);
@@ -93,8 +95,17 @@ function initializeIsland() {
         photoBadge.setAttribute("visibility","hidden");
         graphic.append(photoBadge);graphic.append(badge);node.append(graphic);
         if(kind==="nba"){
-          const sign=element("span","arena-logo-sign");sign.id="arena-logo-"+item.id;sign.hidden=true;
-          sign.setAttribute("aria-hidden","true");node.append(sign);
+          const sign=element("span","arena-logo-sign"),branding=globalThis.NBAPixel.arenaBranding(item);sign.id="arena-logo-"+item.id;
+          sign.setAttribute("aria-hidden","true");sign.dataset.mode="overview";
+          const [roofX,roofY]=branding.roof,[signX,signY,signWidth,signHeight]=branding.sign;
+          for(const [key,value]of [["roof-x",roofX/80*100],["roof-y",roofY/66*100],["sign-x",signX/80*100],["sign-y",signY/66*100],["sign-width",signWidth/80*100],["sign-height",signHeight/66*100]])sign.style.setProperty("--"+key,value+"%");
+          sign.append(L.create(item,{variant:"map",eager:true}));
+          const live=element("span","arena-logo-live","LIVE");live.id="arena-logo-live-"+item.id;live.hidden=true;sign.append(live);node.append(sign);
+          node.setAttribute("title",item.name);
+          node.addEventListener("mouseenter",()=>{hoveredArena=item.id;renderMapTeamName();});
+          node.addEventListener("mouseleave",()=>{hoveredArena=null;renderMapTeamName();});
+          node.addEventListener("focus",()=>{focusedArena=item.id;renderMapTeamName();});
+          node.addEventListener("blur",()=>{focusedArena=null;renderMapTeamName();});
         }
         node.addEventListener("click",()=>openLandmark(kind,item.id));
         node.addEventListener("focus",()=>explorer?.focusOnly(item.id));
@@ -179,7 +190,7 @@ function initializeIsland() {
       entry.title.textContent=item.name+(done?" ✓":"");
       entry.details.textContent=(kind==="nba"?item.region:kind==="court"?item.gameName+"・"+status:status)+(photographed?"・合影已收藏":"");
     }
-    fanUI?.updateLocation(state);fanUI?.refreshGame();explorer?.refreshScene();explorer?.refreshEncounter();
+    renderMapTeamName();fanUI?.updateLocation(state);fanUI?.refreshGame();explorer?.refreshScene();explorer?.refreshEncounter();
   }
   function element(tag,className,text) {
     const node=document.createElement(tag);node.className=className;
@@ -259,6 +270,7 @@ function initializeIsland() {
     renderPolicyProgress();
   }
   function openLandmark(kind,id,focus=true) {
+    hoveredArena=null;focusedArena=null;
     if(kind!=="memory")memoryUI?.cancelNavigation();
     if(["practice","tutorial"].includes(gameMode)&&(kind!=="court"||id!==gameCourtId))leavePractice(false);
     if(gameMode==="online"&&(kind!=="court"||id!==gameCourtId)){stopGameTimer();stopSounds();$("play-court").hidden=true;}

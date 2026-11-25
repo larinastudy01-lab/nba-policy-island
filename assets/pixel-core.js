@@ -5,6 +5,17 @@
   const ARENAS={warriors:"low-oval",lakers:"dome",clippers:"glass",nuggets:"sawtooth",mavericks:"steps",bulls:"brick",celtics:"dome",knicks:"glass",spurs:"low-oval",thunder:"sawtooth",suns:"steps",timberwolves:"sawtooth",bucks:"brick",sixers:"steps",heat:"glass",raptors:"brick"};
   Object.assign(ARENAS,{nets:'brick',cavaliers:'glass',jazz:'sawtooth',rockets:'low-oval',blazers:'steps',kings:'dome',grizzlies:'brick',pelicans:'steps',pistons:'sawtooth',pacers:'low-oval',wizards:'steps',hawks:'brick',hornets:'glass',magic:'dome'});
   const MODELS=["low-oval","dome","glass","sawtooth","steps","brick"];
+  // 本地 80×66 球館圖格座標；總覽錨定屋頂，近景落在屋頂前緣看板。
+  const ARENA_BRANDING={
+    "low-oval":{roof:[40,34],sign:[56,33,12,9]},
+    dome:{roof:[40,34],sign:[45,28,15,12]},
+    glass:{roof:[40,34],sign:[46,25,16,12]},
+    sawtooth:{roof:[40,34],sign:[42,29,14,10]},
+    steps:{roof:[40,34],sign:[37,27,14,10]},
+    brick:{roof:[40,34],sign:[45,29,14,10]}
+  };
+  const ARENA_ROOF_POINTS={knicks:[40,36],bulls:[40,36],cavaliers:[40,36],mavericks:[40,36],magic:[40,36],sixers:[40,42],pacers:[55,34],spurs:[55,34],grizzlies:[55,31],rockets:[55,34],pelicans:[55,34],heat:[55,33]};
+  function arenaBranding(team){const spec=ARENA_BRANDING[ARENAS[team.id]];if(!spec)throw new RangeError('Unknown arena branding');return {roof:[...(ARENA_ROOF_POINTS[team.id]||spec.roof)],sign:[...spec.sign]};}
   const PEOPLE=["short-cap","tall-curls","backpack","ponytail","hoodie","senior","ball-fan","seated"];
   const xml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"})[c]);
   class Tile{
@@ -80,5 +91,5 @@
   function encounterBackdrop(id){const entry=tiles().encounters[id];if(!entry)throw new RangeError("Unknown pixel encounter");return `<g transform="scale(4)" shape-rendering="crispEdges">${entry.markup}</g>`;}
   function arenaMarkup(team){const day=arena(team),night=arena(team,true);return `<path class="arena-halo" d="M-76-10-38-50 38-50 76-10 38 36-38 36Z"/><g transform="translate(-80 -68) scale(2)" shape-rendering="crispEdges"><g class="pixel-day">${day.markup()}</g><g class="pixel-night">${night.markup()}</g></g><text class="roof-text" y="-23">${xml(team.abbr)}</text><text class="arena-live-tag" y="10">模擬 LIVE</text><text class="landmark-label" y="55">${xml(team.shortName)}主場</text><path class="selection-ring" d="M-78-12-39-58 39-58 78-12 39 46-39 46Z"/><rect class="hit-area" x="-78" y="-65" width="156" height="124"/>`;}
   function courtMarkup(c){return `<g transform="translate(-55 -52) scale(2)" shape-rendering="crispEdges"><g class="pixel-day">${court(c.type).markup()}</g><g class="pixel-night">${court(c.type,true).markup()}</g></g><text class="landmark-label court-label" y="48">${xml(c.name)}</text><path class="selection-ring" d="M-52-8 0-42 52-8 0 39Z"/><rect class="hit-area" x="-52" y="-50" width="104" height="117"/>`;}
-  return {SPEC,ARENAS,MODELS,PEOPLE,Tile,shade,block,tree,arena,court,direction,actor,actorMarkup,actorSVG,interior,scenicBackdrop,encounterBackdrop,arenaMarkup,courtMarkup};
+  return {SPEC,ARENAS,ARENA_BRANDING,arenaBranding,MODELS,PEOPLE,Tile,shade,block,tree,arena,court,direction,actor,actorMarkup,actorSVG,interior,scenicBackdrop,encounterBackdrop,arenaMarkup,courtMarkup};
 });

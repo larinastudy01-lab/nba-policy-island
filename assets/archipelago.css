@@ -30,13 +30,14 @@
 #city-layer { display:contents; }
 .city-scene { position:absolute;height:auto;image-rendering:pixelated;pointer-events:none; }
 #region-layer { position:absolute;inset:0;pointer-events:none;z-index:2300; }
-.region-label { position:absolute;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:auto;cursor:pointer;min-height:44px;padding:8px 12px;background:#163b4bed;color:#edf2dc;border:1px solid #b1ccc0;border-radius:5px;font:600 12px/1.5 "Microsoft JhengHei",sans-serif;box-shadow:0 3px #17414e66; }
-.region-label:focus-visible { outline:3px solid #fff1b3;outline-offset:3px; }
-.region-label[data-live="true"] { border-color:#edcf8b;color:#ffe3a4; }
+.region-label { position:absolute;transform:scale(calc(1 / var(--camera-scale,1))) translate(-50%,-50%);transform-origin:0 0;white-space:nowrap;pointer-events:auto;cursor:pointer;display:grid;place-items:center;box-sizing:border-box;width:28px;height:14px;min-height:0;padding:0;background:transparent;color:#d4e7df;border:0;border-radius:1px;font:500 9px/1 "Microsoft JhengHei",sans-serif;box-shadow:none;opacity:.72; }
+.region-label:hover { opacity:1; }
+.region-label:focus-visible { outline:1px solid #fff1b3;outline-offset:2px;opacity:1; }
+.region-label[data-live="true"] { color:#d4e7df; }
 #team-search-controls { padding:14px 0; }
 #team-search-controls label { display:block;font-size:13px;color:#d8e7e4;margin-bottom:9px; }
 .team-search-row { display:flex;gap:8px; }
 .team-search-row input { flex:1;min-width:0;min-height:44px;padding:10px;background:#153342;color:#f0f5ed;border:1px solid #7b9da7;border-radius:6px;font:inherit; }
 .team-search-row button { min-height:44px;padding:8px 14px;border:1px solid #7c9fa3;border-radius:6px;color:#f1e0b5;background:#203d4a;cursor:pointer; }
 #team-search-status { font-size:12px;color:#bbd4d4; }
-@media(max-width:700px){.region-label{font-size:10px;min-height:38px;padding:5px 7px;}}
+@media(max-width:700px){.region-label{font-size:8px;min-height:0;padding:0;}}
