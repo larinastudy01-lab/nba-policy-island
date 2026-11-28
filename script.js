@@ -1,6 +1,7 @@
 "use strict";
 
-function initializeIsland() {
+function initializeIsland(options = {}) {
+  const isThree = options.renderer?.kind === "three";
   const C = globalThis.NBAIsland;
   const F = globalThis.NBAFan;
   const S = globalThis.NBASights;
@@ -58,7 +59,18 @@ function initializeIsland() {
 
   function arenaGraphic(team) { return globalThis.NBAPixel.arenaMarkup(team); }
   function courtGraphic(court) { return globalThis.NBAPixel.courtMarkup(court); }
+  function buildSharedDirectory(){
+    for(const [kind,items] of [["nba",C.TEAMS],["court",C.COURTS],["encounter",C.ENCOUNTERS]])for(const item of items){
+      const node=element("button","semantic-landmark");node.id="landmark-"+item.id;node.type="button";node.dataset.kind=kind;node.addEventListener("click",()=>openLandmark(kind,item.id));$("landmark-layer").append(node);
+      const badge=element("span",""),photoBadge=element("span","");mapNodes.set(item.id,{node,badge,photoBadge});
+      const button=element("button","");button.id="list-"+item.id;button.type="button";button.addEventListener("click",()=>openLandmark(kind,item.id));
+      const title=element("strong",""),details=element("small",""),copy=element("span","list-copy");copy.append(title,details);button.append(kind==="nba"?L.create(item,{variant:"list"}):element("span","list-symbol",kind==="court"?"PK":"偶遇"),copy);$("station-list").append(button);listNodes.set(item.id,{button,kind,item,title,details});
+      if(kind==="court"){const option=element("option","",item.name+" · "+item.gameName);option.value=item.id;$("court-group-"+item.type).append(option);}
+    }
+    for(const item of S.SIGHTS){const node=element("button","");node.id="landmark-"+item.id;node.addEventListener("click",()=>openLandmark("sight",item.id));$("scenery-layer").append(node);const button=element("button","",(item.photo?"◎ ":"◇ ")+item.name);button.id="list-"+item.id;button.type="button";button.addEventListener("click",()=>openLandmark("sight",item.id));$("station-list").append(button);sightNodes.set(item.id,{node});listNodes.set(item.id,{button,kind:"sight",item});}
+  }
   function buildLandmarks() {
+    if(isThree){buildSharedDirectory();return;}
     $("landmark-layer").setAttribute("aria-label",`${C.TEAMS.length+C.COURTS.length+C.ENCOUNTERS.length} 個可探索地標，使用 Tab 選取後按 Enter 或空白鍵開啟`);
     for (const [kind,items] of [["nba",C.TEAMS],["court",C.COURTS],["encounter",C.ENCOUNTERS]]) {
       for (const item of items) {
@@ -142,6 +154,7 @@ function initializeIsland() {
     return activity.waiting || activity.preparing || activity.playing ? `等待對手 ${activity.waiting} 房 · 準備中 ${activity.preparing} 房 · 對戰中 ${activity.playing} 房` : "目前無等待或對戰中的房間";
   }
   function buildSights(){
+    if(isThree)return;
     for(const item of S.SIGHTS){
       const image=document.createElement("img");image.className="scenic-art";image.id=`scenic-art-${item.id}`;image.src=item.pixelAsset;image.alt="";image.setAttribute("aria-hidden","true");
       image.style.left=`${(item.x-item.width/2)/C.MAP.width*100}%`;image.style.top=`${(item.y-item.height)/C.MAP.height*100}%`;image.style.width=`${item.width/C.MAP.width*100}%`;image.style.height=`${item.height/C.MAP.height*100}%`;image.style.zIndex=String(item.key==="golden-gate"?3:Math.round(item.y)-2);
@@ -263,7 +276,7 @@ function initializeIsland() {
       renderRoom();
     }else if(state.kind==="sight"){
       $("map-scoreboard").hidden=true;
-      $("sight-image").src=$("island-map").dataset.theme==="night"?item.pixelNightAsset:item.pixelAsset;$("sight-image").alt=`${item.name}的原創斜俯視街景插畫`;
+      $("sight-image").src=isThree?F.svgDataURL(globalThis.NBAStylizedArt.landmark(item)):$("island-map").dataset.theme==="night"?item.pixelNightAsset:item.pixelAsset;$("sight-image").alt=`${item.name}的原創斜俯視街景插畫`;
       $("sight-description").textContent=item.description;$("sight-access").textContent=item.photo?"已沿步道抵達觀景點。可用已儲存的球迷造型拍照與下載 PNG；景點照不計入主場或偶遇收藏。":"街景眺望・此處沒有開放步行入口；鏡頭查看地標，玩家保持原位。";$("sight-photo").hidden=!item.photo;
     }else{
       $("map-scoreboard").hidden=true;fanUI?.renderEncounterPanel(item.id);
@@ -666,8 +679,9 @@ function initializeIsland() {
     getPlayerPosition:()=>explorer?.position(),hasArrived:id=>explorer?explorer.hasArrived(id):state.id===id,
     onReveal:()=>explorer?.refreshEncounter(),
     onVisit:(id,kind="nba")=>openLandmark(kind,id),onChange:()=>{renderMapAndDirectory();renderPracticeFan();}});
+  globalThis.NBAApp={openLandmark,closeStationPanel,getSelection:()=>({...state}),getGameState:()=>state.gameState,getBayFixture:()=>bayFixture,getAvatar:()=>fanUI.savedAvatar(),getEncounter:currentEncounter,getPosition:()=>explorer?.position(),showDirectory:()=>setDirectory(true)};
   let lastArrivalContext="";
-  explorer=globalThis.NBAExplorerUI.initialize({getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,getBayFixture:()=>bayFixture,onView:camera=>{memoryUI.observeView(camera);shopUI.observeView(camera);if(camera.level!=="venue")closeStationPanel(false);},
+  explorer=(options.renderer||globalThis.NBAExplorerUI).initialize({getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,getBayFixture:()=>bayFixture,onNavigate:(kind,id)=>kind==="memory"?memoryUI.navigate(id,true):openLandmark(kind,id),getAvatar:()=>fanUI.savedAvatar(),onView:camera=>{memoryUI.observeView(camera);shopUI.observeView(camera);if(camera.level!=="venue")closeStationPanel(false);},
     onPosition:(position,walker)=>{memoryUI.observePosition(position,walker);shopUI.refreshEntrance();fanUI.updateLocation();const key=`${state.kind}:${state.id}:${explorer?.hasArrived(state.id)}`;
       if(key!==lastArrivalContext){if(state.kind==="encounter")fanUI.renderEncounterPanel(state.id);if(explorer?.hasArrived(state.id)&&panelRequested){renderPanel();if(pendingPanelFocus){pendingPanelFocus=false;$("panel-title").focus();}}}lastArrivalContext=key;},onAnnounce:announce});
   // 初始化期間 explorer 尚未賦值；再以行走模型的初始座標渲染一次。
@@ -689,4 +703,4 @@ function initializeIsland() {
 }
 
 if(typeof module!=="undefined"&&module.exports){module.exports={...require("./assets/island-core.js"),...require("./assets/policy-core.js")};}
-else if(typeof document!=="undefined")initializeIsland();
+else if(typeof document!=="undefined"){if(globalThis.NBAMapBoot)globalThis.NBAMapBoot.start(initializeIsland);else initializeIsland();}

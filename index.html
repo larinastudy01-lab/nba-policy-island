@@ -6,9 +6,10 @@
 <title>NBA 政策島｜登島，讓每一球有故事</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='19' fill='%23f3c45b'/%3E%3Cpath d='M1 20h38M20 1v38M7 5q28 15 0 30M33 5Q5 20 33 35' fill='none' stroke='%231c4266' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./assets/policy.css"><link rel="stylesheet" href="./assets/fan.css"><link rel="stylesheet" href="./assets/games.css"><link rel="stylesheet" href="./assets/explorer.css"><link rel="stylesheet" href="./assets/bay.css"><link rel="stylesheet" href="./assets/scenery.css"><link rel="stylesheet" href="./assets/pixel.css"><link rel="stylesheet" href="./assets/archipelago.css"><link rel="stylesheet" href="./assets/memory.css"><link rel="stylesheet" href="./assets/shop.css">
-<script src="./assets/archipelago-core.js" defer></script><script src="./assets/memory-core.js" defer></script><script src="./assets/shop-config.js" defer></script><script src="./assets/shop-core.js" defer></script><script src="./assets/pixel-core.js" defer></script><script src="./assets/pixel-tiles.js" defer></script><script src="./assets/supabase-config.js" defer></script><script src="./assets/games-core.js" defer></script><script src="./assets/sights-core.js" defer></script><script src="./assets/traffic-core.js" defer></script><script src="./assets/island-core.js" defer></script><script src="./assets/team-logo-ui.js" defer></script><script src="./assets/explorer-core.js" defer></script><script src="./assets/bay-scene.js" defer></script><script src="./assets/practice-core.js" defer></script><script src="./assets/policy-core.js" defer></script><script src="./assets/online.js" defer></script><script src="./assets/fan-core.js" defer></script><script src="./assets/fan-ui.js" defer></script><script src="./assets/games-ui.js" defer></script><script src="./assets/explorer-ui.js" defer></script><script src="./assets/memory-ui.js" defer></script><script src="./assets/shop-ui.js" defer></script><script src="./script.js" defer></script>
+<script src="./assets/archipelago-core.js" defer></script><script src="./assets/memory-core.js" defer></script><script src="./assets/shop-config.js" defer></script><script src="./assets/shop-core.js" defer></script><script src="./assets/pixel-core.js" defer></script><script src="./assets/pixel-tiles.js" defer></script><script src="./assets/supabase-config.js" defer></script><script src="./assets/games-core.js" defer></script><script src="./assets/sights-core.js" defer></script><script src="./assets/traffic-core.js" defer></script><script src="./assets/island-core.js" defer></script><script src="./assets/team-logo-ui.js" defer></script><script src="./assets/explorer-core.js" defer></script><script src="./assets/bay-scene.js" defer></script><script src="./assets/practice-core.js" defer></script><script src="./assets/policy-core.js" defer></script><script src="./assets/online.js" defer></script><script src="./assets/fan-core.js" defer></script><script src="./assets/fan-ui.js" defer></script><script src="./assets/games-ui.js" defer></script><script src="./assets/explorer-ui.js" defer></script><script src="./assets/memory-ui.js" defer></script><script src="./assets/shop-ui.js" defer></script><script src="./assets/map-controller.js" defer></script><script src="./assets/stylized-art.js" defer></script><script src="./assets/map-bootstrap.js" defer></script><script src="./script.js" defer></script>
   <link rel="stylesheet" href="./assets/team-logo.css">
   <link rel="stylesheet" href="./assets/warriors-bay.css">
+<link rel="stylesheet" href="./assets/three-map/hud.css"><script type="importmap">{"imports":{"three":"./prototype/three-islands/vendor/three-r187/build/three.module.js","three/addons/":"./prototype/three-islands/vendor/three-r187/addons/"}}</script>
 </head>
 <body>
 <a class="skip-link" href="#island-map-area">跳至島圖</a>
@@ -25,7 +26,7 @@
 <figure class="island-map-shell" id="island-map-area" tabindex="-1" aria-labelledby="island-caption">
   <div class="map-breadcrumb"><span id="map-team-name" class="map-team-name" role="status"></span><strong id="camera-location">全島總覽</strong><span id="map-light-status">白天・沿路探索島嶼</span></div>
   <div class="island-map-canvas" id="island-map" tabindex="0" data-theme="day" data-view="island" aria-label="可探索的籃球島，點區名拉近、點場館沿路前往；抵達勇士海灣設施時可按 Enter 互動">
-    <div class="island-world" id="island-world">
+    <template id="fallback-world">    <div class="island-world" id="island-world">
       <img class="island-background" src="./assets/pixel/island-map.png" width="3600" height="2250" alt="30 座獨立球隊島：海岸間保留水面，以跨海主幹道和短橋連接各隊入口、球館廣場、球場與拍照點。">
       <img class="bay-ground" src="./assets/pixel/bay-ground.png" width="3600" height="2250" alt="灣區高架廣場、石板步道、木板碼頭與小船" aria-hidden="true">
       <img class="scenery-ground" src="./assets/pixel/scenery-ground.png" width="3600" height="2250" alt="金門灣水道、橋側步行平台及四處車輛展示鋪面" aria-hidden="true">
@@ -46,7 +47,7 @@
       <div id="city-layer" aria-label="新球隊島的原創城市街景"></div>
       <div id="fan-map-marker" class="fan-map-marker" role="img" aria-label="我目前在勇士主場"><div id="fan-map-avatar"></div><span id="fan-map-name">我</span></div>
       <button id="island-encounter-actor" class="island-encounter-actor" type="button" aria-controls="encounter-panel" hidden><span id="island-actor-label">附近有熟悉的身影</span></button>
-    </div>
+    </div></template>
   </div>
   <p id="district-clue" class="district-clue" role="status" hidden></p>
   <p id="crowd-status" class="crowd-status">模擬路人・非真人玩家；灣區近景可看見散步與運球。</p>

@@ -1,0 +1,528 @@
+{
+  "version": "stylized-3d-v1",
+  "recordedAt": "2026-11-28T15:37:34.044Z",
+  "measurement": "fresh 6.5-second near-view window after idle reset",
+  "checks": [
+    "Static overview stops rendering: desktop",
+    "Actual scene: final removes LIVE rings while night lighting/headlights remain",
+    "Actual scene: away Warriors do not glow, home Lakers do",
+    "Three repeated 3-island cycles: detail cache <= 2, geometry/texture counts stable",
+    "Static overview stops rendering: mobile emulation",
+    "No real-browser runtime/shader errors"
+  ],
+  "errors": [],
+  "performance": [
+    {
+      "scenario": "warriors-desktop",
+      "version": "stylized-3d-v1",
+      "firstFrameMs": 1955.699999988079,
+      "modelsReadyMs": 4324.5999999940395,
+      "fps": 60.01000166694449,
+      "frameMsP95": 18.30000000000109,
+      "drawCalls": 272,
+      "triangles": 323446,
+      "geometries": 393,
+      "textures": 25,
+      "jsHeapBytes": 63678322,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 402,
+      "activeDetails": 1,
+      "cachedDetails": 1,
+      "modelFiles": 2,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "warriors",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 29.500000000000014,
+        "z": 49.50000000000003,
+        "span": 57.00000000000003
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T15:36:54.617Z"
+    },
+    {
+      "scenario": "lakers-desktop",
+      "version": "stylized-3d-v1",
+      "firstFrameMs": 1955.699999988079,
+      "modelsReadyMs": 4324.5999999940395,
+      "fps": 60.008001066808866,
+      "frameMsP95": 18.30000000000291,
+      "drawCalls": 213,
+      "triangles": 326094,
+      "geometries": 417,
+      "textures": 28,
+      "jsHeapBytes": 62911028,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 810,
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 2,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "lakers",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 28.000000000000014,
+        "z": 85.49999999999994,
+        "span": 53.00000000000003
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T15:37:01.494Z"
+    },
+    {
+      "scenario": "bulls-desktop",
+      "version": "stylized-3d-v1",
+      "firstFrameMs": 1955.699999988079,
+      "modelsReadyMs": 4324.5999999940395,
+      "fps": 60,
+      "frameMsP95": 18.30000000000291,
+      "drawCalls": 184,
+      "triangles": 229622,
+      "geometries": 410,
+      "textures": 28,
+      "jsHeapBytes": 61543947,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1218,
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 2,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "bulls",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 157.99999999999991,
+        "z": 79.50000000000004,
+        "span": 53.000000000000014
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T15:37:08.294Z"
+    },
+    {
+      "scenario": "detail-soak-cycle-1",
+      "version": "stylized-3d-v1",
+      "firstFrameMs": 1955.699999988079,
+      "modelsReadyMs": 4324.5999999940395,
+      "fps": 60.00600060006014,
+      "frameMsP95": 18.30000000000291,
+      "drawCalls": 184,
+      "triangles": 229622,
+      "geometries": 413,
+      "textures": 28,
+      "jsHeapBytes": 72589774,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1597,
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 2,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "bulls",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 157.85119790828688,
+        "z": 79.50684681860245,
+        "span": 53.00000233451677
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T15:37:14.583Z"
+    },
+    {
+      "scenario": "detail-soak-cycle-2",
+      "version": "stylized-3d-v1",
+      "firstFrameMs": 1955.699999988079,
+      "modelsReadyMs": 4324.5999999940395,
+      "fps": 59.81231308652178,
+      "frameMsP95": 24.30000000000291,
+      "drawCalls": 184,
+      "triangles": 229622,
+      "geometries": 413,
+      "textures": 28,
+      "jsHeapBytes": 73127405,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1783,
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 2,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "bulls",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 157.81801120344403,
+        "z": 79.50835432840618,
+        "span": 53.00000502683496
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T15:37:17.672Z"
+    },
+    {
+      "scenario": "detail-soak-cycle-3",
+      "version": "stylized-3d-v1",
+      "firstFrameMs": 1955.699999988079,
+      "modelsReadyMs": 4324.5999999940395,
+      "fps": 59.81231308652178,
+      "frameMsP95": 18.30000000000291,
+      "drawCalls": 184,
+      "triangles": 229622,
+      "geometries": 413,
+      "textures": 28,
+      "jsHeapBytes": 72334315,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1968,
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 2,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "bulls",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 157.81801146639987,
+        "z": 79.50834852525927,
+        "span": 53.000005671520356
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T15:37:20.746Z"
+    },
+    {
+      "scenario": "warriors-mobile-emulation",
+      "version": "stylized-3d-v1",
+      "firstFrameMs": 1202.9000000059605,
+      "modelsReadyMs": 3480.5999999940395,
+      "fps": 30.00150007500375,
+      "frameMsP95": 36.5,
+      "drawCalls": 200,
+      "triangles": 208252,
+      "geometries": 408,
+      "textures": 27,
+      "jsHeapBytes": 72621917,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 203,
+      "activeDetails": 1,
+      "cachedDetails": 1,
+      "modelFiles": 2,
+      "quality": "low",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "warriors",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 29.500000000000007,
+        "z": 49.500000000000014,
+        "span": 57.000000000000014
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 390,
+        "height": 844
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "recordedAt": "2026-11-28T15:37:33.411Z"
+    }
+  ],
+  "note": "Mobile is Chrome emulation on recorded desktop GPU. Physical device FPS and long session remain pending."
+}

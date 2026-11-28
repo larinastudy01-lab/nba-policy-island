@@ -36,6 +36,22 @@
 
 本版以 [FINAL_ACCEPTANCE.md](./FINAL_ACCEPTANCE.md) 的五條灣區／座位／試玩／雙裝置動線為準；一般鏡頭操作見 [EXPLORER.md](./EXPLORER.md)，下方原有政策、合影、遊戲示範也持續可用。
 
+## Stylized 3D 整合版補充
+
+本機整合分支 `integration/stylized-three-v1` 的功能、實際 Chrome 測試、畫面與待驗範圍見 [STYLIZED_3D_INTEGRATION.md](./STYLIZED_3D_INTEGRATION.md)。以下舊版測試數字不是本版結果。
+
+| 週次 | 對應功能 | 檔案位置 | 展示方式 |
+|---|---|---|---|
+| W02 | 導覽、清單、場館資料 | `index.html`、`script.js` | 收合清單，搜尋 30 隊，查看開賽時間。 |
+| W03 | 圖像、政策表格 | `assets/three-map/photo.js`、`index.html` | 下載合影 PNG，對照三政策表與座位圖。 |
+| W04 | 本地音效 | `script.js`、`assets/shot-hit.wav`、`assets/round-end.wav` | 遊戲開始操作後開音效，投進與終場。 |
+| W05 | 表單驗證 | `assets/shop-ui.js`、`assets/fan-ui.js` | 換裝儲存、商品正整數數量及模擬結帳。 |
+| W07 | 色彩、文字與隊色 | `assets/three-map/models.js`、`hud.css` | 比較勇士／湖人／公牛與日夜照明。 |
+| W08 | 定位、圖層與鏡頭 | `assets/map-controller.js`、`assets/three-map/main.js` | 全島 → 近景 → 實體入口；HUD 不擋互動。 |
+| W09 | 運算與判斷 | `assets/policy-core.js`、`assets/games-core.js` | 試算 2,400 點、遊戲計分與平手。 |
+| W11 | 物件、DOM 與共用資料 | `script.js`、`assets/three-map/world.js` | 同一 ID 同時驅動清單、3D 地標與面板。 |
+| W12 | 事件、委派與計時 | `assets/shop-ui.js`、`assets/three-map/main.js` | 購物車動態按鈕、30 秒遊戲、離場／對話框暫停。 |
+
 ## 建議展示動線
 
 1. 湖人看模擬 LIVE（勇士客隊不亮），切完賽保留 101：108 並關燈。

@@ -1,5 +1,9 @@
 # NBA 政策島
 
+目前工作區在 **`integration/stylized-three-v1`**：正式首頁程式已接上平滑的 Three.js 微縮城市、共用原玩法面板與 2D 備援。勇士／湖人／公牛為詳細樣板，其餘 27 隊保留簡化島嶼。**尚未推送、合併或切換 GitHub Pages**。本版版本、實際瀏覽器測試、效能、截圖及待驗範圍見 [Stylized 3D 整合報告](./docs/STYLIZED_3D_INTEGRATION.md)，素材來源見 [ASSET_LICENSES.md](./ASSET_LICENSES.md)。
+
+3D 預覽：在根目錄執行 `python -m http.server 8000` 後手動開啟 `http://localhost:8000/`。原版備援：`?map=2d`；直接開啟 `index.html` 仍可離線使用 2D。以下保留既有版本功能與演進說明。
+
 已接入使用者提供的 **30 隊隊徽**：總覽常駐 20–22 px 屋頂隊徽，指向／聚焦／選取時在地圖下方顯示完整隊名；拉近後同一枚變為單一球館招牌。清單、資訊卡、主客隊記分板、商店與記憶簿共用隊伍資料。保留中文原檔及透明背景，另以隊伍縮寫建立內容完全相同的 PNG 副本；完整對應、顯示規則及手動驗收見 [隊徽指南](./docs/TEAM_LOGOS.md)。
 
 原創 2.5D 等距像素籃球群島，**一支 NBA 球隊一座島**。使用原生 HTML、CSS、JavaScript 與本地素材，直接開啟 `index.html` 即可離線探索，不需安裝套件。

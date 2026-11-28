@@ -1,4 +1,21 @@
-# Three.js 原型素材與授權紀錄
+# NBA 政策島素材與授權紀錄
+
+## Stylized 3D 正式整合分支｜2026-11-28
+
+版本 `stylized-3d-v1`，分支 `integration/stylized-three-v1`。以下為本次變動；下方保留上一階段的取得證據。
+
+| 來源／素材 | 本次實際使用與授權 | 位置／處理 |
+|---|---|---|
+| Three.js r187 / RoundedBoxGeometry | MIT，three.js authors。從同一份已核對 SHA-256 的 npm 0.187.0 封存檔複製原始 addon，保留 LICENSE；沒有 CDN 依賴。 | `prototype/three-islands/vendor/three-r187/addons/geometries/RoundedBoxGeometry.js`；套件來源見同目錄上層 `SOURCE.json`。 |
+| Quaternius Sports Car、NormalTree_1 | **沿用已取得的兩個 CC0 GLB**，不是新下載六款品牌車。透過 GLTFLoader 載入。 | 原始 GLB、manifest、雜湊保持不變；`assets/three-map/world.js` 在執行時替換為平滑 Standard 材質與統一粗糙度。 |
+| 原創微縮城市、球館、人物、道路、20 處景點及照片 | 本專案程式生成；不是 Kenney 或 Quaternius 模型包。 | `assets/three-map/models.js`、`world.js`、`photo.js`；圓角幾何、曲線海岸、Canvas 招牌、海面 shader。 |
+| 30 隊隊徽 | 沿用使用者提供的原圖與既有 64×64 等比衍生圖；各隊商標，**不屬 CC0**。 | 新場景採本地縮圖；原 `assets/team/` WebP 不變，既有 ID 對應不變。 |
+| [Kenney City Kit Roads](https://kenney.nl/assets/city-kit-roads) | 官方列 CC0；本次再次核對。**未新增下載或匯入**。 | 適合未來道路標誌與街道小物；優先 GLB，先核對包內 license，再適配現有路網比例。 |
+| [Quaternius Ultimate Stylized Nature](https://quaternius.com/packs/ultimatestylizednature.html) | 官方列 CC0、glTF 等格式。**整包未匯入**，不可與上述單獨取得的 Trees 混稱。 | 未來只取少量植物，套共同色盤與比例，不整包載入。 |
+| [Poly Pizza Sports Car](https://poly.pizza/m/1mkmFkAz5v)／[Trees](https://poly.pizza/m/etFGNvsiFv) | 這兩個作者模型為 CC0；平台其他模型須逐件確認。 | 本次只使用這兩個既有 GLB。 |
+| [Poly Haven](https://polyhaven.com/license) | 官方素材列 CC0。**本次未下載、未匯入**。 | 寫實掃描與高解析 PBR 不直接混用；若日後採環境光，先選小型 HDRI、評估色調與體積並另記下載證據。 |
+
+本次沒有新增尚未取得的模型。既有 ZaddyFi voxel 候選包不納入新的正式 3D 渲染器。需要第三方新模型時，依下方取得、授權、雜湊、縮放與測試步驟辦理；新材質應使用平滑 Standard 材質與本版色盤，而非原型的平面 Lambert 規格。
 
 查核／取得日期：2026-11-28（Asia/Taipei）。本表只說明本次新增原型；既有 NBA 隊徽、球星名稱及商標不因導入 Three.js 而取得新的授權。未下載的候選素材沒有列為已匯入。
 
