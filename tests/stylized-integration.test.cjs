@@ -23,7 +23,7 @@ test('formal bootstrap has one renderer and local import map, legacy artwork is 
 let registered=false;
 async function modules(){
   if(!registered){require('node:module').registerHooks({resolve(s,c,next){if(s==='three')return {url:pathToFileURL(path.join(base,'vendor/three-r187/build/three.module.js')).href,shortCircuit:true};if(s.startsWith('three/addons/'))return {url:pathToFileURL(path.join(base,'vendor/three-r187/addons',s.slice(13))).href,shortCircuit:true};return next(s,c);}});registered=true;}
-  Object.assign(globalThis,{NBAIsland:C,NBAArchipelago:A,NBAFan:F,NBASights:require('../assets/sights-core.js'),NBAMemory:require('../assets/memory-core.js'),NBAShop:require('../assets/shop-core.js'),NBAVehicles:require('../assets/vehicle-core.js'),NBATraffic:require('../assets/traffic-core.js'),document:{createElement:()=>({width:0,height:0,getContext:()=>({fillRect(){},fillText(){}})})}});
+  Object.assign(globalThis,{NBACities:require('../assets/city-landmarks.js'),NBAIsland:C,NBAArchipelago:A,NBAFan:F,NBASights:require('../assets/sights-core.js'),NBAMemory:require('../assets/memory-core.js'),NBAShop:require('../assets/shop-core.js'),NBAVehicles:require('../assets/vehicle-core.js'),NBATraffic:require('../assets/traffic-core.js'),document:{createElement:()=>({width:0,height:0,getContext:()=>({fillRect(){},fillText(){}})})}});
   const T=await import(pathToFileURL(path.join(base,'vendor/three-r187/build/three.module.js')).href);T.TextureLoader.prototype.load=(url,done)=>{const texture=new T.Texture();queueMicrotask(()=>done?.(texture));return texture;};return T;
 }
 test('smooth model modules cover 30 city features and have curved geometry and finite avatar options',async()=>{

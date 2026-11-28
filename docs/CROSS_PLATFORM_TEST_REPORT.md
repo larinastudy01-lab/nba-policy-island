@@ -1,5 +1,11 @@
 # 跨裝置驗收紀錄
 
+## 最新：journey-franchise-v2
+
+2026-11-29：[本版報告](./FRANCHISE_JOURNEY_V2.md)。Windows 實際 Chrome 已完成自創球隊、專屬島、完整快速對戰、存讀及舊功能回歸；六種視窗各測新球隊建立、Pointer 操作、按鈕至少 48px、無橫向溢出與旋轉保留回合。角色模式新增道路搖桿／WASD，指標取消、背景與鬆開會停止手動移動，車道試駕鬆開油門會煞車。
+
+證據：[6 尺寸及新流程 JSON](./franchise-preview/browser-report.json)、[原功能回歸](./franchise-preview/regression/browser-report.json)、[桌機與手機模擬效能](./franchise-preview/performance/performance-report.json)。這些是 Chrome 視窗／觸控模擬，未宣稱為 iPhone、Android、iPad、觸控筆電或 macOS Safari 真機測試。手機模擬暖機後約 30 FPS、冷載近景約 28.1 FPS，冷載尚未達目標。Supabase 設定空白，真人跨裝置 PK 待驗。十五款完整歷史主題及其 90 組全流程驗收仍為後續工作，不能用這次的原遊戲抽測替代。
+
 ## 最新第一階段：through-ages-v1
 
 2026-11-29：[第一階段報告](./THROUGH_THE_AGES_PHASE1.md)。已為原十五款遊戲加入共用 Pointer Events 按鈕／地圖手勢，維持鍵盤及輔具 click；不宣稱十五款歷史玩法或虛擬搖桿已完成。

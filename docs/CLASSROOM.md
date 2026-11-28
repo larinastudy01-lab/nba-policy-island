@@ -1,5 +1,7 @@
 # 九週課堂功能與展示
 
+本次最新版為 **`journey-franchise-v2`｜夢回 NBA**。新增七項主選單、自創第 31 隊表單／SVG 隊徽、專屬島嶼、快速對戰、角色道路操作與 30 城市特色。原 30 隊、15 場與資料進度沿用。最新九週表、實際測試、畫面與未完成範圍見 [本版報告](./FRANCHISE_JOURNEY_V2.md)，後續課程尚未公布的任務見 [擴充計畫](./FRANCHISE_ROADMAP.md)。以下為歷次紀錄。
+
 目前第一階段為 **`through-ages-v1`「夢回 NBA：穿越籃球時光」**。新增十秒可略過開場、七年代、黃昏、三級畫質、漸進教學與平滑向量備援；30 隊、15 場原玩法、商店與進度沿用。[完整修改、畫面、299 項測試與效能](./THROUGH_THE_AGES_PHASE1.md)。新輸入模組涵蓋 Pointer Events、雙指縮放與既有遊戲按鈕；歷史版虛擬搖桿等後續工作仍另列待辦。下方保留各版原始紀錄，請以第一階段報告的範圍與待驗項目為準。
 
 歷史旅程與跨裝置需求已納入 [修訂計畫](./NBA_HISTORY_JOURNEY_PLAN.md)及 [跨裝置必要驗收規格](./CROSS_PLATFORM_REQUIREMENTS.md)。目前十五款歷史專屬玩法與共用 InputManager 尚待開發；[九十組測試報告](./CROSS_PLATFORM_TEST_REPORT.md)未把原遊戲抽測列為歷史版本通過。

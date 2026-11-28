@@ -20,6 +20,6 @@ async function run(){
       await context.close();
     }
     assert.deepEqual(errors,[]);checks.push('No real-browser runtime/shader errors');
-  }finally{await browser.close();await new Promise(r=>server.close(r));fs.writeFileSync(path.join(out,'performance-report.json'),JSON.stringify({version:'through-ages-v1',recordedAt:new Date().toISOString(),measurement:'fresh 6.5-second near-view window after idle reset',checks,errors,performance:rows,note:'Mobile is Chrome emulation on recorded desktop GPU. Physical device FPS and long session remain pending.'},null,2)+'\n');}
+  }finally{await browser.close();await new Promise(r=>server.close(r));fs.writeFileSync(path.join(out,'performance-report.json'),JSON.stringify({version:require('../assets/three-map/version.json').version,recordedAt:new Date().toISOString(),measurement:'fresh 6.5-second near-view window after idle reset',checks,errors,performance:rows,note:'Mobile is Chrome emulation on recorded desktop GPU. Physical device FPS and long session remain pending.'},null,2)+'\n');}
 }
 run().catch(e=>{console.error(e);server.close();process.exitCode=1;});

@@ -1,10 +1,10 @@
 {
-  "version": "through-ages-v1",
+  "version": "journey-franchise-v2",
   "date": "2026-11-29",
   "branch": "main",
-  "sourceBranch": "integration/through-ages-v1",
-  "baseline": "44c00d4cb4c7a9a07d0a61a7e6324d7bfd511b6e",
-  "backupBranch": "backup/pre-through-ages-44c00d4",
+  "sourceBranch": "integration/franchise-journey-v2",
+  "baseline": "4904d720ba12f055bb5e9831f32ba849395b1c9e",
+  "backupBranch": "backup/pre-franchise-4904d72",
   "primary": "three",
   "fallback": "?map=2d (smooth vector)",
   "detailIslands": [
@@ -54,5 +54,9 @@
     "low",
     "medium",
     "high"
-  ]
+  ],
+  "cityLandmarks": 30,
+  "fictionalTeamSlot": 31,
+  "quickMatch": "offline four key turns",
+  "historyReservedSlots": 42
 }

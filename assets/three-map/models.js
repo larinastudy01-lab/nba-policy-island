@@ -1,3 +1,4 @@
+import {cityLandmark} from './cities.js';
 import * as T from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -69,18 +70,7 @@ export function publicCourt(kit,parent,court,{glows=[],detail=true}={}){
   if(detail){for(let i=0;i<8;i++)cylinder(parent,x-4+i*1.15,y+.7,z-3.3,.04,1.4,'#65898b');line(parent,new T.Vector3(x-4,y+1.4,z-3.3),new T.Vector3(x+4,y+1.4,z-3.3),.05,'#6c9394');kit.bench(parent,x+5.5,z+1);kit.lamp(parent,x-5,z-2,glows);}
 }
 
-export function cityFeature(kit,parent,team,detailed=false){
-  const island=globalThis.NBAArchipelago.getIsland(team.id),x=island.x*.1-10,z=island.y*.1-8,y=LEVEL;const {box,ball,cylinder,palm,sign}=kit;
-  const west=['warriors','clippers','blazers','kings'].includes(team.id),palms=['lakers','heat','magic','suns'].includes(team.id);
-  if(palms){palm(parent,x-2,z,.8);if(detailed)palm(parent,x+3,z+3,1);}
-  else if(['nuggets','jazz','suns','timberwolves'].includes(team.id)){for(let i=0;i<3;i++)ball(parent,x+i*1.6,y+.6+i*.3,z,2,1.2+i*.4,1.5,team.id==='timberwolves'?'#649784':'#c6aa90');}
-  else if(team.id==='rockets'){cylinder(parent,x,y+2.4,z,.65,4.8,'#e2dfd2');const cone=new T.Mesh(kit.geometry('rocket-cone',()=>new T.ConeGeometry(.65,1.3,24)),kit.material(team.color));cone.position.set(x,y+5.4,z);parent.add(cone);for(const dx of [-.8,.8])box(parent,x+dx,y+.9,z,.4,1.5,.8,team.color,.15);}
-  else if(west){for(const dx of [-2,2])cylinder(parent,x+dx,y+1.8,z,.18,3.6,'#b68665');box(parent,x,y+3.5,z,6,.3,.4,team.accent,.06);}
-  else if(['spurs','pelicans','wizards','celtics','bucks'].includes(team.id)){box(parent,x,y+2,z,5,.4,3,'#d4c2aa',.2);for(const dx of [-2,-.7,.7,2])cylinder(parent,x+dx,y+1,z,.17,2,'#e7dbc7');ball(parent,x,y+2.4,z,2.2,.8,1.4,team.color);}
-  else{for(let i=0;i<3;i++){const h=2+i*1.2;box(parent,x+i*2.1,y+h/2,z-i*.5,1.8,h,2.4,team.id==='bulls'?'#b07867':i%2?'#b0c4ca':'#91a8b6',.2);box(parent,x+i*2.1,y+h+.3,z-i*.5,1.3,.6,1.8,team.color,.12);}}
-  if(detailed&&team.id==='lakers')sign(parent,'HOLLYWOOD',x+1,y+5,z-2,'#729285',7);
-  if(detailed&&team.id==='bulls'){for(let i=0;i<3;i++)box(parent,x+4+i*2,y+3+i*.9,z-3,1.8,6+i*1.8,2,'#8197a1',.18);ball(parent,x+8,y+.8,z+4,2,.95,1.2,'#b9cfce',{roughness:.25,metalness:.25});}
-}
+export function cityFeature(kit,parent,team,detailed=false){return cityLandmark(kit,parent,team,detailed);}
 
 export function character(kit,avatar,{star=false,pose='stand'}={}){
   const F=globalThis.NBAFan,a=F.normalizeAvatar(avatar),color=key=>F.OPTIONS[key].find(v=>v[0]===a[key])?.[2],team=globalThis.NBAIsland.TEAMS.find(t=>t.id===a.jersey),g=new T.Group();

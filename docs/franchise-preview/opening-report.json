@@ -1,0 +1,12 @@
+{
+  "version": "journey-franchise-v2",
+  "checks": [
+    "first opening lasts ten seconds and is silent without consent",
+    "Start journey title and optional continue button",
+    "repeat visit bypasses opening",
+    "reduced-motion replay and Continue preserve progress"
+  ],
+  "errors": [],
+  "physicalDevices": false,
+  "date": "2026-11-28T18:52:53.464Z"
+}

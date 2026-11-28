@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {LEVEL} from './models.js';
 export function createVehicles(parent,kit,assets,onChange=()=>{}){
-  const A=globalThis.NBAArchipelago,V=globalThis.NBAVehicles,traffic=globalThis.NBATraffic,groups=new Map(),loading=new Set(),errors=[];let night=false,closed=false,fleet=V.createFleet(Object.fromEntries([...traffic.tracks].map(([id,t])=>[id,t.length])));
+  const A=globalThis.NBAArchipelago,V=globalThis.NBAVehicles,traffic=globalThis.NBATraffic,groups=new Map(),loading=new Set(),errors=[];let night=false,closed=false,ride=false,throttle=0,fleet=V.createFleet(Object.fromEntries([...traffic.tracks].map(([id,t])=>[id,t.length])));
   const park=new T.Group();parent.add(park);const w=A.getIsland('warriors'),sx=A.getIsland('suns');
   // Exhibition is a paved parking pocket, separate from pedestrian graph / facility hit boxes.
   kit.box(park,w.x*.1+19,LEVEL-.03,w.y*.1+6.2,11.3,.35,8.1,'#a6b4b4',.5);
@@ -19,11 +19,14 @@ export function createVehicles(parent,kit,assets,onChange=()=>{}){
     }catch(e){errors.push({id,message:e.message});}finally{loading.delete(key);if(!closed)onChange();}}
   function update(delta,time,{teamId,overview,reduced,low=false}){
     park.visible=!overview&&teamId==='warriors';for(const [index,p]of parked.entries()){const active=!overview&&p.teamId===teamId&&(!low||index<3||p.teamId!=='warriors');if(active)model(p.key,p.id);const g=groups.get(p.key);if(g){g.visible=active;g.position.set(p.x*.1,LEVEL+.12,p.y*.1);g.rotation.y=Math.PI;g.userData.wheels.forEach(w=>w.visible=!low);}}
-    fleet=V.advance(fleet,delta,{tracks:traffic.tracks,sample:traffic.sample,active:v=>!overview&&(v.route==='bay-cruise'?teamId==='warriors':teamId==='suns'),reduced});
+    fleet=V.advance(fleet,delta,{tracks:traffic.tracks,sample:traffic.sample,active:v=>!(ride&&v.id==='bay-gt')&&!overview&&(v.route==='bay-cruise'?teamId==='warriors':teamId==='suns'),reduced});
+    if(ride){const v=fleet.find(v=>v.id==='bay-gt'),track=traffic.tracks.get(v.route),p=traffic.sample(v.route,v.distance),gap=Math.min(...fleet.filter(o=>o.route===v.route&&o.id!==v.id).map(o=>(o.distance-v.distance+track.length)%track.length),Infinity);v.speed=Math.max(0,Math.min(p.speed*throttle,(gap-48)*1.2));v.distance=(v.distance+v.speed*Math.min(delta,80)/1000)%track.length;v.wheelAngle+=v.speed*Math.min(delta,80)/3000;v.heading=traffic.sample(v.route,v.distance).heading;v.paused=!v.speed;}
     for(const v of fleet){const active=!overview&&(v.route==='bay-cruise'?teamId==='warriors':teamId==='suns');if(active)model(v.id,v.model);const g=groups.get(v.id);if(!g)continue;g.visible=active;const p=traffic.sample(v.route,v.distance);g.position.set(p.x*.1,LEVEL+.14,p.y*.1);g.rotation.y=-v.heading+Math.PI/2;g.userData.wheels.forEach((w,i)=>{w.rotation.x=v.wheelAngle;w.visible=!low||i%2===0;});}
   }
   function setNight(value){night=value;for(const g of groups.values())g.userData.beam.forEach(b=>b.visible=night&&!g.userData.parked);}
   function snapshot(){return [...groups].map(([id,g])=>({id,model:g.userData.model,visible:g.visible,lights:night&&!g.userData.parked&&g.visible,position:g.position.toArray(),heading:g.rotation.y,...fleet.find(v=>v.id===id)}));}
   function dispose(){closed=true;for(const g of groups.values()){g.userData.beam.forEach(b=>b.material.dispose());g.removeFromParent();}groups.clear();}
-  return {update,setNight,snapshot,dispose,errors};
+  function control(action,value=0){if(action==='start'){ride=true;throttle=0;}if(action==='stop'){ride=false;throttle=0;}if(action==='throttle')throttle=T.MathUtils.clamp(Number(value)||0,0,1);return rideState();}
+  function rideState(){const v=fleet.find(v=>v.id==='bay-gt');return {active:ride,throttle,...traffic.sample(v.route,v.distance),speed:v.speed,distance:v.distance};}
+  return {control,rideState,update,setNight,snapshot,dispose,errors};
 }

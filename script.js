@@ -254,7 +254,7 @@ function initializeIsland(options = {}) {
       $("team-badge").style.setProperty("--team-accent",item.accent);
       $("team-english").textContent=item.englishName;
       $("team-city").textContent=item.city||"待補";$("team-abbr").textContent=item.abbr;$("team-region").textContent=item.region;
-      $("team-scene").textContent=item.cityScene;
+      $("team-scene").textContent=globalThis.NBACities?.get(item.id)?.name||item.cityScene;
       const station=F.getStation(item.id);$("team-venue").textContent=station?.venue||item.venue;$("team-representative").textContent=station?`${station.starName}（隊史球星）`:"本島先開放主場探索；球星合影尚未開放";
       $("find-star").disabled=!station;$("find-star").textContent=station?"進館找球星 ↗":"球星合影尚未開放";
       $("nba-shop-launch").hidden=!globalThis.NBAShop.getShop("shop-"+item.id);
@@ -685,6 +685,8 @@ function initializeIsland(options = {}) {
     onPosition:(position,walker)=>{memoryUI.observePosition(position,walker);shopUI.refreshEntrance();fanUI.updateLocation();const key=`${state.kind}:${state.id}:${explorer?.hasArrived(state.id)}`;
       if(key!==lastArrivalContext){if(state.kind==="encounter")fanUI.renderEncounterPanel(state.id);if(explorer?.hasArrived(state.id)&&panelRequested){renderPanel();if(pendingPanelFocus){pendingPanelFocus=false;$("panel-title").focus();}}}lastArrivalContext=key;},onAnnounce:announce});
   globalThis.NBAJourney?.mount(explorer);
+  globalThis.NBAFranchiseUI?.mount(explorer);
+  globalThis.NBAExploreControls?.mount(explorer);
   // 初始化期間 explorer 尚未賦值；再以行走模型的初始座標渲染一次。
   fanUI.updateLocation();
   function refreshEncounterDay(){const date=currentEncounter().date;if(date!==lastEncounterDate){lastEncounterDate=date;if(state.kind==="encounter")fanUI.renderEncounterPanel(state.id);fanUI.refreshGame();explorer?.refreshEncounter();}}

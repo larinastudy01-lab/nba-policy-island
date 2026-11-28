@@ -82,7 +82,7 @@
     return {x:island.x+dx,y:island.y+dy,islandId:island.id,teamIslandId:island.teamId,entrance:Number.isFinite(ex)?{x:island.x+ex,y:island.y+ey}:null,...(width?{width,height}:{})};
   }
   // Stepped coast, with a shared shoreline/land test used by the generator and tests.
-  function coast(island){return [[-180,-55],[-153,-91],[-74,-113],[-18,-124],[69,-106],[144,-77],[179,-35],[170,33],[138,79],[65,112],[-23,123],[-110,94],[-164,48]].map(([x,y])=>({x:island.x+x,y:island.y+y}));}
+  function coast(island){const seed=[...island.teamId].reduce((n,c)=>n+c.charCodeAt(0),0);return [[-180,-55],[-153,-91],[-74,-113],[-18,-124],[69,-106],[144,-77],[179,-35],[170,33],[138,79],[65,112],[-23,123],[-110,94],[-164,48]].map(([x,y],i)=>{const f=island.teamId==='warriors'?1:1+((seed+i*7)%9-3)*.008;return {x:island.x+x*f,y:island.y+y*(island.theme==='beach'?f*1.03:f)};});}
   function contains(island,point){const poly=coast(island);let yes=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a.y>point.y)!==(b.y>point.y)&&point.x<(b.x-a.x)*(point.y-a.y)/(b.y-a.y)+a.x)yes=!yes;}return yes;}
   const ROAD_NODES={},ROAD_EDGES=[];
   const node=(id,x,y)=>{ROAD_NODES[id]={x,y};return id;};

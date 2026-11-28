@@ -1,0 +1,60 @@
+{
+  "version": "journey-franchise-v2",
+  "checks": [
+    "Create team with original logo/jerseys/roster, reject duplicate number and save only on submit",
+    "Fictional 31st island is road reachable; world overview preserves position and real 30 teams",
+    "Playable quick match: opponent, lineup, tactics, 2 successful shots and 2 blocks, final score/history/reward",
+    "Reload restores funds, record, roster and team; unsaved edits do not apply or mutate past matches",
+    "Time-machine era, character keyboard road walk, route-constrained car throttle/brake and day/night work",
+    "No-WebGL vector fallback supports franchise island, match timeout/end and original saved state",
+    "6 viewport contexts: create/play pointer action, min 48px button, no horizontal overflow, rotate preserves turns"
+  ],
+  "layouts": [
+    {
+      "width": 360,
+      "height": 800,
+      "overflow": false,
+      "dialogOverflow": false,
+      "button": 48
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "overflow": false,
+      "dialogOverflow": false,
+      "button": 48
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "overflow": false,
+      "dialogOverflow": false,
+      "button": 48
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "overflow": false,
+      "dialogOverflow": false,
+      "button": 48
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "overflow": false,
+      "dialogOverflow": false,
+      "button": 48
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "overflow": false,
+      "dialogOverflow": false,
+      "button": 48
+    }
+  ],
+  "errors": [],
+  "missing": [],
+  "physicalDevices": false,
+  "date": "2026-11-28T18:49:15.103Z"
+}

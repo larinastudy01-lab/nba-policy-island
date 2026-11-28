@@ -1,0 +1,2245 @@
+{
+  "version": "journey-franchise-v2",
+  "recordedAt": "2026-11-28T18:50:34.007Z",
+  "measurement": "fresh 6.5-second near-view window after idle reset",
+  "checks": [
+    "Static overview stops rendering: desktop",
+    "Actual scene: final removes LIVE rings while night lighting/headlights remain",
+    "Actual scene: away Warriors do not glow, home Lakers do",
+    "Three repeated 3-island cycles: detail cache <= 2, geometry/texture counts stable",
+    "Static overview stops rendering: mobile emulation",
+    "No real-browser runtime/shader errors"
+  ],
+  "errors": [],
+  "performance": [
+    {
+      "scenario": "warriors-desktop",
+      "version": "journey-franchise-v2",
+      "firstFrameMs": 2229.0999999940395,
+      "modelsReadyMs": 5270.4000000059605,
+      "fps": 60.00400026668446,
+      "frameMsP95": 18.30000000000109,
+      "drawCalls": 614,
+      "triangles": 784398,
+      "geometries": 735,
+      "textures": 40,
+      "jsHeapBytes": 102769846,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 350,
+      "quality": "medium",
+      "activeDetails": 1,
+      "cachedDetails": 1,
+      "modelFiles": 20,
+      "renderer": "journey-franchise-v2",
+      "era": "new-generation",
+      "adaptiveLow": false,
+      "intro": {
+        "elapsed": 0,
+        "stage": 0,
+        "complete": false,
+        "active": false
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "warriors",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 677.630370424129,
+        "y": 1498.5079133864112,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 19,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "poly-f40",
+          "poly-gtr",
+          "poly-lambo",
+          "poly-sport-yellow",
+          "poly-sport-coupe",
+          "poly-sport-roadster",
+          "poly-city-taxi",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard"
+        ],
+        "failures": []
+      },
+      "vehicles": [
+        {
+          "id": "park-poly-f40",
+          "model": "poly-f40",
+          "visible": true,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-gtr",
+          "model": "poly-gtr",
+          "visible": true,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-gt",
+          "model": "poly-gtr",
+          "visible": true,
+          "lights": false,
+          "position": [
+            88.5352518795502,
+            2.3400000000000003,
+            135.65611507058568
+          ],
+          "heading": -0.7182495809217869,
+          "route": "bay-cruise",
+          "distance": 108.47548799999988,
+          "speed": 12,
+          "wheelAngle": 36.15849599999998,
+          "paused": false
+        },
+        {
+          "id": "park-poly-sport-coupe",
+          "model": "poly-sport-coupe",
+          "visible": true,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-sport-roadster",
+          "model": "poly-sport-roadster",
+          "visible": true,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-taxi",
+          "model": "poly-city-taxi",
+          "visible": true,
+          "lights": false,
+          "position": [
+            79.60841355304541,
+            2.3400000000000003,
+            139.3408637454028
+          ],
+          "heading": -3.8598422345115777,
+          "route": "bay-cruise",
+          "distance": 242.12786306163932,
+          "speed": 12,
+          "wheelAngle": 36.27091999999995,
+          "paused": false
+        },
+        {
+          "id": "park-poly-sport-yellow",
+          "model": "poly-sport-yellow",
+          "visible": true,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-lambo",
+          "model": "poly-lambo",
+          "visible": true,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        }
+      ],
+      "drive": {
+        "active": false,
+        "throttle": 0,
+        "x": 885.352518795502,
+        "y": 1356.5611507058568,
+        "heading": -0.7182495809217873,
+        "view": "rear",
+        "flip": false,
+        "corner": false,
+        "speed": 12,
+        "distance": 108.47548799999988
+      },
+      "visuals": {
+        "cached": 1,
+        "game": null,
+        "errors": [],
+        "gameFPS": null,
+        "gameAnimation": false
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "vinish-street-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "vinish-portable-shot-clock",
+        "vinish-ball-rack",
+        "innerscene-arena",
+        "poly-golden-gate",
+        "polyhaven-bench",
+        "vinish-wedge-supercar",
+        "vinish-security-guard"
+      ],
+      "cityLandmarks": [
+        "city-warriors",
+        "city-lakers",
+        "city-clippers",
+        "city-kings",
+        "city-suns",
+        "city-blazers",
+        "city-jazz",
+        "city-nuggets",
+        "city-thunder",
+        "city-timberwolves",
+        "city-mavericks",
+        "city-rockets",
+        "city-spurs",
+        "city-grizzlies",
+        "city-pelicans",
+        "city-celtics",
+        "city-knicks",
+        "city-nets",
+        "city-sixers",
+        "city-raptors",
+        "city-bulls",
+        "city-bucks",
+        "city-pistons",
+        "city-pacers",
+        "city-cavaliers",
+        "city-hawks",
+        "city-hornets",
+        "city-heat",
+        "city-magic",
+        "city-wizards"
+      ],
+      "franchiseIsland": true,
+      "exploreLevel": "city",
+      "lighting": {
+        "night": false,
+        "phase": "day",
+        "lamps": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 73.26303704241296,
+        "z": 148.45079133864124,
+        "span": 57.00000000000003
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T18:49:48.013Z"
+    },
+    {
+      "scenario": "lakers-desktop",
+      "version": "journey-franchise-v2",
+      "firstFrameMs": 2229.0999999940395,
+      "modelsReadyMs": 5270.4000000059605,
+      "fps": 60.00400026668446,
+      "frameMsP95": 18.30000000000109,
+      "drawCalls": 303,
+      "triangles": 368160,
+      "geometries": 823,
+      "textures": 49,
+      "jsHeapBytes": 107463902,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 748,
+      "quality": "medium",
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 31,
+      "renderer": "journey-franchise-v2",
+      "era": "new-generation",
+      "adaptiveLow": false,
+      "intro": {
+        "elapsed": 0,
+        "stage": 0,
+        "complete": false,
+        "active": false
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "lakers",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 677.630370424129,
+        "y": 1498.5079133864112,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 30,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "poly-f40",
+          "poly-gtr",
+          "poly-lambo",
+          "poly-sport-yellow",
+          "poly-sport-coupe",
+          "poly-sport-roadster",
+          "poly-city-taxi",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "vinish-arena-hoop",
+          "vinish-team-bench",
+          "vinish-scorers-table",
+          "vinish-flip-scoreboard",
+          "vinish-youth-hoop",
+          "poly-large-building",
+          "poly-city-food-van",
+          "poly-palm-tree",
+          "vinish-coconut-palm",
+          "poly-animated-human",
+          "poly-street-straight"
+        ],
+        "failures": []
+      },
+      "vehicles": [
+        {
+          "id": "park-poly-f40",
+          "model": "poly-f40",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-gtr",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-gt",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            88.69904164063166,
+            2.3400000000000003,
+            135.50893626931799
+          ],
+          "heading": -0.7848177446975938,
+          "route": "bay-cruise",
+          "distance": 110.67830399999988,
+          "speed": 0,
+          "wheelAngle": 36.89276799999997,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-coupe",
+          "model": "poly-sport-coupe",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-sport-roadster",
+          "model": "poly-sport-roadster",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-taxi",
+          "model": "poly-city-taxi",
+          "visible": false,
+          "lights": false,
+          "position": [
+            79.41125882705705,
+            2.3400000000000003,
+            139.5131721886679
+          ],
+          "heading": -3.85984223451158,
+          "route": "bay-cruise",
+          "distance": 244.74626306163924,
+          "speed": 0,
+          "wheelAngle": 37.143719999999945,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-yellow",
+          "model": "poly-sport-yellow",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-lambo",
+          "model": "poly-lambo",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        }
+      ],
+      "drive": {
+        "active": false,
+        "throttle": 0,
+        "x": 886.9904164063165,
+        "y": 1355.0893626931797,
+        "heading": -0.7848177446975941,
+        "view": "rear",
+        "flip": false,
+        "corner": true,
+        "speed": 0,
+        "distance": 110.67830399999988
+      },
+      "visuals": {
+        "cached": 1,
+        "game": null,
+        "errors": [],
+        "gameFPS": null,
+        "gameAnimation": false
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "vinish-arena-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "vinish-team-bench",
+        "vinish-scorers-table",
+        "vinish-flip-scoreboard",
+        "vinish-youth-hoop",
+        "poly-large-building",
+        "poly-city-food-van",
+        "poly-palm-tree",
+        "vinish-coconut-palm",
+        "poly-animated-human",
+        "poly-street-straight"
+      ],
+      "cityLandmarks": [
+        "city-warriors",
+        "city-lakers",
+        "city-clippers",
+        "city-kings",
+        "city-suns",
+        "city-blazers",
+        "city-jazz",
+        "city-nuggets",
+        "city-thunder",
+        "city-timberwolves",
+        "city-mavericks",
+        "city-rockets",
+        "city-spurs",
+        "city-grizzlies",
+        "city-pelicans",
+        "city-celtics",
+        "city-knicks",
+        "city-nets",
+        "city-sixers",
+        "city-raptors",
+        "city-bulls",
+        "city-bucks",
+        "city-pistons",
+        "city-pacers",
+        "city-cavaliers",
+        "city-hawks",
+        "city-hornets",
+        "city-heat",
+        "city-magic",
+        "city-wizards"
+      ],
+      "franchiseIsland": true,
+      "exploreLevel": "city",
+      "lighting": {
+        "night": false,
+        "phase": "day",
+        "lamps": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 86.38721511300287,
+        "z": 182.31611518005502,
+        "span": 53.00000000000003
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T18:49:54.862Z"
+    },
+    {
+      "scenario": "bulls-desktop",
+      "version": "journey-franchise-v2",
+      "firstFrameMs": 2229.0999999940395,
+      "modelsReadyMs": 5270.4000000059605,
+      "fps": 60.00200006666886,
+      "frameMsP95": 18.30000000000291,
+      "drawCalls": 194,
+      "triangles": 236842,
+      "geometries": 838,
+      "textures": 33,
+      "jsHeapBytes": 117932532,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1157,
+      "quality": "medium",
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 32,
+      "renderer": "journey-franchise-v2",
+      "era": "new-generation",
+      "adaptiveLow": false,
+      "intro": {
+        "elapsed": 0,
+        "stage": 0,
+        "complete": false,
+        "active": false
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "bulls",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 677.630370424129,
+        "y": 1498.5079133864112,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 31,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "poly-f40",
+          "poly-gtr",
+          "poly-lambo",
+          "poly-sport-yellow",
+          "poly-sport-coupe",
+          "poly-sport-roadster",
+          "poly-city-taxi",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "vinish-arena-hoop",
+          "vinish-team-bench",
+          "vinish-scorers-table",
+          "vinish-flip-scoreboard",
+          "vinish-youth-hoop",
+          "poly-large-building",
+          "poly-city-food-van",
+          "poly-palm-tree",
+          "vinish-coconut-palm",
+          "poly-animated-human",
+          "poly-street-straight",
+          "poly-animated-hoop"
+        ],
+        "failures": []
+      },
+      "vehicles": [
+        {
+          "id": "park-poly-f40",
+          "model": "poly-f40",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-gtr",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-gt",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            88.69904164063166,
+            2.3400000000000003,
+            135.50893626931799
+          ],
+          "heading": -0.7848177446975939,
+          "route": "bay-cruise",
+          "distance": 110.67830399999988,
+          "speed": 0,
+          "wheelAngle": 36.89276799999997,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-coupe",
+          "model": "poly-sport-coupe",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-sport-roadster",
+          "model": "poly-sport-roadster",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-taxi",
+          "model": "poly-city-taxi",
+          "visible": false,
+          "lights": false,
+          "position": [
+            79.41125882705705,
+            2.3400000000000003,
+            139.5131721886679
+          ],
+          "heading": -3.85984223451158,
+          "route": "bay-cruise",
+          "distance": 244.74626306163924,
+          "speed": 0,
+          "wheelAngle": 37.143719999999945,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-yellow",
+          "model": "poly-sport-yellow",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-lambo",
+          "model": "poly-lambo",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        }
+      ],
+      "drive": {
+        "active": false,
+        "throttle": 0,
+        "x": 886.9904164063165,
+        "y": 1355.0893626931797,
+        "heading": -0.7848177446975941,
+        "view": "rear",
+        "flip": false,
+        "corner": true,
+        "speed": 0,
+        "distance": 110.67830399999988
+      },
+      "visuals": {
+        "cached": 1,
+        "game": null,
+        "errors": [],
+        "gameFPS": null,
+        "gameAnimation": false
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "poly-animated-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "poly-large-building",
+        "polyhaven-bench"
+      ],
+      "cityLandmarks": [
+        "city-warriors",
+        "city-lakers",
+        "city-clippers",
+        "city-kings",
+        "city-suns",
+        "city-blazers",
+        "city-jazz",
+        "city-nuggets",
+        "city-thunder",
+        "city-timberwolves",
+        "city-mavericks",
+        "city-rockets",
+        "city-spurs",
+        "city-grizzlies",
+        "city-pelicans",
+        "city-celtics",
+        "city-knicks",
+        "city-nets",
+        "city-sixers",
+        "city-raptors",
+        "city-bulls",
+        "city-bucks",
+        "city-pistons",
+        "city-pacers",
+        "city-cavaliers",
+        "city-hawks",
+        "city-hornets",
+        "city-heat",
+        "city-magic",
+        "city-wizards"
+      ],
+      "franchiseIsland": true,
+      "exploreLevel": "city",
+      "lighting": {
+        "night": false,
+        "phase": "day",
+        "lamps": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 307.4508811393162,
+        "z": 136.07924055371646,
+        "span": 53.00000000000002
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T18:50:01.677Z"
+    },
+    {
+      "scenario": "detail-soak-cycle-1",
+      "version": "journey-franchise-v2",
+      "firstFrameMs": 2229.0999999940395,
+      "modelsReadyMs": 5270.4000000059605,
+      "fps": 59.72869001822236,
+      "frameMsP95": 18.400000000001455,
+      "drawCalls": 194,
+      "triangles": 236842,
+      "geometries": 835,
+      "textures": 34,
+      "jsHeapBytes": 120197540,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1530,
+      "quality": "medium",
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 32,
+      "renderer": "journey-franchise-v2",
+      "era": "new-generation",
+      "adaptiveLow": false,
+      "intro": {
+        "elapsed": 0,
+        "stage": 0,
+        "complete": false,
+        "active": false
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "bulls",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 677.630370424129,
+        "y": 1498.5079133864112,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 31,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "poly-f40",
+          "poly-gtr",
+          "poly-lambo",
+          "poly-sport-yellow",
+          "poly-sport-coupe",
+          "poly-sport-roadster",
+          "poly-city-taxi",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "vinish-arena-hoop",
+          "vinish-team-bench",
+          "vinish-scorers-table",
+          "vinish-flip-scoreboard",
+          "vinish-youth-hoop",
+          "poly-large-building",
+          "poly-city-food-van",
+          "poly-palm-tree",
+          "vinish-coconut-palm",
+          "poly-animated-human",
+          "poly-street-straight",
+          "poly-animated-hoop"
+        ],
+        "failures": []
+      },
+      "vehicles": [
+        {
+          "id": "park-poly-f40",
+          "model": "poly-f40",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-gtr",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-gt",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.13490645452204,
+            2.3400000000000003,
+            133.028575663667
+          ],
+          "heading": -2.950089073269903,
+          "route": "bay-cruise",
+          "distance": 143.3231039999997,
+          "speed": 0,
+          "wheelAngle": 47.77436800000009,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-coupe",
+          "model": "poly-sport-coupe",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-sport-roadster",
+          "model": "poly-sport-roadster",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-taxi",
+          "model": "poly-city-taxi",
+          "visible": false,
+          "lights": false,
+          "position": [
+            80.39468516497257,
+            2.3400000000000003,
+            142.20827347026784
+          ],
+          "heading": -5.657437407351916,
+          "route": "bay-cruise",
+          "distance": 1.9812810165564725,
+          "speed": 0,
+          "wheelAngle": 48.801992000000084,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-yellow",
+          "model": "poly-sport-yellow",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-lambo",
+          "model": "poly-lambo",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        }
+      ],
+      "drive": {
+        "active": false,
+        "throttle": 0,
+        "x": 871.3490645452204,
+        "y": 1330.28575663667,
+        "heading": -2.95008907656719,
+        "view": "side",
+        "flip": true,
+        "corner": true,
+        "speed": 0,
+        "distance": 143.3231039999997
+      },
+      "visuals": {
+        "cached": 1,
+        "game": null,
+        "errors": [],
+        "gameFPS": null,
+        "gameAnimation": false
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "poly-animated-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "poly-large-building",
+        "polyhaven-bench"
+      ],
+      "cityLandmarks": [
+        "city-warriors",
+        "city-lakers",
+        "city-clippers",
+        "city-kings",
+        "city-suns",
+        "city-blazers",
+        "city-jazz",
+        "city-nuggets",
+        "city-thunder",
+        "city-timberwolves",
+        "city-mavericks",
+        "city-rockets",
+        "city-spurs",
+        "city-grizzlies",
+        "city-pelicans",
+        "city-celtics",
+        "city-knicks",
+        "city-nets",
+        "city-sixers",
+        "city-raptors",
+        "city-bulls",
+        "city-bucks",
+        "city-pistons",
+        "city-pacers",
+        "city-cavaliers",
+        "city-hawks",
+        "city-hornets",
+        "city-heat",
+        "city-magic",
+        "city-wizards"
+      ],
+      "franchiseIsland": true,
+      "exploreLevel": "city",
+      "lighting": {
+        "night": false,
+        "phase": "day",
+        "lamps": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 307.17657369072333,
+        "z": 136.13658039535366,
+        "span": 53.00000363934936
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T18:50:07.894Z"
+    },
+    {
+      "scenario": "detail-soak-cycle-2",
+      "version": "journey-franchise-v2",
+      "firstFrameMs": 2229.0999999940395,
+      "modelsReadyMs": 5270.4000000059605,
+      "fps": 59.73473726840151,
+      "frameMsP95": 18.30000000000291,
+      "drawCalls": 194,
+      "triangles": 236842,
+      "geometries": 835,
+      "textures": 34,
+      "jsHeapBytes": 120494897,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1716,
+      "quality": "medium",
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 32,
+      "renderer": "journey-franchise-v2",
+      "era": "new-generation",
+      "adaptiveLow": false,
+      "intro": {
+        "elapsed": 0,
+        "stage": 0,
+        "complete": false,
+        "active": false
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "bulls",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 677.630370424129,
+        "y": 1498.5079133864112,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 31,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "poly-f40",
+          "poly-gtr",
+          "poly-lambo",
+          "poly-sport-yellow",
+          "poly-sport-coupe",
+          "poly-sport-roadster",
+          "poly-city-taxi",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "vinish-arena-hoop",
+          "vinish-team-bench",
+          "vinish-scorers-table",
+          "vinish-flip-scoreboard",
+          "vinish-youth-hoop",
+          "poly-large-building",
+          "poly-city-food-van",
+          "poly-palm-tree",
+          "vinish-coconut-palm",
+          "poly-animated-human",
+          "poly-street-straight",
+          "poly-animated-hoop"
+        ],
+        "failures": []
+      },
+      "vehicles": [
+        {
+          "id": "park-poly-f40",
+          "model": "poly-f40",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-gtr",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-gt",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            86.11865589434026,
+            2.3400000000000003,
+            133.65107001875649
+          ],
+          "heading": -3.859842233886717,
+          "route": "bay-cruise",
+          "distance": 155.6657279999998,
+          "speed": 0,
+          "wheelAngle": 51.88857600000014,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-coupe",
+          "model": "poly-sport-coupe",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-sport-roadster",
+          "model": "poly-sport-roadster",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-taxi",
+          "model": "poly-city-taxi",
+          "visible": false,
+          "lights": false,
+          "position": [
+            80.95986748543264,
+            2.3400000000000003,
+            142.24755766312092
+          ],
+          "heading": -6.77463603743511,
+          "route": "bay-cruise",
+          "distance": 8.04252901655647,
+          "speed": 0,
+          "wheelAngle": 50.822408000000145,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-yellow",
+          "model": "poly-sport-yellow",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-lambo",
+          "model": "poly-lambo",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        }
+      ],
+      "drive": {
+        "active": false,
+        "throttle": 0,
+        "x": 861.1865589434026,
+        "y": 1336.510700187565,
+        "heading": 2.423343072668006,
+        "view": "front",
+        "flip": true,
+        "corner": false,
+        "speed": 0,
+        "distance": 155.6657279999998
+      },
+      "visuals": {
+        "cached": 1,
+        "game": null,
+        "errors": [],
+        "gameFPS": null,
+        "gameAnimation": false
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "poly-animated-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "poly-large-building",
+        "polyhaven-bench"
+      ],
+      "cityLandmarks": [
+        "city-warriors",
+        "city-lakers",
+        "city-clippers",
+        "city-kings",
+        "city-suns",
+        "city-blazers",
+        "city-jazz",
+        "city-nuggets",
+        "city-thunder",
+        "city-timberwolves",
+        "city-mavericks",
+        "city-rockets",
+        "city-spurs",
+        "city-grizzlies",
+        "city-pelicans",
+        "city-celtics",
+        "city-knicks",
+        "city-nets",
+        "city-sixers",
+        "city-raptors",
+        "city-bulls",
+        "city-bucks",
+        "city-pistons",
+        "city-pacers",
+        "city-cavaliers",
+        "city-hawks",
+        "city-hornets",
+        "city-heat",
+        "city-magic",
+        "city-wizards"
+      ],
+      "franchiseIsland": true,
+      "exploreLevel": "city",
+      "lighting": {
+        "night": false,
+        "phase": "day",
+        "lamps": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 307.1763899446548,
+        "z": 136.1366159889073,
+        "span": 53.000003949437556
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T18:50:11.040Z"
+    },
+    {
+      "scenario": "detail-soak-cycle-3",
+      "version": "journey-franchise-v2",
+      "firstFrameMs": 2229.0999999940395,
+      "modelsReadyMs": 5270.4000000059605,
+      "fps": 60,
+      "frameMsP95": 18.30000000000291,
+      "drawCalls": 194,
+      "triangles": 236842,
+      "geometries": 835,
+      "textures": 34,
+      "jsHeapBytes": 122302695,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1905,
+      "quality": "medium",
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 32,
+      "renderer": "journey-franchise-v2",
+      "era": "new-generation",
+      "adaptiveLow": false,
+      "intro": {
+        "elapsed": 0,
+        "stage": 0,
+        "complete": false,
+        "active": false
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "bulls",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 677.630370424129,
+        "y": 1498.5079133864112,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 31,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "poly-f40",
+          "poly-gtr",
+          "poly-lambo",
+          "poly-sport-yellow",
+          "poly-sport-coupe",
+          "poly-sport-roadster",
+          "poly-city-taxi",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "vinish-arena-hoop",
+          "vinish-team-bench",
+          "vinish-scorers-table",
+          "vinish-flip-scoreboard",
+          "vinish-youth-hoop",
+          "poly-large-building",
+          "poly-city-food-van",
+          "poly-palm-tree",
+          "vinish-coconut-palm",
+          "poly-animated-human",
+          "poly-street-straight",
+          "poly-animated-hoop"
+        ],
+        "failures": []
+      },
+      "vehicles": [
+        {
+          "id": "park-poly-f40",
+          "model": "poly-f40",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-gtr",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-gt",
+          "model": "poly-gtr",
+          "visible": false,
+          "lights": false,
+          "position": [
+            83.78275188260142,
+            2.3400000000000003,
+            135.69259340533384
+          ],
+          "heading": -3.85984223451158,
+          "route": "bay-cruise",
+          "distance": 186.68872799999957,
+          "speed": 0,
+          "wheelAngle": 62.22957600000014,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-coupe",
+          "model": "poly-sport-coupe",
+          "visible": false,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-sport-roadster",
+          "model": "poly-sport-roadster",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-taxi",
+          "model": "poly-city-taxi",
+          "visible": false,
+          "lights": false,
+          "position": [
+            83.003770417226,
+            2.3400000000000003,
+            140.49049555497373
+          ],
+          "heading": -7.001434888098162,
+          "route": "bay-cruise",
+          "distance": 35.01221701655641,
+          "speed": 0,
+          "wheelAngle": 59.81230400000012,
+          "paused": true
+        },
+        {
+          "id": "park-poly-sport-yellow",
+          "model": "poly-sport-yellow",
+          "visible": false,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            157.15079133864114
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-lambo",
+          "model": "poly-lambo",
+          "visible": false,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        }
+      ],
+      "drive": {
+        "active": false,
+        "throttle": 0,
+        "x": 837.8275188260142,
+        "y": 1356.9259340533383,
+        "heading": 2.423343072668006,
+        "view": "front",
+        "flip": true,
+        "corner": false,
+        "speed": 0,
+        "distance": 186.68872799999957
+      },
+      "visuals": {
+        "cached": 1,
+        "game": null,
+        "errors": [],
+        "gameFPS": null,
+        "gameAnimation": false
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "poly-animated-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "poly-large-building",
+        "polyhaven-bench"
+      ],
+      "cityLandmarks": [
+        "city-warriors",
+        "city-lakers",
+        "city-clippers",
+        "city-kings",
+        "city-suns",
+        "city-blazers",
+        "city-jazz",
+        "city-nuggets",
+        "city-thunder",
+        "city-timberwolves",
+        "city-mavericks",
+        "city-rockets",
+        "city-spurs",
+        "city-grizzlies",
+        "city-pelicans",
+        "city-celtics",
+        "city-knicks",
+        "city-nets",
+        "city-sixers",
+        "city-raptors",
+        "city-bulls",
+        "city-bucks",
+        "city-pistons",
+        "city-pacers",
+        "city-cavaliers",
+        "city-hawks",
+        "city-hornets",
+        "city-heat",
+        "city-magic",
+        "city-wizards"
+      ],
+      "franchiseIsland": true,
+      "exploreLevel": "city",
+      "lighting": {
+        "night": false,
+        "phase": "day",
+        "lamps": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 307.1980001312608,
+        "z": 136.13209895253163,
+        "span": 53.00000363565962
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T18:50:14.185Z"
+    },
+    {
+      "scenario": "warriors-mobile-emulation-cold",
+      "version": "journey-franchise-v2",
+      "firstFrameMs": 1458.5999999940395,
+      "modelsReadyMs": 3870.199999988079,
+      "fps": 28.073239963816714,
+      "frameMsP95": 36.5,
+      "drawCalls": 291,
+      "triangles": 381188,
+      "geometries": 693,
+      "textures": 41,
+      "jsHeapBytes": 96981451,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 191,
+      "quality": "low",
+      "activeDetails": 1,
+      "cachedDetails": 1,
+      "modelFiles": 17,
+      "renderer": "journey-franchise-v2",
+      "era": "new-generation",
+      "adaptiveLow": false,
+      "intro": {
+        "elapsed": 0,
+        "stage": 0,
+        "complete": false,
+        "active": false
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "warriors",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 677.630370424129,
+        "y": 1498.5079133864112,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 16,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "poly-f40",
+          "poly-gtr",
+          "poly-lambo",
+          "poly-city-taxi"
+        ],
+        "failures": []
+      },
+      "vehicles": [
+        {
+          "id": "park-poly-f40",
+          "model": "poly-f40",
+          "visible": true,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-gtr",
+          "model": "poly-gtr",
+          "visible": true,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-gt",
+          "model": "poly-gtr",
+          "visible": true,
+          "lights": false,
+          "position": [
+            88.70611058528192,
+            2.3400000000000003,
+            135.50187552580388
+          ],
+          "heading": -0.746602808395122,
+          "route": "bay-cruise",
+          "distance": 110.77821600000004,
+          "speed": 5.76,
+          "wheelAngle": 36.92607200000001,
+          "paused": false
+        },
+        {
+          "id": "bay-taxi",
+          "model": "poly-city-taxi",
+          "visible": true,
+          "lights": false,
+          "position": [
+            79.41843843958083,
+            2.3400000000000003,
+            139.50689738165522
+          ],
+          "heading": -3.85984223451158,
+          "route": "bay-cruise",
+          "distance": 244.65091106164036,
+          "speed": 12,
+          "wheelAngle": 37.11193600000002,
+          "paused": false
+        },
+        {
+          "id": "park-poly-lambo",
+          "model": "poly-lambo",
+          "visible": true,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        }
+      ],
+      "drive": {
+        "active": false,
+        "throttle": 0,
+        "x": 887.0611058528191,
+        "y": 1355.0187552580387,
+        "heading": -0.7848177446975941,
+        "view": "rear",
+        "flip": false,
+        "corner": true,
+        "speed": 5.76,
+        "distance": 110.77821600000004
+      },
+      "visuals": {
+        "cached": 1,
+        "game": null,
+        "errors": [],
+        "gameFPS": null,
+        "gameAnimation": false
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "vinish-street-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "vinish-portable-shot-clock",
+        "vinish-ball-rack",
+        "innerscene-arena",
+        "poly-golden-gate",
+        "polyhaven-bench",
+        "vinish-wedge-supercar",
+        "vinish-security-guard"
+      ],
+      "cityLandmarks": [
+        "city-warriors",
+        "city-lakers",
+        "city-clippers",
+        "city-kings",
+        "city-suns",
+        "city-blazers",
+        "city-jazz",
+        "city-nuggets",
+        "city-thunder",
+        "city-timberwolves",
+        "city-mavericks",
+        "city-rockets",
+        "city-spurs",
+        "city-grizzlies",
+        "city-pelicans",
+        "city-celtics",
+        "city-knicks",
+        "city-nets",
+        "city-sixers",
+        "city-raptors",
+        "city-bulls",
+        "city-bucks",
+        "city-pistons",
+        "city-pacers",
+        "city-cavaliers",
+        "city-hawks",
+        "city-hornets",
+        "city-heat",
+        "city-magic",
+        "city-wizards"
+      ],
+      "franchiseIsland": true,
+      "exploreLevel": "city",
+      "lighting": {
+        "night": false,
+        "phase": "day",
+        "lamps": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 73.26303704241293,
+        "z": 148.45079133864118,
+        "span": 57.000000000000014
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 390,
+        "height": 844
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "recordedAt": "2026-11-28T18:50:26.937Z"
+    },
+    {
+      "scenario": "warriors-mobile-emulation-warm",
+      "version": "journey-franchise-v2",
+      "firstFrameMs": 1458.5999999940395,
+      "modelsReadyMs": 3870.199999988079,
+      "fps": 30.000500008333475,
+      "frameMsP95": 36.5,
+      "drawCalls": 291,
+      "triangles": 381188,
+      "geometries": 693,
+      "textures": 41,
+      "jsHeapBytes": 93869678,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 387,
+      "quality": "low",
+      "activeDetails": 1,
+      "cachedDetails": 1,
+      "modelFiles": 17,
+      "renderer": "journey-franchise-v2",
+      "era": "new-generation",
+      "adaptiveLow": false,
+      "intro": {
+        "elapsed": 0,
+        "stage": 0,
+        "complete": false,
+        "active": false
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "warriors",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 677.630370424129,
+        "y": 1498.5079133864112,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 16,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "poly-f40",
+          "poly-gtr",
+          "poly-lambo",
+          "poly-city-taxi"
+        ],
+        "failures": []
+      },
+      "vehicles": [
+        {
+          "id": "park-poly-f40",
+          "model": "poly-f40",
+          "visible": true,
+          "lights": false,
+          "position": [
+            87.2630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "park-poly-gtr",
+          "model": "poly-gtr",
+          "visible": true,
+          "lights": false,
+          "position": [
+            90.8630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        },
+        {
+          "id": "bay-gt",
+          "model": "poly-gtr",
+          "visible": true,
+          "lights": false,
+          "position": [
+            82.70606480527414,
+            2.3400000000000003,
+            136.63359176714283
+          ],
+          "heading": -3.859842173851065,
+          "route": "bay-cruise",
+          "distance": 200.98814400000035,
+          "speed": 30,
+          "wheelAngle": 66.99604800000002,
+          "paused": false
+        },
+        {
+          "id": "bay-taxi",
+          "model": "poly-city-taxi",
+          "visible": true,
+          "lights": false,
+          "position": [
+            83.99795068131354,
+            2.3400000000000003,
+            139.62160614453194
+          ],
+          "heading": -7.001431929229841,
+          "route": "bay-cruise",
+          "distance": 48.21586501655658,
+          "speed": 30,
+          "wheelAngle": 64.21351999999999,
+          "paused": false
+        },
+        {
+          "id": "park-poly-lambo",
+          "model": "poly-lambo",
+          "visible": true,
+          "lights": false,
+          "position": [
+            94.4630370424129,
+            2.3200000000000003,
+            153.45079133864112
+          ],
+          "heading": 3.141592653589793
+        }
+      ],
+      "drive": {
+        "active": false,
+        "throttle": 0,
+        "x": 827.0606480527413,
+        "y": 1366.3359176714282,
+        "heading": 2.423343072668006,
+        "view": "front",
+        "flip": true,
+        "corner": false,
+        "speed": 30,
+        "distance": 200.98814400000035
+      },
+      "visuals": {
+        "cached": 1,
+        "game": null,
+        "errors": [],
+        "gameFPS": null,
+        "gameAnimation": false
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "vinish-street-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "vinish-portable-shot-clock",
+        "vinish-ball-rack",
+        "innerscene-arena",
+        "poly-golden-gate",
+        "polyhaven-bench",
+        "vinish-wedge-supercar",
+        "vinish-security-guard"
+      ],
+      "cityLandmarks": [
+        "city-warriors",
+        "city-lakers",
+        "city-clippers",
+        "city-kings",
+        "city-suns",
+        "city-blazers",
+        "city-jazz",
+        "city-nuggets",
+        "city-thunder",
+        "city-timberwolves",
+        "city-mavericks",
+        "city-rockets",
+        "city-spurs",
+        "city-grizzlies",
+        "city-pelicans",
+        "city-celtics",
+        "city-knicks",
+        "city-nets",
+        "city-sixers",
+        "city-raptors",
+        "city-bulls",
+        "city-bucks",
+        "city-pistons",
+        "city-pacers",
+        "city-cavaliers",
+        "city-hawks",
+        "city-hornets",
+        "city-heat",
+        "city-magic",
+        "city-wizards"
+      ],
+      "franchiseIsland": true,
+      "exploreLevel": "city",
+      "lighting": {
+        "night": false,
+        "phase": "day",
+        "lamps": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 73.26303704241293,
+        "z": 148.45079133864118,
+        "span": 57.000000000000014
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 390,
+        "height": 844
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "recordedAt": "2026-11-28T18:50:33.459Z"
+    }
+  ],
+  "note": "Mobile is Chrome emulation on recorded desktop GPU. Physical device FPS and long session remain pending."
+}

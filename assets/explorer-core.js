@@ -57,7 +57,7 @@
   }
   const districtFor=id=>DISTRICTS.find(d=>d.id===A.owner(id)?.district)||null;
   const islandFor=id=>A.owner(id);
-  const entrance=id=>{const item=landmarks.find(p=>p.id===id);if(!item||Sights.get(id)&&!item.photo)throw new Error('Unknown destination');return {...item.entrance};};
+  const entrance=id=>{const item=landmarks.find(p=>p.id===id);if(!item){if(A.ROAD_NODES[id])return {...A.ROAD_NODES[id]};throw new Error('Unknown destination');}if(Sights.get(id)&&!item.photo)throw new Error('Unknown destination');return {...item.entrance};};
   const ROAD_NODES=A.ROAD_NODES,ROAD_EDGES=A.ROAD_EDGES;
   const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   function edgeClear(edge){
@@ -176,5 +176,6 @@
     const eligible=A.BAY.entrances.map(id=>({id,distance:distance(walker.position,entrance(id)),name:A.BAY.prompts[id]})).filter(p=>p.distance<=A.BAY.radii[p.id]);
     return eligible.sort((a,b)=>a.distance-b.distance||a.id.localeCompare(b.id))[0]||null;
   }
-  return {edgeClear,nearestBayInteraction,OVERVIEW_VIEW,arenaLogoAnchor,overviewLogoOffset,overviewLogoRect,ISLANDS:A.ISLANDS,islandFor,focusIsland,interactiveVisible,DISTRICTS,ROAD_NODES,ROAD_EDGES,districtFor,entrance,roadPath,journeyFrame,createCamera,focusDistrict,focusVenue,fullIsland,back,worldToViewport,viewportToWorld,labelVisible,visibleLabels,createWalker,walk,tick,hasArrived};
+  function registerDestination(point){if(!landmarks.some(p=>p.id===point.id))landmarks.push(point);}
+  return {registerDestination,edgeClear,nearestBayInteraction,OVERVIEW_VIEW,arenaLogoAnchor,overviewLogoOffset,overviewLogoRect,ISLANDS:A.ISLANDS,islandFor,focusIsland,interactiveVisible,DISTRICTS,ROAD_NODES,ROAD_EDGES,districtFor,entrance,roadPath,journeyFrame,createCamera,focusDistrict,focusVenue,fullIsland,back,worldToViewport,viewportToWorld,labelVisible,visibleLabels,createWalker,walk,tick,hasArrived};
 });

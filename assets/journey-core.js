@@ -1,7 +1,7 @@
 /* Presentation only. Never changes a match seed, game clock or historical result. */
 (function(r,f){const api=f();if(typeof module==='object'&&module.exports)module.exports=api;else r.NBAJourneyCore=api;})(globalThis,function(){
   'use strict';
-  const VERSION='through-ages-v1',KEY='nba-policy-island:journey:v1',INTRO_KEY='nba-policy-island:opening:v1';
+  const VERSION='journey-franchise-v2',KEY='nba-policy-island:journey:v1',INTRO_KEY='nba-policy-island:opening:v1';
   const ERAS=[
     {id:'origins',label:'1940–1960｜NBA 起源',accent:'#c2a475',ambient:'#e4d4bb',sun:'#ffdfad',roughness:.9,sound:'bounce',material:'暖木、奶油色與皮革',layout:'老球館與簡潔廣場'},
     {id:'culture',label:'1970｜街頭籃球文化',accent:'#dc986b',ambient:'#dbdfc5',sun:'#ffe5bc',roughness:.85,sound:'bounce',material:'暖磚、木板與戶外鋪面',layout:'街頭球場與公園'},
