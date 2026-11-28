@@ -55,11 +55,13 @@
   }
   function initialize({getState,onAction}){
     const $=id=>document.getElementById(id);
-    for(let i=0;i<3;i++)$(`mini-choice-${i}`).addEventListener("click",()=>{const s=getState();onAction({type:s&&(s.id==="rebound"||s.child?.id==="rebound")?"lane":"choose",value:i});});
-    for(const type of ["left","right","up","wait"])$(`mini-${type}`).addEventListener("click",()=>onAction({type}));
-    for(const value of ["near","far"])$(`mini-${value}`).addEventListener("click",()=>onAction({type:"range",value}));
+    const bind=root.NBAInput?.bindButton||((button,action)=>button.addEventListener("click",action));
+    for(let i=0;i<3;i++)bind($(`mini-choice-${i}`),()=>{const s=getState();onAction({type:s&&(s.id==="rebound"||s.child?.id==="rebound")?"lane":"choose",value:i});});
+    for(const type of ["left","right","up","wait"])bind($(`mini-${type}`),()=>onAction({type}));
+    for(const value of ["near","far"])bind($(`mini-${value}`),()=>onAction({type:"range",value}));
     $("mini-wind-aim").addEventListener("input",()=>onAction({type:"aim",value:Number($("mini-wind-aim").value)}));
     function key(event){
+      const aliases={a:"ArrowLeft",d:"ArrowRight",w:"ArrowUp",s:"ArrowDown"};if(aliases[(event.key||"").toLowerCase()])event=new Proxy(event,{get(t,k){if(k==="key")return aliases[t.key.toLowerCase()];const v=t[k];return typeof v==="function"?v.bind(t):v;}});
       if(event.repeat){if([" ","ArrowLeft","ArrowRight","ArrowUp","ArrowDown","1","2","3"].includes(event.key)||event.code==="Space")event.preventDefault();return;}const s=getState();if(!s)return;const current=s.child||s;
       let action=null;
       if(event.code==="Space"||event.key===" ")action={type:"shoot"};

@@ -1,12 +1,12 @@
 {
-  "version": "geographic-stylized-v2",
+  "version": "through-ages-v1",
   "date": "2026-11-29",
   "branch": "main",
-  "sourceBranch": "integration/geographic-stylized-v2",
-  "baseline": "ab0591decfaff166c9da244e8a8ac0d74e8d9303",
-  "backupBranch": "backup/pre-geographic-ab0591d",
+  "sourceBranch": "integration/through-ages-v1",
+  "baseline": "44c00d4cb4c7a9a07d0a61a7e6324d7bfd511b6e",
+  "backupBranch": "backup/pre-through-ages-44c00d4",
   "primary": "three",
-  "fallback": "?map=2d",
+  "fallback": "?map=2d (smooth vector)",
   "detailIslands": [
     "warriors",
     "lakers",
@@ -39,9 +39,20 @@
     "sixers",
     "wizards"
   ],
-  "rollout": "GitHub Pages main/root; previous map available with ?map=2d",
+  "rollout": "GitHub Pages main/root; smooth vector fallback available with ?map=2d",
   "localDownloadedModels": 36,
   "sportModels": 7,
   "cityTrafficModels": 2,
-  "geography": "Natural Earth / Albers equal-area with disclosed cartogram spacing"
+  "geography": "Natural Earth / Albers equal-area with disclosed cartogram spacing",
+  "eras": 7,
+  "dayPhases": [
+    "day",
+    "dusk",
+    "night"
+  ],
+  "qualityLevels": [
+    "low",
+    "medium",
+    "high"
+  ]
 }

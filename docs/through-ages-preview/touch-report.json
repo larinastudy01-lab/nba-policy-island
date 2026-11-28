@@ -1,0 +1,145 @@
+{
+  "version": "through-ages-v1",
+  "environment": "Windows Chrome with CDP touch emulation, not a physical device",
+  "checks": [
+    "390x844 real browser two-pointer pinch zoom",
+    "390x844 touch directory, controls, hybrid held-key rejection, rotate without reset, game animation cleanup",
+    "768x1024 real browser two-pointer pinch zoom",
+    "768x1024 touch directory, controls, hybrid held-key rejection, rotate without reset, game animation cleanup"
+  ],
+  "cases": [
+    {
+      "court": "harbor-01",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-02",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-03",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-04",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-05",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-01",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-02",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-03",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-04",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-05",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-01",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-02",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-03",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-04",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-05",
+      "viewport": "390x844",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-01",
+      "viewport": "768x1024",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-01",
+      "viewport": "768x1024",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-05",
+      "viewport": "768x1024",
+      "touchAction": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-02",
+      "viewport": "768x1024",
+      "touchAction": true,
+      "completedRound": false
+    }
+  ],
+  "performance": [
+    {
+      "viewport": "390x844",
+      "game": "shoot",
+      "cached": 1,
+      "errors": [],
+      "gameFPS": 30.004000533464076,
+      "gameAnimation": true
+    },
+    {
+      "viewport": "768x1024",
+      "game": "shoot",
+      "cached": 1,
+      "errors": [],
+      "gameFPS": 60.116224701328115,
+      "gameAnimation": true
+    }
+  ],
+  "errors": []
+}

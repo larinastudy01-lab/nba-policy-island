@@ -1,5 +1,17 @@
 # 跨裝置驗收紀錄
 
+## 最新第一階段：through-ages-v1
+
+2026-11-29：[第一階段報告](./THROUGH_THE_AGES_PHASE1.md)。已為原十五款遊戲加入共用 Pointer Events 按鈕／地圖手勢，維持鍵盤及輔具 click；不宣稱十五款歷史玩法或虛擬搖桿已完成。
+
+[六尺寸報告](./through-ages-preview/browser-report.json)記錄原十五款 × 六尺寸的九十組**開局、操作抽測、畫面、無橫向溢出、離場**。這不是九十場完整終局驗收。實際三十秒投籃結算與其他功能見 [19 組 Chrome 回歸](./through-ages-preview/regression/browser-report.json)。
+
+[觸控報告](./through-ages-preview/touch-report.json)另記錄 390×844 手機與 768×1024 平板的十九組遊戲觸控抽測，以及真正瀏覽器的雙指縮放、旋轉保留進度、混合鍵盤長按去重與動畫清理。環境為 Windows Chrome／CDP 模擬，**不是實體手機、平板、觸控筆電或 macOS**。
+
+原遊戲邏輯由 299 項全專案測試覆蓋；實體裝置、音效聽感、系統 PNG 儲存、長時間效能與真人 PK 仍待驗。主地圖冷啟動手機模擬約 27.66 FPS，暖機後約 30 FPS；遊戲 FPS 另列原始報告，不以地圖數字替代。
+
+## 以下保留前版與歷史玩法的待驗紀錄
+
 更新：2026-11-29。版本：`geographic-stylized-v2`。
 
 **歷史主題重構、InputManager 及 90 組驗收尚未完成。** 下表是必要測試矩陣，不將原有遊戲的邏輯或開啟測試計入歷史版本通過。驗收規則見 [CROSS_PLATFORM_REQUIREMENTS.md](./CROSS_PLATFORM_REQUIREMENTS.md)。

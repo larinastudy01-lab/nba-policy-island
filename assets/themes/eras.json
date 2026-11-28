@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "version": "through-ages-v1",
+  "eras": [
+    {
+      "id": "origins",
+      "label": "1940–1960｜NBA 起源",
+      "accent": "#c2a475",
+      "ambient": "#e4d4bb",
+      "sun": "#ffdfad",
+      "roughness": 0.9,
+      "sound": "bounce",
+      "material": "暖木、奶油色與皮革",
+      "layout": "老球館與簡潔廣場"
+    },
+    {
+      "id": "culture",
+      "label": "1970｜街頭籃球文化",
+      "accent": "#dc986b",
+      "ambient": "#dbdfc5",
+      "sun": "#ffe5bc",
+      "roughness": 0.85,
+      "sound": "bounce",
+      "material": "暖磚、木板與戶外鋪面",
+      "layout": "街頭球場與公園"
+    },
+    {
+      "id": "showtime",
+      "label": "1980｜Showtime 時代",
+      "accent": "#c0a4d6",
+      "ambient": "#e1d9f4",
+      "sun": "#ffe4b0",
+      "roughness": 0.65,
+      "sound": "bounce",
+      "material": "紫金招牌與玻璃",
+      "layout": "棕櫚大道與燈光入口"
+    },
+    {
+      "id": "dynasty",
+      "label": "1990｜Jordan 王朝",
+      "accent": "#da8d89",
+      "ambient": "#e0dde0",
+      "sun": "#ffe8db",
+      "roughness": 0.8,
+      "sound": "bounce",
+      "material": "紅磚、深色金屬與看台",
+      "layout": "都市街廓與球館前場"
+    },
+    {
+      "id": "mamba",
+      "label": "2000｜Kobe 時代",
+      "accent": "#c1a1db",
+      "ambient": "#dbdbea",
+      "sun": "#ffe8bb",
+      "roughness": 0.72,
+      "sound": "bounce",
+      "material": "紫金、磨砂金屬與木地板",
+      "layout": "球館通道與城市廣場"
+    },
+    {
+      "id": "revolution",
+      "label": "2010｜三分球革命",
+      "accent": "#8dbce0",
+      "ambient": "#d8edfa",
+      "sun": "#fff1d6",
+      "roughness": 0.65,
+      "sound": "bounce",
+      "material": "藍金、玻璃與清晰場線",
+      "layout": "海灣步道與開放球場"
+    },
+    {
+      "id": "new-generation",
+      "label": "2020｜新世代 NBA",
+      "accent": "#91c9be",
+      "ambient": "#def0f0",
+      "sun": "#fff3df",
+      "roughness": 0.7,
+      "sound": "bounce",
+      "material": "自然石材、草地與玻璃",
+      "layout": "多用途廣場與湖岸公園"
+    }
+  ],
+  "phases": [
+    "day",
+    "dusk",
+    "night"
+  ]
+}

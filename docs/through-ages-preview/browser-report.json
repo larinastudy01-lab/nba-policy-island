@@ -1,0 +1,837 @@
+{
+  "version": "through-ages-v1",
+  "checks": [
+    "10-second skippable original 3D opening; audio remains silent without consent",
+    "Day, dusk and night share position and keep independent LIVE state",
+    "All seven eras and three quality levels switch without changing gameplay",
+    "Original policy and new nonpixel PNG photo retain shared data",
+    "90 game/viewport smoke cases: start, sample controls, 3D view, no horizontal page overflow, leave",
+    "Opening consent is remembered after reload; original local data remains",
+    "Vector fallback reaches arena/court, plays without WebGL and requests no pixel map images"
+  ],
+  "gamePerformance": [
+    {
+      "viewport": "1920x1080",
+      "cached": 3,
+      "game": "shoot",
+      "errors": [],
+      "gameFPS": 54.79118470737038,
+      "gameAnimation": true
+    }
+  ],
+  "matrix": [
+    {
+      "court": "harbor-01",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-02",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-03",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-04",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-05",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-01",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-02",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-03",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-04",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-05",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-01",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-02",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-03",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-04",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-05",
+      "width": 360,
+      "height": 800,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-01",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-02",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-03",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-04",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-05",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-01",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-02",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-03",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-04",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-05",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-01",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-02",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-03",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-04",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-05",
+      "width": 390,
+      "height": 844,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-01",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-02",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-03",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-04",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-05",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-01",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-02",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-03",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-04",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-05",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-01",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-02",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-03",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-04",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-05",
+      "width": 844,
+      "height": 390,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-01",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-02",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-03",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-04",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-05",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-01",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-02",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-03",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-04",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-05",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-01",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-02",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-03",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-04",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-05",
+      "width": 768,
+      "height": 1024,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-01",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-02",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-03",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-04",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-05",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-01",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-02",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-03",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-04",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-05",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-01",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-02",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-03",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-04",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-05",
+      "width": 1024,
+      "height": 768,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-01",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-02",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-03",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-04",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "harbor-05",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-01",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-02",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-03",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-04",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "park-05",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-01",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-02",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-03",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-04",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    },
+    {
+      "court": "roof-05",
+      "width": 1920,
+      "height": 1080,
+      "started": true,
+      "controlSample": true,
+      "noHorizontalOverflow": true,
+      "completedRound": false
+    }
+  ],
+  "errors": [],
+  "missing": [],
+  "note": "Actual Windows Chrome, touch/viewport emulation; not physical phones/tablets/macOS."
+}

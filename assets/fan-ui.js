@@ -16,7 +16,7 @@
 
     function upgradePhoto(image,record){
       const key=JSON.stringify(record);image.dataset.photoKey=key;image.dataset.artVersion=record.artVersion||"legacy";
-      if(!["stylized-3d-v1","stylized-3d-assets-v1","geographic-stylized-v2"].includes(record.artVersion)||!root.NBA3DPhoto)return;
+      if(!["stylized-3d-v1","stylized-3d-assets-v1","geographic-stylized-v2","through-ages-v1","vector-ages-v1"].includes(record.artVersion)||!root.NBA3DPhoto)return;
       root.NBA3DPhoto.exportPNG(record).then(blob=>{const reader=new FileReader();reader.onload=()=>{if(image.dataset.photoKey===key)image.src=reader.result;};reader.readAsDataURL(blob);}).catch(()=>{image.dataset.preview="compatible-vector";});
     }
     function storageNotice() {
@@ -78,7 +78,7 @@
         const button = document.createElement("button");button.type = "button";button.className = "album-card";
         button.dataset.teamId = station.teamId;button.dataset.starId = station.starId;button.dataset.collected = String(Boolean(savedPhoto));
         if (savedPhoto) {
-          const image = document.createElement("img");image.src = F.svgDataURL(F.photoSVG(savedPhoto));upgradePhoto(image,savedPhoto);
+          const image = document.createElement("img");image.src = F.svgDataURL(F.photoSVG({...savedPhoto,artVersion:"vector-ages-v1"}));upgradePhoto(image,{...savedPhoto,artVersion:"through-ages-v1"});
           image.alt = `${savedPhoto.avatar.nickname}與${station.starName}在${F.photoInfo(savedPhoto).venue}的收藏合影`;
           image.width = 960;image.height = 640;button.append(image);
         } else {
@@ -111,7 +111,7 @@
       const record = photo || liveRecord();
       const { star: station, team, venue, backgroundLabel, encounter,scenic } = F.photoInfo(record);
       $("photo-subject-label").textContent=scenic?"地標":"球星";$("photo-category-label").textContent=scenic?"類別":"球隊";$("photo-place-label").textContent=scenic?"觀景點":"場館";
-      $("photo-image").src = F.svgDataURL(F.photoSVG(record));upgradePhoto($("photo-image"),record);
+      $("photo-image").src = F.svgDataURL(F.photoSVG({...record,artVersion:"vector-ages-v1"}));upgradePhoto($("photo-image"),{...record,artVersion:"through-ages-v1"});
       $("photo-image").alt = scenic?`${record.avatar.nickname}在${venue}的${backgroundLabel}，含已儲存角色造型與原創地標背景`:`${record.avatar.nickname}與${station.starName}在${venue}的${backgroundLabel}合影，${record.pose === "ball" ? "舉球" : "站姿"}`;
       $("photo-caption").textContent = photo ? `定格照片・${F.photoDate(record.capturedAt)}（台灣時間）` : "即時構圖・使用已儲存造型，拍照後定格。";
       for (const [id, value] of [["photo-fan-name", record.avatar.nickname], ["photo-star-name", station.starName], ["photo-team-name", team.name], ["photo-venue-name", venue], ["photo-date", photo ? F.photoDate(record.capturedAt) + "（台灣）" : "按拍照時記錄"]]) $(id).textContent = value;
@@ -166,7 +166,7 @@
       if(sightContext)return F.normalizePhoto({version:3,artVersion:root.NBAPixel.SPEC.version,kind:"sight",locationId:sightContext.id,background:sightContext.background,avatar:session.getState().saved,pose:$("photo-pose").value,capturedAt:new Date().toISOString()});
       return encounterContext ? F.createEncounterPhoto(encounterContext, session.getState().saved, { pose: $("photo-pose").value }) : F.createPhoto(teamId, session.getState().saved, { pose: $("photo-pose").value, background: $("photo-background").value }, getGameState(),getBayFixture());
     }
-    function liveRecord(){const record=createLiveRecord();return root.NBA_MAP_RENDERER==="three"?{...record,artVersion:"geographic-stylized-v2"}:record;}
+    function liveRecord(){const record=createLiveRecord();return {...record,artVersion:root.NBA_MAP_RENDERER==="three"?"through-ages-v1":"vector-ages-v1",era:root.NBAJourney?.settings().era,dayPhase:root.NBAJourney?.settings().phase};}
     function renderEncounterPanel(placeId) {
       const encounter = today(), place = Island.getLandmark("encounter", placeId), arrived=hasArrived(placeId), present = encounter.locationId === placeId && arrived;
       const revealed = present && revealedKey === encounterKey(encounter), star = F.getStar(encounter.starId);
@@ -246,7 +246,7 @@
       try {
         const record = F.normalizePhoto(photo);
         if (document.fonts) await document.fonts.ready;
-        const blob = await F.exportPNG(record);
+        const blob = await F.exportPNG({...record,artVersion:root.NBA_MAP_RENDERER==="three"?"through-ages-v1":"vector-ages-v1"});
         if (!starDialog.open || JSON.stringify(F.normalizePhoto(photo)) !== JSON.stringify(record)) return;
         clearDownload();downloadURL = URL.createObjectURL(blob);
         const link = $("photo-png-link");link.href = downloadURL;link.download = `nba-policy-island-${record.kind==="sight"?record.locationId:record.kind === "encounter" ? "encounter-" + record.starId : record.teamId}-${record.capturedAt.slice(0, 10)}.png`;link.hidden = false;link.click();

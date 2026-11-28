@@ -1,6 +1,6 @@
 /* Geographic cartogram: primary Natural Earth coordinates, then deterministic island spacing.
    Legacy 2D keeps its original coordinate system; gameplay IDs and storage keys never change. */
-(function(r,f){const api=f(typeof module==='object'&&module.exports?require('./data.js'):r.NBAGeoData);if(typeof module==='object'&&module.exports)module.exports=api;else{r.NBAGeography=api;if(location.protocol!=='file:'&&new URL(location.href).searchParams.get('map')!=='2d')api.apply(r.NBAArchipelago);}})(globalThis,function(data){
+(function(r,f){const api=f(typeof module==='object'&&module.exports?require('./data.js'):r.NBAGeoData);if(typeof module==='object'&&module.exports)module.exports=api;else{r.NBAGeography=api;api.apply(r.NBAArchipelago);}})(globalThis,function(data){
   'use strict';
   const rad=Math.PI/180,p1=29.5*rad,p2=45.5*rad,n=(Math.sin(p1)+Math.sin(p2))/2,c=Math.cos(p1)**2+2*n*Math.sin(p1),rho0=Math.sqrt(c-2*n*Math.sin(38*rad))/n;
   function albers(lon,lat){const t=n*(lon+96)*rad,rho=Math.sqrt(c-2*n*Math.sin(lat*rad))/n;return {x:rho*Math.sin(t),y:rho0-rho*Math.cos(t)};}

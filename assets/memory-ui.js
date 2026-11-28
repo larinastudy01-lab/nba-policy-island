@@ -8,7 +8,7 @@
     const nodes=new Map(),entries=new Map();
     function el(tag,text,className){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n;}
     for(const event of M.ENTRANCES){
-      if(root.NBA_MAP_RENDERER!=="three"){const image=el('img');image.src=event.asset.replace('.svg','-point.svg');image.alt=event.point+'，原創像素場景入口';image.className='memory-prop';image.width=event.width;image.height=event.height;
+      if(!["three","vector"].includes(root.NBA_MAP_RENDERER)){const image=el('img');image.src=event.asset.replace('.svg','-point.svg');image.alt=event.point+'，原創像素場景入口';image.className='memory-prop';image.width=event.width;image.height=event.height;
       image.style.left=(event.x-event.width/2)/A.MAP.width*100+'%';image.style.top=(event.y-event.height)/A.MAP.height*100+'%';image.style.width=event.width/A.MAP.width*100+'%';image.style.zIndex=String(Math.round(event.y));$('memory-layer').append(image);}
       const hint=el('button',undefined,'memory-hint');hint.type='button';hint.id='landmark-'+event.id;hint.setAttribute('aria-label',event.point+'，前往後自主閱讀');hint.setAttribute('aria-haspopup','dialog');hint.setAttribute('aria-controls','memory-dialog');hint.dataset.visible='false';
       hint.style.left=(event.x+event.width/2+12)/A.MAP.width*100+'%';hint.style.top=(event.y-event.height/2+12)/A.MAP.height*100+'%';hint.style.zIndex=String(Math.round(event.entrance.y)+1);

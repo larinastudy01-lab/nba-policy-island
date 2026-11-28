@@ -4,6 +4,7 @@ const {server,out}=require('./stylized-browser.cjs'),fs=require('node:fs'),path=
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'C:/Users/larin/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules/playwright');
 async function run(){
   await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port,browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--enable-unsafe-swiftshader','--disable-background-networking']}),rows=[],errors=[],checks=[];
+  const createContext=browser.newContext.bind(browser);browser.newContext=async(...args)=>{const c=await createContext(...args);await c.addInitScript(()=>{localStorage.setItem('nba-policy-island:opening:v1','seen');localStorage.setItem('nba-policy-island:tutorial:v1','done');});return c;};
   try{
     for(const mobile of [false,true]){
       const context=await browser.newContext(mobile?{viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true}:{viewport:{width:1440,height:1000},deviceScaleFactor:1});context.setDefaultTimeout(15000);await context.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());const page=await context.newPage();page.on('pageerror',e=>errors.push(e.stack));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
@@ -19,6 +20,6 @@ async function run(){
       await context.close();
     }
     assert.deepEqual(errors,[]);checks.push('No real-browser runtime/shader errors');
-  }finally{await browser.close();await new Promise(r=>server.close(r));fs.writeFileSync(path.join(out,'performance-report.json'),JSON.stringify({version:'geographic-stylized-v2',recordedAt:new Date().toISOString(),measurement:'fresh 6.5-second near-view window after idle reset',checks,errors,performance:rows,note:'Mobile is Chrome emulation on recorded desktop GPU. Physical device FPS and long session remain pending.'},null,2)+'\n');}
+  }finally{await browser.close();await new Promise(r=>server.close(r));fs.writeFileSync(path.join(out,'performance-report.json'),JSON.stringify({version:'through-ages-v1',recordedAt:new Date().toISOString(),measurement:'fresh 6.5-second near-view window after idle reset',checks,errors,performance:rows,note:'Mobile is Chrome emulation on recorded desktop GPU. Physical device FPS and long session remain pending.'},null,2)+'\n');}
 }
 run().catch(e=>{console.error(e);server.close();process.exitCode=1;});

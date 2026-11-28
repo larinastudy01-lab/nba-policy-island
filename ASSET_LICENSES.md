@@ -122,3 +122,10 @@ Models are recoloured where needed, deduplicated, welded, simplified and quantiz
 Natural Earth contributors / Tom Patterson and Nathaniel Vaughn Kelso. Public Domain. [Terms](https://www.naturalearthdata.com/about/terms-of-use/), [Downloads](https://www.naturalearthdata.com/downloads/), [primary dataset repository](https://github.com/nvkelso/natural-earth-vector). Acquired 2026-11-29. `ne_50m_admin_0_countries`, `ne_50m_lakes`, `ne_10m_populated_places_simple`; selected CONUS / southern Canada / five Great Lakes and 30 franchise city anchors. Clipped and rounded, projected with Albers equal-area (29.5 / 45.5 parallels, -96 central meridian), then displaced for game-island spacing. The retained raw lon/lat are separate from display offsets. `assets/geography/sources.json` and `cities.json` document provenance.
 
 All procedural city, rounded character, panel/game and cartogram geometry added in this release is original project code. Failed pack attempts are recorded in `assets/models/acquisition-v2.json` and `quaternius-v2.json`; no failed download is listed as imported.
+# 夢回 NBA 第一階段新增美術（2026-11-29）
+
+`through-ages-v1` 沿用本檔已列來源的 36 個本地 GLB 與使用者提供的隊徽，沒有新增未核實授權的外部素材。作者與 CC BY 署名繼續保留在網站「3D 素材作者與授權」。
+
+以下為本專案原創程序素材：`assets/three-map/opening.js` 的籃球、紀念獎盃與城市剪影；`assets/vector-art.js`、`vector-map.js` 的平滑向量場景與角色組合；`assets/audio/journey-bounce.wav` 的兩秒合成落地音效。這些是自訂藝術表現，非 NBA 官方影像、官方獎盃模型或歷史轉播音訊。音效為 PCM16、22,050 Hz、單聲道，僅在使用者按下音效按鈕後播放。
+
+舊像素檔案保留供歷史資料相容與回歸檢查；本版正式 3D、向量備援及新合影不將它們作為預設顯示。原收藏紀錄不刪除或覆寫；介面依拍攝當時資料重建新版畫面。

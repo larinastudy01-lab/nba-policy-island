@@ -15,9 +15,9 @@
     if(!forced){try{
       const module=await import('./three-map/main.js');const renderer=module.prepare();
       root.NBA_MAP_RENDERER='three';document.body.dataset.renderer='three';mountWorld(false);initialize({renderer});return;
-    }catch(error){root.NBA_MAP_BOOT_ERROR=String(error.message);document.body.dataset.fallbackReason=String(error.message);if(root.NBAArchipelago.geographic){const url=new URL(location.href);url.searchParams.set('map','2d');url.searchParams.set('fallback','webgl');location.replace(url.href);return;}}}
-    root.NBA_MAP_RENDERER='2d';document.body.dataset.renderer='2d';mountWorld(true);initialize();
-    if(root.NBA_MAP_BOOT_ERROR){const message=document.createElement('p');message.className='fallback-notice';message.setAttribute('role','status');message.textContent='3D 地圖暫時無法啟動，已切換原版 2D 備援；玩法與本機進度繼續保留。';$('island-map-area').before(message);}
+    }catch(error){root.NBA_MAP_BOOT_ERROR=String(error.message);document.body.dataset.fallbackReason=String(error.message);}}
+    root.NBAVectorArt.install();root.NBA_MAP_RENDERER='vector';document.body.dataset.renderer='vector';mountWorld(false);initialize({renderer:root.NBAVectorMapRenderer});
+    if(root.NBA_MAP_BOOT_ERROR){const message=document.createElement('p');message.className='fallback-notice';message.setAttribute('role','status');message.textContent='3D 地圖暫時無法啟動，已切換平滑向量備援；玩法與本機進度繼續保留。';$('island-map-area').before(message);}
   }
   root.NBAMapBoot={start};
 })(globalThis);

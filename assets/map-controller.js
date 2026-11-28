@@ -15,7 +15,7 @@
       back(){E.back(camera);view();},hasArrived:id=>E.hasArrived(walker,id),
       tick(now=Date.now()){const moving=walker.moving,arrived=E.tick(walker,now);if(moving||arrived)changed();return arrived;},
       pause(paused,now=Date.now()){if(paused&&pausedAt===null)pausedAt=now;else if(!paused&&pausedAt!==null){if(walker.moving)walker.startedAt+=now-pausedAt;pausedAt=null;}},
-      setTheme(next){theme=next==='night'?'night':'day';notify('theme');},getTheme:()=>theme,
+      setTheme(next){theme=['day','dusk','night'].includes(next)?next:'day';notify('theme');},getTheme:()=>theme,
       refreshScene(){notify('state');},refreshLabels(){notify('state');},refreshEncounter(){notify('encounter');},
       destroy(){listeners.clear();}
     };return controller;

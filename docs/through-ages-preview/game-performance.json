@@ -1,0 +1,37 @@
+{
+  "version": "through-ages-v1",
+  "note": "Warm 6.5-second game window in Windows Chrome; mobile is desktop GPU emulation, not a physical phone.",
+  "samples": [
+    {
+      "device": "mobile-emulation",
+      "visuals": {
+        "cached": 1,
+        "game": "shoot",
+        "errors": [],
+        "gameFPS": 30.00200013352106,
+        "gameAnimation": true
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "canvas": {
+        "width": 480,
+        "height": 258
+      }
+    },
+    {
+      "device": "desktop",
+      "visuals": {
+        "cached": 1,
+        "game": "shoot",
+        "errors": [],
+        "gameFPS": 60.132291040767576,
+        "gameAnimation": true
+      },
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "canvas": {
+        "width": 597,
+        "height": 321
+      }
+    }
+  ],
+  "errors": []
+}

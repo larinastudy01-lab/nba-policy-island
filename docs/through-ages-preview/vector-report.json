@@ -1,0 +1,8 @@
+{
+  "checks": [
+    "Actual pointer clicks select island, arrive at arena and arrive at court via the vector map",
+    "Direct local index.html initializes vector exploration and a working shooting game without HTTP server"
+  ],
+  "errors": [],
+  "note": "Real Chrome; forced vector and file URL, no remote service changes."
+}

@@ -1,7 +1,7 @@
 "use strict";
 
 function initializeIsland(options = {}) {
-  const isThree = options.renderer?.kind === "three";
+  const isThree = ["three","vector"].includes(options.renderer?.kind);
   const C = globalThis.NBAIsland;
   const F = globalThis.NBAFan;
   const S = globalThis.NBASights;
@@ -636,8 +636,8 @@ function initializeIsland(options = {}) {
     if(gameMode==="tutorial"){$("tutorial-feedback").textContent=result.feedback;tickGame();return;}
     if(result.accepted){$("shot-feedback").textContent=gameId==="shoot"?(result.hit?"命中！＋1":"差一點，再抓準節奏。"):result.feedback;if(result.hit)playSound("sound-hit");}tickGame();
   }
-  $("shoot-button").addEventListener("click",()=>actGame({type:"shoot"}));
-  $("game-stage").addEventListener("keydown",event=>{if(event.target===$("game-stage"))miniUI.key(event);});
+  (globalThis.NBAInput?.bindButton||((b,f)=>b.addEventListener("click",f)))($("shoot-button"),()=>actGame({type:"shoot"}));
+  $("game-stage").addEventListener("keydown",event=>{if(!event.target.matches?.("input,select,textarea")&&!(event.target.closest?.("button")&&[" ","Enter"].includes(event.key)))miniUI.key(event);});
   $("practice-start").addEventListener("click",()=>{audioUnlocked=true;if(state.kind!=="court")return;if(roomSnapshot&&["countdown","playing"].includes(roomSnapshot.room.status)){$("lobby-notice").textContent="真人對局進行中，請先完成對局。";return;}tutorialContinuation=null;startGame(practicedGames.has(C.getLandmark("court",state.id).gameId)?"practice":"tutorial",state.id,Date.now()+1000);});
   function finishTutorial(){if(gameMode!=="tutorial")return;practicedGames.add(gameId);const continuation=tutorialContinuation,courtId=gameCourtId;tutorialContinuation=null;
     if(continuation){leavePractice(false);panelRequested=true;renderPanel();continuation();}else startGame("practice",courtId,Date.now()+1000);}
@@ -684,6 +684,7 @@ function initializeIsland(options = {}) {
   explorer=(options.renderer||globalThis.NBAExplorerUI).initialize({getSelection:()=>state,getGameState:()=>state.gameState,getEncounter:currentEncounter,getBayFixture:()=>bayFixture,onNavigate:(kind,id)=>kind==="memory"?memoryUI.navigate(id,true):openLandmark(kind,id),getAvatar:()=>fanUI.savedAvatar(),onView:camera=>{memoryUI.observeView(camera);shopUI.observeView(camera);if(camera.level!=="venue")closeStationPanel(false);},
     onPosition:(position,walker)=>{memoryUI.observePosition(position,walker);shopUI.refreshEntrance();fanUI.updateLocation();const key=`${state.kind}:${state.id}:${explorer?.hasArrived(state.id)}`;
       if(key!==lastArrivalContext){if(state.kind==="encounter")fanUI.renderEncounterPanel(state.id);if(explorer?.hasArrived(state.id)&&panelRequested){renderPanel();if(pendingPanelFocus){pendingPanelFocus=false;$("panel-title").focus();}}}lastArrivalContext=key;},onAnnounce:announce});
+  globalThis.NBAJourney?.mount(explorer);
   // 初始化期間 explorer 尚未賦值；再以行走模型的初始座標渲染一次。
   fanUI.updateLocation();
   function refreshEncounterDay(){const date=currentEncounter().date;if(date!==lastEncounterDate){lastEncounterDate=date;if(state.kind==="encounter")fanUI.renderEncounterPanel(state.id);fanUI.refreshGame();explorer?.refreshEncounter();}}

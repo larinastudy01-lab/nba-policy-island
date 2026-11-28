@@ -1,5 +1,7 @@
 # NBA 政策島
 
+最新版 **`through-ages-v1`｜夢回 NBA：穿越籃球時光**：十秒原創 3D 開場、七種年代氛圍、白天／黃昏／夜晚、低中高畫質、精簡 HUD 與漸進教學。WebGL 無法啟動或直接開檔時採平滑向量備援，不再顯示像素底圖。保留 30 隊、20 景點、15 原遊戲、跑車、購物及本機資料。[第一階段報告、畫面與待驗](./docs/THROUGH_THE_AGES_PHASE1.md)。下方保留歷代開發紀錄。
+
 # 本次發佈與後續驗收
 
 `geographic-stylized-v2` 的上線範圍及限制見 [發佈紀錄](./docs/RELEASE_GEOGRAPHIC_V2.md)。[歷史旅程修訂計畫](./docs/NBA_HISTORY_JOURNEY_PLAN.md)已改為十五座既有球場整合；歷史玩法、InputManager 與九十組跨裝置驗收仍待完成，詳見 [跨裝置測試報告](./docs/CROSS_PLATFORM_TEST_REPORT.md)。
