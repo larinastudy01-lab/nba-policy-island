@@ -276,7 +276,7 @@ function initializeIsland(options = {}) {
       renderRoom();
     }else if(state.kind==="sight"){
       $("map-scoreboard").hidden=true;
-      $("sight-image").src=isThree?F.svgDataURL(globalThis.NBAStylizedArt.landmark(item)):$("island-map").dataset.theme==="night"?item.pixelNightAsset:item.pixelAsset;$("sight-image").alt=`${item.name}的原創斜俯視街景插畫`;
+      if(globalThis.NBA3DVisual)globalThis.NBA3DVisual.image($("sight-image"),"sight",item);else $("sight-image").src=isThree?F.svgDataURL(globalThis.NBAStylizedArt.landmark(item)):$("island-map").dataset.theme==="night"?item.pixelNightAsset:item.pixelAsset;$("sight-image").alt=`${item.name}的原創斜俯視街景插畫`;
       $("sight-description").textContent=item.description;$("sight-access").textContent=item.photo?"已沿步道抵達觀景點。可用已儲存的球迷造型拍照與下載 PNG；景點照不計入主場或偶遇收藏。":"街景眺望・此處沒有開放步行入口；鏡頭查看地標，玩家保持原位。";$("sight-photo").hidden=!item.photo;
     }else{
       $("map-scoreboard").hidden=true;fanUI?.renderEncounterPanel(item.id);
@@ -623,7 +623,7 @@ function initializeIsland(options = {}) {
   function renderPracticeFan(){
     const visible=Boolean(fanUI&&gameMode==="practice"&&gameFinished);
     $("practice-fan-result").hidden=!visible;
-    if(visible){const avatar=fanUI.savedAvatar();$("practice-fan-avatar").innerHTML=fanUI.renderAvatar(avatar);$("practice-fan-caption").textContent=`${avatar.nickname}，這一局的努力收進你的球迷故事。`;}
+    if(visible){const avatar=fanUI.savedAvatar();if(globalThis.NBA3DVisual)globalThis.NBA3DVisual.avatar($("practice-fan-avatar"),avatar);else $("practice-fan-avatar").innerHTML=fanUI.renderAvatar(avatar);$("practice-fan-caption").textContent=`${avatar.nickname}，這一局的努力收進你的球迷故事。`;}
   }
   function actGame(action){
     audioUnlocked=true;if(!game||gameFinished||state.kind!=="court"||state.id!==gameCourtId)return;

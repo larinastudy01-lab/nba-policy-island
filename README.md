@@ -1,5 +1,11 @@
 # NBA 政策島
 
+# 本次發佈與後續驗收
+
+`geographic-stylized-v2` 的上線範圍及限制見 [發佈紀錄](./docs/RELEASE_GEOGRAPHIC_V2.md)。[歷史旅程修訂計畫](./docs/NBA_HISTORY_JOURNEY_PLAN.md)已改為十五座既有球場整合；歷史玩法、InputManager 與九十組跨裝置驗收仍待完成，詳見 [跨裝置測試報告](./docs/CROSS_PLATFORM_TEST_REPORT.md)。
+
+最新版本 **`geographic-stylized-v2`**：以 Natural Earth 真實城市座標重排美國地理群島，保留 30 隊獨立島與全部功能 ID；正式畫面採 Stylized 3D，換裝、尋星、合影、記憶簿、商品與 15 款遊戲均接入共用 WebGL 渲染。新增七款跑車與城市交通，全部 **36 個 GLB** 存在專案內。開發分支為 `integration/geographic-stylized-v2`，通過測試後沿用 `main` 根目錄發布；前版提交 `ab0591d` 保留備援。見 [本版報告、前後畫面、效能及九週表](./docs/GEOGRAPHIC_STYLIZED_V2.md)、[授權](./ASSET_LICENSES.md)、[未取得的完整包／候選](./MANUAL_DOWNLOAD.md)。下方保留版本演進紀錄。
+
 發布版本 `stylized-3d-assets-v1` 已自動下載並整合 **24 個授權明確的非像素 GLB**，包括籃球設施、現代球館、三個美國地標、人物動畫與街景。新素材分布在勇士／湖人／公牛／尼克近景，保留原玩法、入口及舊合影。見 [下載與實際 Three.js 驗證](./docs/DOWNLOADED_MODELS.md)、[授權](./ASSET_LICENSES.md)及 [僅限原站下載失敗的完整包](./MANUAL_DOWNLOAD.md)。
 
 正式首頁已接上平滑的 Three.js 微縮城市、共用原玩法面板與 2D 備援。勇士／湖人／公牛／尼克提供詳細近景，其餘 26 隊保留簡化島嶼。GitHub Pages 沿用 `main` 根目錄發布至 [NBA 政策島](https://larinastudy01-lab.github.io/nba-policy-island/)。整合來源分支為 `integration/stylized-three-v1`，舊版保留於 `backup/pre-stylized-8cccaa4`。本版版本、實際瀏覽器測試、效能、截圖及待驗範圍見 [Stylized 3D 整合報告](./docs/STYLIZED_3D_INTEGRATION.md)及 [發布紀錄](./docs/RELEASE_2026-11-29.md)。下方與歷史報告中的「未部署」描述保留當時開發紀錄，最新發布範圍以本段與發布紀錄為準。

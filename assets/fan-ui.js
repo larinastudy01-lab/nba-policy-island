@@ -16,7 +16,7 @@
 
     function upgradePhoto(image,record){
       const key=JSON.stringify(record);image.dataset.photoKey=key;image.dataset.artVersion=record.artVersion||"legacy";
-      if(!["stylized-3d-v1","stylized-3d-assets-v1"].includes(record.artVersion)||!root.NBA3DPhoto)return;
+      if(!["stylized-3d-v1","stylized-3d-assets-v1","geographic-stylized-v2"].includes(record.artVersion)||!root.NBA3DPhoto)return;
       root.NBA3DPhoto.exportPNG(record).then(blob=>{const reader=new FileReader();reader.onload=()=>{if(image.dataset.photoKey===key)image.src=reader.result;};reader.readAsDataURL(blob);}).catch(()=>{image.dataset.preview="compatible-vector";});
     }
     function storageNotice() {
@@ -28,7 +28,7 @@
     function renderDraft(fillFields = false) {
       const { draft, saved } = session.getState();
       if (fillFields) for (const key of fields) $(`fan-${key}`).value = draft[key];
-      $("avatar-preview").innerHTML = F.avatarSVG(draft);
+      if(root.NBA3DVisual)root.NBA3DVisual.avatar($("avatar-preview"),draft);else $("avatar-preview").innerHTML = F.avatarSVG(draft);
       $("fan-draft-label").textContent = JSON.stringify(draft) === JSON.stringify(saved) ? "與目前套用造型相同" : "試穿中・按儲存才套用";
       $("fan-saved-summary").textContent = `目前套用：${saved.nickname}・${Island.getLandmark("nba", saved.jersey).name} ${saved.number} 號`;
       storageNotice();
@@ -134,13 +134,13 @@
       $("star-dialog-title").textContent = `${team.name}｜主場尋星`;
       $("star-era-label").textContent = `${station.starName}・${station.label}`;
       $("arena-explore").hidden = false;$("photo-studio").hidden = true;
-      $("arena-background").src = station.background;$("arena-background").alt = `${station.venue}：原創看台、木地板與球員通道場景`;
-      $("star-portrait").src = station.illustration;$("star-portrait").alt = `${station.starName}的原創 Q 版隊史致敬插畫`;
+      if(root.NBA3DVisual)root.NBA3DVisual.image($("arena-background"),"arena",{teamId:id});else $("arena-background").src = station.background;$("arena-background").alt = `${station.venue}：原創看台、木地板與球員通道場景`;
+      if(root.NBA3DVisual)root.NBA3DVisual.image($("star-portrait"),"star",{starId:station.starId});else $("star-portrait").src = station.illustration;$("star-portrait").alt = `${station.starName}的原創 Q 版隊史致敬插畫`;
       $("star-landmark").style.left = `${station.x}%`;$("star-landmark").style.top = `${station.y}%`;
       $("star-landmark").setAttribute("aria-label",`${station.point}找到${station.starName}，按下進入合影`);
       $("arena-clue").textContent = `合影點：${station.point}。點場景中的${station.starName}，或用 Tab 選取後按 Enter。`;
       $("star-spot-label").textContent = `${station.starName}・點我合影`;
-      $("arena-visitor").innerHTML = F.avatarSVG(session.getState().saved);
+      if(root.NBA3DVisual)root.NBA3DVisual.avatar($("arena-visitor"),session.getState().saved);else $("arena-visitor").innerHTML = F.avatarSVG(session.getState().saved);
       $("arena-caption").textContent = `${station.venue}・${station.point}・${station.label}。場景為自訂設計。`;
       $("photo-pose").value = "stand";$("photo-background").value = "day";updateNight();
       $("photo-status").textContent = "";
@@ -166,15 +166,15 @@
       if(sightContext)return F.normalizePhoto({version:3,artVersion:root.NBAPixel.SPEC.version,kind:"sight",locationId:sightContext.id,background:sightContext.background,avatar:session.getState().saved,pose:$("photo-pose").value,capturedAt:new Date().toISOString()});
       return encounterContext ? F.createEncounterPhoto(encounterContext, session.getState().saved, { pose: $("photo-pose").value }) : F.createPhoto(teamId, session.getState().saved, { pose: $("photo-pose").value, background: $("photo-background").value }, getGameState(),getBayFixture());
     }
-    function liveRecord(){const record=createLiveRecord();return root.NBA_MAP_RENDERER==="three"?{...record,artVersion:"stylized-3d-assets-v1"}:record;}
+    function liveRecord(){const record=createLiveRecord();return root.NBA_MAP_RENDERER==="three"?{...record,artVersion:"geographic-stylized-v2"}:record;}
     function renderEncounterPanel(placeId) {
       const encounter = today(), place = Island.getLandmark("encounter", placeId), arrived=hasArrived(placeId), present = encounter.locationId === placeId && arrived;
       const revealed = present && revealedKey === encounterKey(encounter), star = F.getStar(encounter.starId);
       $("encounter-date").textContent = `${encounter.date}・台灣日期`;
-      $("encounter-scene-image").src = `./assets/pixel/encounters/${place.id}.svg`;$("encounter-scene-image").alt = `${place.name}・${place.scene}`;
+      if(root.NBA3DVisual)root.NBA3DVisual.image($("encounter-scene-image"),"encounter",place);else $("encounter-scene-image").src = `./assets/pixel/encounters/${place.id}.svg`;$("encounter-scene-image").alt = `${place.name}・${place.scene}`;
       $("encounter-presence").textContent = !arrived ? "沿道路前往中；抵達後再看看附近有誰。" : present ? "附近有熟悉的身影……" : "這裡今天很安靜，沿著島上的步道去其他地點看看吧。";
       $("encounter-character").hidden = !present;$("encounter-character").dataset.revealed = String(revealed);
-      if (present) { $("encounter-portrait").src = star.illustration;$("encounter-portrait").alt = revealed ? `${star.starName}，${star.label}` : "熟悉的身影，點擊揭曉身分"; }
+      if (present) { if(root.NBA3DVisual)root.NBA3DVisual.image($("encounter-portrait"),"star",{starId:star.starId});else $("encounter-portrait").src = star.illustration;$("encounter-portrait").alt = revealed ? `${star.starName}，${star.label}` : "熟悉的身影，點擊揭曉身分"; }
       $("encounter-character").setAttribute("aria-label", revealed ? `代表球星 ${star.starName}` : "點擊熟悉的身影，揭曉身分");
       $("encounter-character-label").textContent = revealed ? star.starName : "點擊揭曉";
       $("encounter-reveal").hidden = !revealed;

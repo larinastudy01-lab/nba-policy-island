@@ -11,6 +11,17 @@ export const MODEL_CATALOG={
     "bytes": 392684,
     "animations": []
   },
+  "poly-animated-hoop": {
+    "id": "poly-animated-hoop",
+    "name": "Basket ball and hoop",
+    "category": "basketball",
+    "author": "Armory_3D",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/i3LLacyQP4",
+    "file": "../models/basketball/poly-animated-hoop.glb",
+    "bytes": 65996,
+    "animations": []
+  },
   "poly-animated-human": {
     "id": "poly-animated-human",
     "name": "Animated Human",
@@ -31,6 +42,39 @@ export const MODEL_CATALOG={
       "Human Armature|Working"
     ]
   },
+  "poly-city-food-van": {
+    "id": "poly-city-food-van",
+    "name": "Sushi Truck",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/OgrROxABGT",
+    "file": "../models/vehicles/poly-city-food-van.glb",
+    "bytes": 268844,
+    "animations": []
+  },
+  "poly-city-suv": {
+    "id": "poly-city-suv",
+    "name": "SUV",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/xsMtZhBkxL",
+    "file": "../models/vehicles/poly-city-suv.glb",
+    "bytes": 124536,
+    "animations": []
+  },
+  "poly-city-taxi": {
+    "id": "poly-city-taxi",
+    "name": "Taxi",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/x43lOScTpN",
+    "file": "../models/vehicles/poly-city-taxi.glb",
+    "bytes": 124320,
+    "animations": []
+  },
   "poly-empire-state": {
     "id": "poly-empire-state",
     "name": "Empire State Building",
@@ -42,6 +86,39 @@ export const MODEL_CATALOG={
     "bytes": 133300,
     "animations": []
   },
+  "poly-endurance": {
+    "id": "poly-endurance",
+    "name": "Endurance Race Car",
+    "category": "vehicles",
+    "author": "Streetsrak3r",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/O2ctIKoLrr",
+    "file": "../models/vehicles/poly-endurance.glb",
+    "bytes": 496840,
+    "animations": []
+  },
+  "poly-f40": {
+    "id": "poly-f40",
+    "name": "Ferrari F40",
+    "category": "vehicles",
+    "author": "PuKkBuMXDD",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/RTwim9bhNd",
+    "file": "../models/vehicles/poly-f40.glb",
+    "bytes": 241248,
+    "animations": []
+  },
+  "poly-full-court": {
+    "id": "poly-full-court",
+    "name": "Basketball court",
+    "category": "basketball",
+    "author": "Poly by Google",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/85FpUr2fHkH",
+    "file": "../models/basketball/poly-full-court.glb",
+    "bytes": 24676,
+    "animations": []
+  },
   "poly-golden-gate": {
     "id": "poly-golden-gate",
     "name": "Golden Gate bridge",
@@ -51,6 +128,28 @@ export const MODEL_CATALOG={
     "source": "https://poly.pizza/m/a648BwpXx-A",
     "file": "../models/landmarks/poly-golden-gate.glb",
     "bytes": 148832,
+    "animations": []
+  },
+  "poly-gtr": {
+    "id": "poly-gtr",
+    "name": "Nissan GTR",
+    "category": "vehicles",
+    "author": "David Sirera",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/a_HKCtYAv2W",
+    "file": "../models/vehicles/poly-gtr.glb",
+    "bytes": 505124,
+    "animations": []
+  },
+  "poly-lambo": {
+    "id": "poly-lambo",
+    "name": "CAR Model",
+    "category": "vehicles",
+    "author": "Ignition Labs",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/5zUWP5UsLg-",
+    "file": "../models/vehicles/poly-lambo.glb",
+    "bytes": 465436,
     "animations": []
   },
   "poly-large-building": {
@@ -84,6 +183,39 @@ export const MODEL_CATALOG={
     "source": "https://poly.pizza/m/DsrrAYmucG",
     "file": "../models/nature/poly-palm-tree.glb",
     "bytes": 76624,
+    "animations": []
+  },
+  "poly-sport-coupe": {
+    "id": "poly-sport-coupe",
+    "name": "Sports Car",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/1mkmFkAz5v",
+    "file": "../models/vehicles/poly-sport-coupe.glb",
+    "bytes": 120840,
+    "animations": []
+  },
+  "poly-sport-roadster": {
+    "id": "poly-sport-roadster",
+    "name": "Sports Car",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/OyqKvX9xNh",
+    "file": "../models/vehicles/poly-sport-roadster.glb",
+    "bytes": 117844,
+    "animations": []
+  },
+  "poly-sport-yellow": {
+    "id": "poly-sport-yellow",
+    "name": "Sports Car",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/Gzj704DXdr",
+    "file": "../models/vehicles/poly-sport-yellow.glb",
+    "bytes": 144752,
     "animations": []
   },
   "poly-street-straight": {
@@ -263,7 +395,7 @@ export const MODEL_CATALOG={
     "license": "CC-BY-4.0",
     "source": "https://vinish.dev/free-3d-models/supercars",
     "file": "../models/vehicles/vinish-wedge-supercar.glb",
-    "bytes": 1610560,
+    "bytes": 1714664,
     "animations": []
   },
   "vinish-youth-hoop": {

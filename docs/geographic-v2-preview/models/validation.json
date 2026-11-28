@@ -1,0 +1,241 @@
+{
+  "recordedAt": "2026-11-28T17:02:52.956Z",
+  "checks": [
+    "Real Chrome GLTFLoader + texture decode + actual WebGL rendering: 36/36 local GLBs"
+  ],
+  "errors": [],
+  "missing": [],
+  "models": [
+    {
+      "id": "innerscene-arena",
+      "drawCalls": 9,
+      "triangles": 13120,
+      "animations": []
+    },
+    {
+      "id": "poly-animated-hoop",
+      "drawCalls": 3,
+      "triangles": 1328,
+      "animations": []
+    },
+    {
+      "id": "poly-animated-human",
+      "drawCalls": 1,
+      "triangles": 1578,
+      "animations": [
+        "Human Armature|ArmatureAction.002",
+        "Human Armature|Death",
+        "Human Armature|Idle",
+        "Human Armature|Jump",
+        "Human Armature|Punch",
+        "Human Armature|Run",
+        "Human Armature|Walk",
+        "Human Armature|Working"
+      ]
+    },
+    {
+      "id": "poly-city-food-van",
+      "drawCalls": 3,
+      "triangles": 9286,
+      "animations": []
+    },
+    {
+      "id": "poly-city-suv",
+      "drawCalls": 6,
+      "triangles": 3250,
+      "animations": []
+    },
+    {
+      "id": "poly-city-taxi",
+      "drawCalls": 6,
+      "triangles": 3240,
+      "animations": []
+    },
+    {
+      "id": "poly-empire-state",
+      "drawCalls": 2,
+      "triangles": 3724,
+      "animations": []
+    },
+    {
+      "id": "poly-endurance",
+      "drawCalls": 12,
+      "triangles": 14301,
+      "animations": []
+    },
+    {
+      "id": "poly-f40",
+      "drawCalls": 12,
+      "triangles": 6140,
+      "animations": []
+    },
+    {
+      "id": "poly-full-court",
+      "drawCalls": 1,
+      "triangles": 654,
+      "animations": []
+    },
+    {
+      "id": "poly-golden-gate",
+      "drawCalls": 4,
+      "triangles": 3712,
+      "animations": []
+    },
+    {
+      "id": "poly-gtr",
+      "drawCalls": 9,
+      "triangles": 14370,
+      "animations": []
+    },
+    {
+      "id": "poly-lambo",
+      "drawCalls": 2,
+      "triangles": 7848,
+      "animations": []
+    },
+    {
+      "id": "poly-large-building",
+      "drawCalls": 5,
+      "triangles": 840,
+      "animations": []
+    },
+    {
+      "id": "poly-liberty",
+      "drawCalls": 3,
+      "triangles": 2316,
+      "animations": []
+    },
+    {
+      "id": "poly-palm-tree",
+      "drawCalls": 1,
+      "triangles": 2846,
+      "animations": []
+    },
+    {
+      "id": "poly-sport-coupe",
+      "drawCalls": 6,
+      "triangles": 3116,
+      "animations": []
+    },
+    {
+      "id": "poly-sport-roadster",
+      "drawCalls": 7,
+      "triangles": 3026,
+      "animations": []
+    },
+    {
+      "id": "poly-sport-yellow",
+      "drawCalls": 3,
+      "triangles": 4718,
+      "animations": []
+    },
+    {
+      "id": "poly-street-straight",
+      "drawCalls": 1,
+      "triangles": 148,
+      "animations": []
+    },
+    {
+      "id": "polyhaven-bench",
+      "drawCalls": 1,
+      "triangles": 522,
+      "animations": []
+    },
+    {
+      "id": "vinish-arena-hoop",
+      "drawCalls": 8,
+      "triangles": 2992,
+      "animations": []
+    },
+    {
+      "id": "vinish-ball-rack",
+      "drawCalls": 4,
+      "triangles": 32686,
+      "animations": []
+    },
+    {
+      "id": "vinish-bleachers",
+      "drawCalls": 2,
+      "triangles": 1924,
+      "animations": []
+    },
+    {
+      "id": "vinish-coconut-palm",
+      "drawCalls": 4,
+      "triangles": 5774,
+      "animations": []
+    },
+    {
+      "id": "vinish-flip-scoreboard",
+      "drawCalls": 5,
+      "triangles": 2556,
+      "animations": []
+    },
+    {
+      "id": "vinish-half-court",
+      "drawCalls": 3,
+      "triangles": 637,
+      "animations": []
+    },
+    {
+      "id": "vinish-led-scoreboard",
+      "drawCalls": 6,
+      "triangles": 1657,
+      "animations": []
+    },
+    {
+      "id": "vinish-portable-shot-clock",
+      "drawCalls": 4,
+      "triangles": 1040,
+      "animations": []
+    },
+    {
+      "id": "vinish-scorers-table",
+      "drawCalls": 9,
+      "triangles": 2794,
+      "animations": []
+    },
+    {
+      "id": "vinish-security-guard",
+      "drawCalls": 14,
+      "triangles": 15624,
+      "animations": [
+        "Idle",
+        "Walk",
+        "Run"
+      ]
+    },
+    {
+      "id": "vinish-street-hoop",
+      "drawCalls": 7,
+      "triangles": 2846,
+      "animations": []
+    },
+    {
+      "id": "vinish-team-bench",
+      "drawCalls": 7,
+      "triangles": 8928,
+      "animations": []
+    },
+    {
+      "id": "vinish-two-tone-basketball",
+      "drawCalls": 3,
+      "triangles": 6760,
+      "animations": []
+    },
+    {
+      "id": "vinish-wedge-supercar",
+      "drawCalls": 16,
+      "triangles": 73144,
+      "animations": []
+    },
+    {
+      "id": "vinish-youth-hoop",
+      "drawCalls": 6,
+      "triangles": 2280,
+      "animations": []
+    }
+  ],
+  "islands": [],
+  "note": "Real Chrome on recorded desktop GPU; no deployment or remote SQL. Physical mobile and friend PK pending."
+}

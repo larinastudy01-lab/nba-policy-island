@@ -95,3 +95,30 @@ The following sections are retained historical records. Their earlier not-downlo
 5. 跑終端機解析、路徑及回歸測試，再手動檢查陰影、朝向、遮擋、近遠景和效能。通過後才提正式整合。
 
 Draco／Meshopt 尚未採用：本次兩個 GLB 合計 477,392 bytes，不引入額外 decoder 成本。日後確有體積瓶頸才導入，並同時附 decoder 檔、授權和未壓縮回退策略。
+
+## Geographic / Stylized v2 additions (2026-11-29)
+
+The current local catalogue has 36 verified self-contained GLBs. The earlier 24-model table describes the previous release. New files retain embedded author/source/license metadata; atlas textures are retained for vehicle colours, with smooth Standard shading and no remote runtime model URLs.
+
+| Local asset ID | Author | License | Original source | Acquired |
+|---|---|---|---|---|
+| poly-animated-hoop | Armory_3D | CC0-1.0 | [Source](https://poly.pizza/m/i3LLacyQP4) | 2026-11-29 |
+| poly-city-food-van | Quaternius | CC0-1.0 | [Source](https://poly.pizza/m/OgrROxABGT) | 2026-11-29 |
+| poly-city-suv | Quaternius | CC0-1.0 | [Source](https://poly.pizza/m/xsMtZhBkxL) | 2026-11-29 |
+| poly-city-taxi | Quaternius | CC0-1.0 | [Source](https://poly.pizza/m/x43lOScTpN) | 2026-11-29 |
+| poly-endurance | Streetsrak3r | CC-BY-3.0 | [Source](https://poly.pizza/m/O2ctIKoLrr) | 2026-11-29 |
+| poly-f40 | PuKkBuMXDD | CC-BY-3.0 | [Source](https://poly.pizza/m/RTwim9bhNd) | 2026-11-29 |
+| poly-full-court | Poly by Google | CC-BY-3.0 | [Source](https://poly.pizza/m/85FpUr2fHkH) | 2026-11-29 |
+| poly-gtr | David Sirera | CC-BY-3.0 | [Source](https://poly.pizza/m/a_HKCtYAv2W) | 2026-11-29 |
+| poly-lambo | Ignition Labs | CC-BY-3.0 | [Source](https://poly.pizza/m/5zUWP5UsLg-) | 2026-11-29 |
+| poly-sport-coupe | Quaternius | CC0-1.0 | [Source](https://poly.pizza/m/1mkmFkAz5v) | 2026-11-29 |
+| poly-sport-roadster | Quaternius | CC0-1.0 | [Source](https://poly.pizza/m/OyqKvX9xNh) | 2026-11-29 |
+| poly-sport-yellow | Quaternius | CC0-1.0 | [Source](https://poly.pizza/m/Gzj704DXdr) | 2026-11-29 |
+
+Models are recoloured where needed, deduplicated, welded, simplified and quantized offline; external references are embedded in GLB. Original source bytes / SHA-256, optimized hashes and geometry statistics are in `assets/models/sources.json` and `manifest.json`. Vehicle marques are identification of model subjects, not a claim to trademark ownership or official endorsement. User-supplied NBA logos have not been changed.
+
+### Geographic datasets
+
+Natural Earth contributors / Tom Patterson and Nathaniel Vaughn Kelso. Public Domain. [Terms](https://www.naturalearthdata.com/about/terms-of-use/), [Downloads](https://www.naturalearthdata.com/downloads/), [primary dataset repository](https://github.com/nvkelso/natural-earth-vector). Acquired 2026-11-29. `ne_50m_admin_0_countries`, `ne_50m_lakes`, `ne_10m_populated_places_simple`; selected CONUS / southern Canada / five Great Lakes and 30 franchise city anchors. Clipped and rounded, projected with Albers equal-area (29.5 / 45.5 parallels, -96 central meridian), then displaced for game-island spacing. The retained raw lon/lat are separate from display offsets. `assets/geography/sources.json` and `cities.json` document provenance.
+
+All procedural city, rounded character, panel/game and cartogram geometry added in this release is original project code. Failed pack attempts are recorded in `assets/models/acquisition-v2.json` and `quaternius-v2.json`; no failed download is listed as imported.

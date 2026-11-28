@@ -28,7 +28,7 @@
  .explorer-controls select { max-width:220px; }
 }
 #city-layer { display:contents; }
-.city-scene { position:absolute;height:auto;image-rendering:pixelated;pointer-events:none; }
+.city-scene { position:absolute;height:auto;image-rendering:auto;pointer-events:none; }
 #region-layer { position:absolute;inset:0;pointer-events:none;z-index:2300; }
 .region-label { position:absolute;transform:scale(calc(1 / var(--camera-scale,1))) translate(-50%,-50%);transform-origin:0 0;white-space:nowrap;pointer-events:auto;cursor:pointer;display:grid;place-items:center;box-sizing:border-box;width:28px;height:14px;min-height:0;padding:0;background:transparent;color:#d4e7df;border:0;border-radius:1px;font:500 9px/1 "Microsoft JhengHei",sans-serif;box-shadow:none;opacity:.72; }
 .region-label:hover { opacity:1; }

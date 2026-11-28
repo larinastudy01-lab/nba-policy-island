@@ -91,7 +91,7 @@
     return { version: 1, artVersion:P.SPEC.version,teamId, starId: station.starId, avatar: normalizeAvatar(avatar), pose, background, capturedAt: new Date(capturedAt).toISOString() };
   }
   function normalizePhoto(value) {
-    const art=[P.SPEC.version,"stylized-3d-v1","stylized-3d-assets-v1"].includes(value?.artVersion)?{artVersion:value.artVersion}:{};
+    const art=[P.SPEC.version,"stylized-3d-v1","stylized-3d-assets-v1","geographic-stylized-v2"].includes(value?.artVersion)?{artVersion:value.artVersion}:{};
     if(value?.version===3&&value.kind==="sight"){
       if(!Sights.get(value.locationId)?.photo||!["stand","ball"].includes(value.pose)||!["day","night"].includes(value.background)||!value.avatar||typeof value.avatar!=="object"||typeof value.capturedAt!=="string"||!Number.isFinite(Date.parse(value.capturedAt)))return null;
       return {...art,version:3,kind:"sight",locationId:value.locationId,avatar:normalizeAvatar(value.avatar),pose:value.pose,background:value.background,capturedAt:new Date(value.capturedAt).toISOString()};
@@ -204,7 +204,7 @@ ${pose === "ball" ? '<g data-layer="ball"><circle cx="192" cy="103" r="25" fill=
   function photoDate(value) { return new Date(value).toLocaleString("zh-TW", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }); }
   function photoSVG(value) {
     const record = normalizePhoto(value); if (!record) throw new TypeError("Invalid photo.");
-    if(["stylized-3d-v1","stylized-3d-assets-v1"].includes(record.artVersion)&&globalThis.NBAStylizedArt)return globalThis.NBAStylizedArt.photo(record);
+    if(["stylized-3d-v1","stylized-3d-assets-v1","geographic-stylized-v2"].includes(record.artVersion)&&globalThis.NBAStylizedArt)return globalThis.NBAStylizedArt.photo(record);
     const pixel=record.artVersion===P.SPEC.version,view=pixel?"0 0 16 24":"0 0 240 320";
     const actor=(a,options={})=>{const team=Island.TEAMS.find(t=>t.id===a.jersey);return pixel?P.actorMarkup(a,{model:"neutral",...options,teamColor:team.color,accent:team.accent}):legacyAvatarBody(a,options);};
     if(record.kind==="sight"){const sight=Sights.get(record.locationId);return `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img"><title>${xml(record.avatar.nickname)}在${xml(sight.name)}的旅行照</title>${(pixel?P.scenicBackdrop(sight.id,record.background==="night"):Sights.photoBackdrop(sight.id,record.background==="night"))}<svg x="110" y="202" width="225" height="300" viewBox="${view}">${actor(record.avatar,{pose:record.pose})}</svg><rect y="512" width="960" height="128" fill="#0c263b"/><g fill="#f4eed3" font-family="Microsoft JhengHei, sans-serif"><text x="40" y="546" font-size="17">NBA 政策島 ／ SCENIC ISLAND MEMORIES</text><text x="40" y="583" font-size="27">${xml(record.avatar.nickname)} · ${xml(sight.name)}</text><text x="40" y="614" font-size="16">${xml(sight.region)}・${record.background==="night"?"夜景":"白天"}・原創微縮地標旅行照</text><text x="920" y="549" text-anchor="end" font-size="14">${xml(photoDate(record.capturedAt))}（台灣）</text></g></svg>`;}
@@ -213,7 +213,7 @@ ${pose === "ball" ? '<g data-layer="ball"><circle cx="192" cy="103" r="25" fill=
   }
   function svgDataURL(svg) { return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`; }
   async function exportPNG(record, environment = {}) {
-    if(["stylized-3d-v1","stylized-3d-assets-v1"].includes(record.artVersion)&&globalThis.NBA3DPhoto&&!environment.Image)return globalThis.NBA3DPhoto.exportPNG(record);
+    if(["stylized-3d-v1","stylized-3d-assets-v1","geographic-stylized-v2"].includes(record.artVersion)&&globalThis.NBA3DPhoto&&!environment.Image)return globalThis.NBA3DPhoto.exportPNG(record);
     const ImageType = environment.Image || globalThis.Image;
     const createCanvas = environment.createCanvas || (() => document.createElement("canvas"));
     const image = new ImageType();

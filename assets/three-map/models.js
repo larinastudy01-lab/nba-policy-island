@@ -92,7 +92,8 @@ export function character(kit,avatar,{star=false,pose='stand'}={}){
   if(a.hair!=='shaved'){const cap=ball(g,0,3.19,-.07,.73,.34,.64,hair);if(a.hair==='sweep')cap.rotation.z=.3;if(a.hair==='bun')ball(g,.25,3.52,-.3,.3,.3,.3,hair);if(a.hair==='braids')for(const dx of [-.55,.55])box(g,dx,2.8,-.45,.18,.9,.2,hair,.09);if(a.hair==='curls')for(let i=0;i<5;i++)ball(g,(i-2)*.24,3.27,.29,.2,.17,.2,hair);}
   if(a.headband!=='none'){const band=cylinder(g,0,3.1,0,.72,.13,a.headband==='gold'?'#eac45c':team.color);band.scale.z=.9;}
   for(const dx of [-.24,.24])ball(g,dx,2.83,.57,.07,a.expression==='wink'&&dx>0?.025:.085,.05,'#263a46');
-  ball(g,0,2.53,.58,.16,.035,.03,'#986b61');
+  if(star&&avatar.beard)ball(g,0,2.43,.36,.45,.21,.34,'#55473f');
+  ball(g,0,2.53,.58,.16,a.expression==='focus'?.018:.035,.03,'#986b61');
   if(a.glasses!=='none')for(const dx of [-.24,.24]){const ring=new T.Mesh(kit.geometry('glasses',()=>new T.TorusGeometry(.17,.025,5,20)),kit.material('#42505b'));ring.position.set(dx,2.83,.63);g.add(ring);}
   const number=kit.sign(g,a.number,0,1.8,.45,team.color,.65);number.scale.y=.36;
   if(pose==='ball'){const basketball=ball(g,.75,2.16,.5,.37,.37,.37,'#d99550');arms[1].rotation.x=-.8;}

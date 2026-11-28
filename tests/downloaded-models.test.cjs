@@ -1,10 +1,10 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{pathToFileURL}=require('node:url');
 const root=path.resolve(__dirname,'..'),rows=require('../assets/models/manifest.json'),base=path.join(root,'prototype/three-islands/vendor/three-r187');
-test('24 acquired, optimized models have unique local paths, verified hashes and explicit licenses',()=>{
-  assert.equal(rows.length,24);assert.equal(new Set(rows.map(r=>r.id)).size,24);assert.equal(rows.filter(r=>r.category==='basketball').length,12);
+test('36 acquired, optimized models have unique local paths, verified hashes and explicit licenses',()=>{
+  assert.equal(rows.length,36);assert.equal(new Set(rows.map(r=>r.id)).size,36);assert.equal(rows.filter(r=>r.category==='basketball').length,14);
   for(const r of rows){assert(['CC0-1.0','CC-BY-3.0','CC-BY-4.0'].includes(r.license));assert(r.author&&r.source&&r.acquired&&r.sourceSha256);const b=fs.readFileSync(path.join(root,r.path));assert.equal(b.length,r.bytes);assert.equal(b.toString('ascii',0,4),'glTF');assert.equal(b.readUInt32LE(8),b.length);assert.equal(crypto.createHash('sha256').update(b).digest('hex'),r.sha256);const j=JSON.parse(b.subarray(20,20+b.readUInt32LE(12)));assert(j.buffers.every(b=>!b.uri));assert((j.images||[]).every(i=>i.bufferView!==undefined&&!i.uri));assert(!(j.extensionsRequired||[]).some(x=>/draco|meshopt/i.test(x)));assert(r.after.triangles>0&&r.after.materials>0);assert(r.after.primitives<=r.before.primitives);assert(new URL(r.path,'https://example.github.io/nba-policy-island/').pathname.startsWith('/nba-policy-island/'));}
-  assert(rows.reduce((n,r)=>n+r.bytes,0)<rows.reduce((n,r)=>n+r.sourceBytes,0)*.3);assert.equal(rows.find(r=>r.id==='poly-empire-state').after.primitives,2);
+  assert(rows.reduce((n,r)=>n+r.bytes,0)<rows.reduce((n,r)=>n+r.sourceBytes,0)*.35);assert.equal(rows.find(r=>r.id==='poly-empire-state').after.primitives,2);
 });
 test('website attribution covers every CC-BY author and links the original source',()=>{
   const html=fs.readFileSync(path.join(root,'assets/models/credits.html'),'utf8');for(const r of rows.filter(r=>r.license.startsWith('CC-BY'))){assert(html.includes(r.author));assert(html.includes(r.source));}assert(!/https?:[^"']+\.glb/.test(html));

@@ -1,0 +1,139 @@
+[
+  {
+    "source": "https://poly.pizza/m/RTwim9bhNd",
+    "status": "acquired",
+    "id": "poly-f40",
+    "bytes": 355752
+  },
+  {
+    "source": "https://poly.pizza/m/a_HKCtYAv2W",
+    "status": "acquired",
+    "id": "poly-gtr",
+    "bytes": 774684
+  },
+  {
+    "source": "https://poly.pizza/m/Gzj704DXdr",
+    "status": "acquired",
+    "id": "poly-sport-yellow",
+    "bytes": 252528
+  },
+  {
+    "source": "https://poly.pizza/m/5zUWP5UsLg-",
+    "status": "acquired",
+    "id": "poly-lambo",
+    "bytes": 1829316
+  },
+  {
+    "source": "https://poly.pizza/m/1mkmFkAz5v",
+    "status": "acquired",
+    "id": "poly-sport-coupe",
+    "bytes": 175100
+  },
+  {
+    "source": "https://poly.pizza/m/OyqKvX9xNh",
+    "status": "acquired",
+    "id": "poly-sport-roadster",
+    "bytes": 171300
+  },
+  {
+    "source": "https://poly.pizza/m/OgrROxABGT",
+    "status": "acquired",
+    "id": "poly-city-food-van",
+    "bytes": 553580
+  },
+  {
+    "source": "https://poly.pizza/m/O2ctIKoLrr",
+    "status": "acquired",
+    "id": "poly-endurance",
+    "bytes": 1172344
+  },
+  {
+    "source": "https://poly.pizza/m/i3LLacyQP4",
+    "status": "acquired",
+    "id": "poly-animated-hoop",
+    "bytes": 116676
+  },
+  {
+    "source": "https://poly.pizza/m/85FpUr2fHkH",
+    "status": "acquired",
+    "id": "poly-full-court",
+    "bytes": 1299568
+  },
+  {
+    "source": "https://poly.pizza/m/xsMtZhBkxL",
+    "status": "acquired",
+    "id": "poly-city-suv",
+    "bytes": 181608
+  },
+  {
+    "source": "https://poly.pizza/m/x43lOScTpN",
+    "status": "acquired",
+    "id": "poly-city-taxi",
+    "bytes": 181084
+  },
+  {
+    "source": "https://quaternius.com/packs/universalbasecharacters.html",
+    "status": "manual-candidate",
+    "reason": "Public page accessible; full archive not acquired. Existing verified alternatives are used."
+  },
+  {
+    "source": "https://quaternius.com/packs/downtowncitymegakit.html",
+    "status": "manual-candidate",
+    "reason": "Public page accessible; full archive not acquired. Existing verified alternatives are used."
+  },
+  {
+    "source": "https://quaternius.com/packs/cars.html",
+    "status": "manual-candidate",
+    "reason": "Public page accessible; full archive not acquired. Existing verified alternatives are used."
+  },
+  {
+    "source": "https://kenney.nl/assets/city-kit-suburban",
+    "status": "unavailable",
+    "reason": "HTTP Error 403: Forbidden"
+  },
+  {
+    "source": "https://kenney.nl/assets/city-kit-commercial",
+    "status": "unavailable",
+    "reason": "HTTP Error 403: Forbidden"
+  },
+  {
+    "source": "https://kenney.nl/assets/racing-kit",
+    "status": "unavailable",
+    "reason": "HTTP Error 403: Forbidden"
+  },
+  {
+    "source": "https://kenney.nl/assets/city-kit-roads",
+    "status": "unavailable",
+    "reason": "HTTP Error 403: Forbidden"
+  },
+  {
+    "source": "https://sketchfab.com/3d-models/mclaren-765lt-with-windows-v2-cc1876d0179b42aeb31e004c01a857da",
+    "status": "manual-candidate",
+    "reason": "Public page accessible; full archive not acquired. Existing verified alternatives are used."
+  },
+  {
+    "source": "https://kenney.nl/assets/car-kit",
+    "status": "unavailable",
+    "reason": "HTTP Error 403: Forbidden"
+  },
+  {
+    "source": "https://api.sketchfab.com/v3/models/cc1876d0179b42aeb31e004c01a857da",
+    "status": "metadata-only",
+    "license": {
+      "uri": "https://api.sketchfab.com/v3/licenses/322a749bcfa841b29dff1e8a1bb74b0b",
+      "label": "CC Attribution",
+      "fullName": "Creative Commons Attribution",
+      "requirements": "Author must be credited. Commercial use is allowed.",
+      "url": "http://creativecommons.org/licenses/by/4.0/",
+      "slug": "by"
+    },
+    "isDownloadable": true,
+    "vertexCount": 1022028,
+    "faceCount": 1953159
+  },
+  {
+    "source": "https://api.sketchfab.com/v3/models/cc1876d0179b42aeb31e004c01a857da/download",
+    "status": "unavailable",
+    "reason": "HTTP Error 401: Unauthorized"
+  }
+]

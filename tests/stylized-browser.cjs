@@ -2,8 +2,9 @@
 // Explicit real-browser acceptance requested for the integration branch.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'C:/Users/larin/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules/playwright');
-const root=path.resolve(__dirname,'..'),out=path.join(root,'docs/stylized-3d-preview'),errors=[],missing=[],requests=[],checks=[],performanceRows=[];
+const root=path.resolve(__dirname,'..'),out=path.join(root,process.env.ARTIFACT_DIR||'docs/stylized-3d-preview'),errors=[],missing=[],requests=[],checks=[],performanceRows=[];
 const pushCheck=checks.push.bind(checks);checks.push=(...items)=>{items.forEach(i=>console.log('PASS:',i));return pushCheck(...items);};
+fs.mkdirSync(out,{recursive:true});
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.cjs':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.glb':'model/gltf-binary','.json':'application/json','.wav':'audio/wav'};
 const server=http.createServer((req,res)=>{let name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);if(!name.startsWith('/nba-policy-island/'))return res.writeHead(404).end();name=name.slice('/nba-policy-island/'.length)||'index.html';if(name.endsWith('/'))name+='index.html';const file=path.resolve(root,name);if(!file.startsWith(root+path.sep))return res.writeHead(403).end();try{res.writeHead(200,{'Content-Type':mime[path.extname(file)]||'application/octet-stream'}).end(fs.readFileSync(file));}catch{res.writeHead(404).end();}});
 async function run(){

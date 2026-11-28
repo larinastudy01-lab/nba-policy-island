@@ -1,0 +1,156 @@
+{
+  "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson",
+  "license": "Public Domain",
+  "cities": {
+    "warriors": {
+      "city": "San Francisco",
+      "lon": -122.3996,
+      "lat": 37.784263
+    },
+    "lakers": {
+      "city": "Los Angeles",
+      "lon": -118.231986,
+      "lat": 34.049219
+    },
+    "clippers": {
+      "city": "Los Angeles",
+      "lon": -118.231986,
+      "lat": 34.049219
+    },
+    "kings": {
+      "city": "Sacramento",
+      "lon": -121.471984,
+      "lat": 38.576967
+    },
+    "blazers": {
+      "city": "Portland",
+      "lon": -122.681936,
+      "lat": 45.52197
+    },
+    "suns": {
+      "city": "Phoenix",
+      "lon": -112.067365,
+      "lat": 33.448322
+    },
+    "jazz": {
+      "city": "Salt Lake City",
+      "lon": -111.931998,
+      "lat": 40.776962
+    },
+    "nuggets": {
+      "city": "Denver",
+      "lon": -104.985962,
+      "lat": 39.741134
+    },
+    "thunder": {
+      "city": "Oklahoma City",
+      "lon": -97.520629,
+      "lat": 35.471989
+    },
+    "mavericks": {
+      "city": "Dallas",
+      "lon": -96.794687,
+      "lat": 32.771958
+    },
+    "spurs": {
+      "city": "San Antonio",
+      "lon": -98.492693,
+      "lat": 29.419848
+    },
+    "rockets": {
+      "city": "Houston",
+      "lon": -95.348436,
+      "lat": 29.741273
+    },
+    "timberwolves": {
+      "city": "Minneapolis",
+      "lon": -93.253732,
+      "lat": 44.981925
+    },
+    "bucks": {
+      "city": "Milwaukee",
+      "lon": -87.916673,
+      "lat": 43.029608
+    },
+    "bulls": {
+      "city": "Chicago",
+      "lon": -87.635237,
+      "lat": 41.847961
+    },
+    "raptors": {
+      "city": "Toronto",
+      "lon": -79.389459,
+      "lat": 43.664645
+    },
+    "pistons": {
+      "city": "Detroit",
+      "lon": -83.051334,
+      "lat": 42.333558
+    },
+    "cavaliers": {
+      "city": "Cleveland",
+      "lon": -81.696944,
+      "lat": 41.471933
+    },
+    "pacers": {
+      "city": "Indianapolis",
+      "lon": -86.171994,
+      "lat": 39.751934
+    },
+    "grizzlies": {
+      "city": "Memphis",
+      "lon": -90.028777,
+      "lat": 35.144701
+    },
+    "pelicans": {
+      "city": "New Orleans",
+      "lon": -90.088368,
+      "lat": 29.968908
+    },
+    "hawks": {
+      "city": "Atlanta",
+      "lon": -84.367642,
+      "lat": 33.739457
+    },
+    "hornets": {
+      "city": "Charlotte",
+      "lon": -80.831984,
+      "lat": 35.20694
+    },
+    "magic": {
+      "city": "Orlando",
+      "lon": -81.381976,
+      "lat": 28.511923
+    },
+    "heat": {
+      "city": "Miami",
+      "lon": -80.226052,
+      "lat": 25.789557
+    },
+    "celtics": {
+      "city": "Boston",
+      "lon": -71.07196,
+      "lat": 42.331906
+    },
+    "knicks": {
+      "city": "New York",
+      "lon": -73.995718,
+      "lat": 40.721562
+    },
+    "nets": {
+      "city": "Brooklyn",
+      "lon": -73.995718,
+      "lat": 40.721562
+    },
+    "sixers": {
+      "city": "Philadelphia",
+      "lon": -75.179841,
+      "lat": 39.945942
+    },
+    "wizards": {
+      "city": "Washington, D.C.",
+      "lon": -77.011364,
+      "lat": 38.901495
+    }
+  }
+}

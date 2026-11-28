@@ -69,7 +69,7 @@
     {id:'court-dribble',area:'court',look:'dribble',jersey:'clippers',pixelModel:'ball-fan',route:[[385,558]],speed:0,wait:0,delay:0},
     {id:'court-seat-a',area:'court',look:'sit',jersey:'heat',pixelModel:'senior',route:[[425,572]],speed:0,wait:0,delay:0},
     {id:'court-seat-b',area:'court',look:'sit',jersey:'bucks',pixelModel:'seated',route:[[416,584]],speed:0,wait:0,delay:0}
-  ].map(p=>({...p,stops:p.stops||(p.speed>0?[0,Math.floor(p.route.length/2)]:[])}));
+  ].map(p=>({...p,route:A.geographic?p.route.map(([x,y])=>y<1000?Object.values(A.geo.moveFromLegacy('warriors',{x,y})):[x,y]):p.route,stops:p.stops||(p.speed>0?[0,Math.floor(p.route.length/2)]:[])}));
   const modeFor=match=>!match?.isHome?"ambient":({scheduled:"enter",live:"live",final:"exit"}[match.state]||"ambient");
   const near=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   function createCrowd(){return {mode:"ambient",elapsed:0,people:PEOPLE.map(p=>({...p,position:{x:p.route[0][0],y:p.route[0][1]},path:p.route.map(([x,y])=>({x,y})),index:1%p.route.length,pause:p.delay,walking:false,facing:1,direction:"se"}))};}

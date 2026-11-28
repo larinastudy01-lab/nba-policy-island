@@ -105,7 +105,7 @@
     return frame({x:(left+right)/2,y:(top+bottom)/2},Math.min(MAP.width,Math.max(720,right-left+220,(bottom-top+150)*MAP.width/MAP.height)));
   }
   // 總覽保留額外海面，讓北側屋頂上方的 20–22px 隊徽在手機也不會被裁掉。
-  const OVERVIEW_VIEW=Object.freeze({x:-150,y:-187.5,width:3900,height:2437.5});
+  const OVERVIEW_VIEW=Object.freeze(A.geographic?{x:-150,y:-180,width:A.MAP.width+300,height:A.MAP.height+360}:{x:-150,y:-187.5,width:3900,height:2437.5});
   function arenaLogoAnchor(team){const [x,y]=Pixel.arenaBranding(team).roof;return {x:team.x+x*2-80,y:team.y+y*2-68};}
   function overviewLogoOffset(team,viewportWidth,size=22){return team.id==='pistons'?Math.max(0,(A.ROAD_NODES['bridge-raptors'].x-arenaLogoAnchor(team).x)*viewportWidth/OVERVIEW_VIEW.width+size/2+2):0;}
   function overviewLogoRect(team,viewportWidth,size=22){const anchor=worldToViewport(arenaLogoAnchor(team),OVERVIEW_VIEW),scale=viewportWidth/OVERVIEW_VIEW.width;return {x:anchor.x*viewportWidth-size/2+overviewLogoOffset(team,viewportWidth,size),y:(arenaLogoAnchor(team).y-OVERVIEW_VIEW.y)*scale-size,width:size,height:size};}

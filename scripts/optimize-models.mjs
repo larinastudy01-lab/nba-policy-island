@@ -15,13 +15,13 @@ function recolor(doc,row){
   for(const m of doc.getRoot().listMaterials()){
     const name=m.getName().toLowerCase();let rgb=m.getBaseColorFactor().slice(0,3);
     // Preserve only authored net/face alpha illustrations; omit photographic PBR maps.
-    if(!/hoop_net|face_|coconut_frond/.test(name)&&!['poly-palm-tree','poly-street-straight'].includes(row.id))m.setBaseColorTexture(null);
+    if(!/hoop_net|face_|coconut_frond/.test(name)&&!['poly-palm-tree','poly-street-straight'].includes(row.id)&&!(row.id.startsWith('poly-')&&row.category==='vehicles'))m.setBaseColorTexture(null);
     m.setNormalTexture(null).setOcclusionTexture(null).setMetallicRoughnessTexture(null).setEmissiveTexture(null).setRoughnessFactor(.78).setMetallicFactor(.04);
     if(row.id==='innerscene-arena'){rgb=hex(/glass/.test(name)?'93b9c9':/cladding/.test(name)?'447eb1':/bronze|louvre|painted/.test(name)?'506b7d':/paving/.test(name)?'d4d5c6':'c6cfc8');m.setAlphaMode('OPAQUE');}
     else if(row.id==='polyhaven-bench')rgb=hex('b88e65');
     else if(name==='court_wood')rgb=hex('cf9c77');
     else if(row.id==='vinish-coconut-palm')rgb=/frond/.test(name)?(name==='coconut_frond'?[1,1,1]:hex('579378')):/trunk/.test(name)?hex('a98a68'):hex('829356');
-    else if(row.category==='vehicles')rgb=hex(/paint/.test(name)?'d29e6e':/glass|wind|screen/.test(name)?'638d9e':/led|lamp|light/.test(name)?'e8dcb8':/tire|rubber|gap|under|seal|black|piano/.test(name)?'354953':/seat|leather/.test(name)?'a39380':'92a6ab');
+    else if(row.category==='vehicles')rgb=row.id.startsWith('poly-')?rgb.map(v=>Math.max(.018,Math.min(.9,v))):hex(/paint/.test(name)?'d29e6e':/glass|wind|screen/.test(name)?'638d9e':/led|lamp|light/.test(name)?'e8dcb8':/tire|rubber|gap|under|seal|black|piano/.test(name)?'354953':/seat|leather/.test(name)?'a39380':'92a6ab');
     else rgb=rgb.map(v=>Math.max(.035,Math.min(.85,v)));
     m.setBaseColorFactor([...rgb,m.getAlphaMode()==='OPAQUE'?1:m.getBaseColorFactor()[3]]);
     if(!/net|face/.test(name)&&row.category!=='characters')m.setAlphaMode('OPAQUE');
@@ -49,7 +49,7 @@ for(const row of sources){
   for(const extension of [...doc.getRoot().listExtensionsUsed()])if(/^KHR_materials_/.test(extension.extensionName))extension.dispose();
   doc.getRoot().getAsset().copyright=`${row.name} by ${row.author}; ${row.license}; ${row.source}. Modified palette and optimized by NBA Policy Island.`;
   const transforms=[dedup({propertyTypes:['Material','Texture','Accessor','Mesh']}),weld()];
-  if(!before.animations.length&&!before.skins){transforms.push(flatten(),join({keepNamed:false}),simplify({simplifier:MeshoptSimplifier,ratio:row.category==='vehicles'?.3:.65,error:.0008,lockBorder:true}));}
+  if(!before.animations.length&&!before.skins){transforms.push(flatten(),join({keepNamed:false}),simplify({simplifier:MeshoptSimplifier,ratio:row.category==='vehicles'?.5:.65,error:.0008,lockBorder:true}));}
   else transforms.push(resample());
   transforms.push(prune(),quantize({quantizePosition:14,quantizeNormal:10,quantizeTexcoord:12}),dedup());
   await doc.transform(...transforms);

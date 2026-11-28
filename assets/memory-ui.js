@@ -38,8 +38,8 @@
     function showEvent(id){const event=M.get(id),point=M.getEntrance(id)||M.forEvent(event?.id)[0];if(!event||!point)return;current=event;resetShot();$('memory-read-notice').textContent='';$('memory-book').hidden=true;$('memory-reader').hidden=false;$('memory-heading').textContent=event.title;
       const team=C.TEAMS.find(t=>t.id===point.teamId);L.mount($('memory-team-logo'),team,{variant:'heading',eager:true});$('memory-meta').textContent=`${team.name}島 · ${event.season} 賽季 · ${event.form}`;
       $('memory-date').textContent=event.date+'（事件當地日期）';$('memory-date').setAttribute('datetime',event.date);$('memory-place').textContent=point.point;
-      $('memory-scene').src=point.asset;$('memory-scene').alt=point.point+'的原創等距像素場景，非歷史影像';
-      $('memory-scene-caption').textContent=event.presentation==='memorial'?'原創靜態紀念場景・九束花悼念九位罹難者。沒有動畫、音效或過關要求。':event.presentation==='newspaper'?'原創像素場景與重新編排的展板，非歷史報紙原件或歷史影像。':'原創像素重現畫面，非歷史影像；島上位置不是實際比賽場地。';
+      if(root.NBA3DVisual)root.NBA3DVisual.image($('memory-scene'),'memory',{...event,teamId:point.teamId});else $('memory-scene').src=point.asset;$('memory-scene').alt=point.point+'的原創風格化場景，非歷史影像';
+      $('memory-scene-caption').textContent=event.presentation==='memorial'?'原創靜態紀念場景・九束花悼念九位罹難者。沒有動畫、音效或過關要求。':event.presentation==='newspaper'?'原創風格化場景與重新編排的展板，非歷史報紙原件或歷史影像。':'原創遊戲重現畫面，非歷史影像；島上位置不是實際比賽場地。';
       $('memory-text').replaceChildren(...event.text.map(p=>el('p',p)));$('memory-reflection').textContent=event.reflection;
       $('memory-historic-score').hidden=!event.score;$('memory-historic-score').textContent=event.score?'史實比分 · '+event.score:'';
       $('memory-sources').replaceChildren(...event.sources.map(source=>{const row=el('li'),a=el('a',source.title+' ↗');a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';row.append(a);return row;}));

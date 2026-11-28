@@ -1,0 +1,33 @@
+'use strict';
+// Read-only verification of the existing public Pages deployment. No remote settings change.
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'C:/Users/larin/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules/playwright');
+const root=path.resolve(__dirname,'..'),base=process.env.PAGES_URL||'https://larinastudy01-lab.github.io/nba-policy-island/';
+const expected=require('../assets/three-map/version.json'),stamp=Date.now(),report={base,version:expected.version,checkedAt:new Date().toISOString(),checks:[],errors:[],missing:[]};
+const url=p=>new URL(p+(p.includes('?')?'&':'?')+'release='+stamp,base).href;
+function check(text){report.checks.push(text);console.log(text);}
+async function run(){
+  const versionResponse=await fetch(url('assets/three-map/version.json'));assert.equal(versionResponse.status,200);const version=await versionResponse.json();assert.equal(version.version,expected.version);assert.equal(version.branch,'main');
+  const models=require('../assets/models/manifest.json'),teams=require('../assets/island-core.js').TEAMS;
+  const paths=[...new Set(['index.html','assets/map-bootstrap.js','assets/three-map/main.js','assets/three-map/world.js','assets/three-map/visuals.js','assets/three-map/vehicles.js','assets/three-map/model-catalog.js','assets/geography/data.js','assets/geography/layout.js','assets/models/manifest.json','assets/models/credits.html','prototype/three-islands/vendor/three-r187/build/three.module.js','prototype/three-islands/vendor/three-r187/addons/loaders/GLTFLoader.js',...models.map(r=>r.path),...teams.map(t=>t.logo)])];
+  const digest=b=>crypto.createHash('sha256').update(b).digest('hex');
+  for(let i=0;i<paths.length;i+=6)await Promise.all(paths.slice(i,i+6).map(async p=>{const res=await fetch(url(p));assert.equal(res.status,200,p);const data=Buffer.from(await res.arrayBuffer()),local=fs.readFileSync(path.join(root,p)),normalize=b=>/\.(glb|png|webp)$/i.test(p)?b:Buffer.from(b.toString('utf8').replace(/\r\n/g,'\n'));assert.equal(digest(normalize(data)),digest(normalize(local)),p);if(p.endsWith('.glb'))assert.equal(data.toString('ascii',0,4),'glTF');}));
+  report.verifiedFiles=paths.length;check('Public entry points, 36 local GLBs and 30 team logos return HTTP 200 and match local SHA-256');
+  const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true,args:['--enable-unsafe-swiftshader','--disable-background-networking']});
+  try{
+    const context=await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'}),page=await context.newPage();page.setDefaultTimeout(30000);
+    page.on('pageerror',e=>report.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)report.missing.push({url:r.url(),status:r.status()});});
+    await page.goto(url(''),{waitUntil:'networkidle'});await page.waitForFunction(()=>globalThis.NBA3DMap&&globalThis.NBAApp);
+    assert.equal(await page.getAttribute('body','data-renderer'),'three');assert.equal(await page.locator('iframe').count(),0);assert.equal(await page.evaluate(()=>NBAIsland.TEAMS.length),30);check('Public homepage starts the 30-team geographic Three.js map directly without iframe');
+    for(const id of ['warriors','lakers','bulls','rockets']){await page.click('#hud-settings-toggle');await page.selectOption('#district-select','island-'+id);await page.click('#hud-settings-toggle');await page.waitForTimeout(5000);const s=await page.evaluate(()=>NBA3DMap.snapshot());assert.equal(s.teamId,id);assert.equal(s.downloadedModels.failures.length,0);assert(s.placedModels.length>0,id);}
+    check('Four public island views load local models, including the geographic Rockets expansion');
+    await page.evaluate(()=>NBAApp.openLandmark('nba','warriors'));await page.waitForFunction(()=>NBA3DMap.snapshot().position.locationId==='warriors'&&!NBA3DMap.snapshot().position.moving);await page.locator('#station-panel').waitFor({state:'visible'});await page.click('#policy-launch');await page.check('#plan-reserved');await page.locator('#policy-form').evaluate(f=>f.requestSubmit());assert((await page.textContent('#policy-result-content')).includes('2,400'));await page.click('#policy-launch');check('Public shared policy form calculates 20 student seats, 40 general seats and 2,400 points');
+    await page.click('#find-star');await page.click('#star-landmark');await page.click('#capture-photo');const download=page.waitForEvent('download');await page.click('#download-photo');const file=await download;const png=fs.readFileSync(await file.path());assert.equal(png.subarray(0,8).toString('hex'),'89504e470d0a1a0a');assert(png.length>10000);check('Public home photo exports an actual nonempty PNG from local 3D assets');await page.click('#star-close');
+    await page.click('#hud-settings-toggle');await page.click('#showroom-open');await page.waitForFunction(()=>document.querySelectorAll('#showroom-dialog img[src^="data:image/png"]').length===9);await page.click('#showroom-close');await page.click('#hud-settings-toggle');check('Public showroom renders nine distinct 3D vehicle images');
+    const prototype=await context.newPage();await prototype.goto(base+'prototype/three-islands/',{waitUntil:'networkidle'});await prototype.waitForURL(base+'index.html?from=three-prototype');await prototype.waitForFunction(()=>globalThis.NBA3DMap);await prototype.close();check('Existing prototype address redirects to the integrated public map');
+    await page.goto(base+'?map=2d&release='+stamp,{waitUntil:'networkidle'});await page.waitForFunction(()=>globalThis.NBAApp&&document.body.dataset.renderer==='2d');check('Public legacy 2D fallback initializes separately');
+    assert.deepEqual(report.errors,[]);assert.deepEqual(report.missing,[]);
+  }finally{await browser.close();}
+}
+const output=path.join(root,'node_modules/model-downloads/pages-geographic-release-verification.json');
+run().then(()=>{report.passed=true;console.log('PASS',report.checks.length,'public release checks');}).catch(e=>{report.passed=false;report.failure=e.stack;console.error(e);process.exitCode=1;}).finally(()=>{fs.mkdirSync(path.dirname(output),{recursive:true});fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');});

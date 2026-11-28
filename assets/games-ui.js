@@ -72,7 +72,7 @@
     function render(state){
       if(!state)return;const v=view(state),s=state.child||state;
       $("mini-scene").hidden=false;$("shooting-graphic").setAttribute("hidden","");
-      $("mini-scene").innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" role="img" aria-label="${G.getGame(s.id).name}遊戲場景"><rect width="600" height="320" rx="12" fill="#0a2639"/><path d="M45 310V22h510v288M45 160h510" fill="none" stroke="#527d8b" stroke-width="2"/>${v.graphic}</svg>`;
+      if(root.NBA3DVisual)root.NBA3DVisual.renderGame(state,v);else $("mini-scene").innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" role="img" aria-label="${G.getGame(s.id).name}遊戲場景"><rect width="600" height="320" rx="12" fill="#0a2639"/><path d="M45 310V22h510v288M45 160h510" fill="none" stroke="#527d8b" stroke-width="2"/>${v.graphic}</svg>`;
       if($("mini-prompt").textContent!==v.message)$("mini-prompt").textContent=v.message;
       $("mini-choices").hidden=!v.choices;
       for(let i=0;i<3;i++){const b=$(`mini-choice-${i}`);b.textContent=v.choices?.[i]||String(i+1);b.disabled=v.locked;b.setAttribute("aria-label",`${i+1}：${b.textContent}`);}

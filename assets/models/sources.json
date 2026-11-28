@@ -13,6 +13,19 @@
     "sourceSha256": "fb359e7cb23d34bf7700f92df69c7a9984a31f2f37a0a79a5442d39badc409a3"
   },
   {
+    "id": "poly-animated-hoop",
+    "name": "Basket ball and hoop",
+    "category": "basketball",
+    "author": "Armory_3D",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/i3LLacyQP4",
+    "download": "https://static.poly.pizza/d4a3995f-5823-4d31-b4ed-a27a0700e896.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/animated-hoop.glb",
+    "sourceBytes": 116676,
+    "sourceSha256": "7fc7f50887067ec36f82d45f1d5d53597a3d8adfdcfdeaa61404b331ed103a7c"
+  },
+  {
     "id": "poly-animated-human",
     "name": "Animated Human",
     "category": "characters",
@@ -24,6 +37,45 @@
     "raw": "node_modules/model-downloads/poly-c3Ibh9I3udk.glb",
     "sourceBytes": 698560,
     "sourceSha256": "ce4d543e82e455d5a1253798c9759f12b9eec74929ddbca464447eeaa3a42c5d"
+  },
+  {
+    "id": "poly-city-food-van",
+    "name": "Sushi Truck",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/OgrROxABGT",
+    "download": "https://static.poly.pizza/737a333f-5c55-45e5-9742-011d97fd47f1.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/city-food-van.glb",
+    "sourceBytes": 553580,
+    "sourceSha256": "dde09b72a30012b1d818d7ff5b441b6bd4b7bd37aef1317e06526b24004c558c"
+  },
+  {
+    "id": "poly-city-suv",
+    "name": "SUV",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/xsMtZhBkxL",
+    "download": "https://static.poly.pizza/e5fbf2ee-5c9e-47d5-8ab6-80cacd463baa.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/city-suv.glb",
+    "sourceBytes": 181608,
+    "sourceSha256": "1a9ce2bba813dca5005abab09715b01b8b5f4a9c48d7260463afdfeb876aa8b6"
+  },
+  {
+    "id": "poly-city-taxi",
+    "name": "Taxi",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/x43lOScTpN",
+    "download": "https://static.poly.pizza/3622a7bf-f213-44c8-8949-c1bdd1e961a9.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/city-taxi.glb",
+    "sourceBytes": 181084,
+    "sourceSha256": "14b2f982f8a501565702ecb56f917c82e9abae914fa3f76d2f622a8670598af1"
   },
   {
     "id": "poly-empire-state",
@@ -39,6 +91,45 @@
     "sourceSha256": "c9678617043bb4a45e2190a4a2baa6ab1f5cbf2271a413f80e19dcfafd21f892"
   },
   {
+    "id": "poly-endurance",
+    "name": "Endurance Race Car",
+    "category": "vehicles",
+    "author": "Streetsrak3r",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/O2ctIKoLrr",
+    "download": "https://static.poly.pizza/d2478285-f82e-459f-8acd-cadc4e08de14.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/endurance.glb",
+    "sourceBytes": 1172344,
+    "sourceSha256": "62f22ab9bc92df684d3721af876de50fb29afcc2b9a687d976d2cb4c0a1570d8"
+  },
+  {
+    "id": "poly-f40",
+    "name": "Ferrari F40",
+    "category": "vehicles",
+    "author": "PuKkBuMXDD",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/RTwim9bhNd",
+    "download": "https://static.poly.pizza/95b46627-afff-4b11-95a8-c19e903c01e3.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/f40.glb",
+    "sourceBytes": 355752,
+    "sourceSha256": "3477930afc78b93bf16d6061f4eca804ed933a91799ecd44fe95e14a8b266bf5"
+  },
+  {
+    "id": "poly-full-court",
+    "name": "Basketball court",
+    "category": "basketball",
+    "author": "Poly by Google",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/85FpUr2fHkH",
+    "download": "https://static.poly.pizza/2a18465d-d353-47c5-85ec-273b189c1612.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/full-court.glb",
+    "sourceBytes": 1299568,
+    "sourceSha256": "fcf675ae08e7bcd9ceea62036545e19cc340f60176d7b4cf4ff99842c63d9d38"
+  },
+  {
     "id": "poly-golden-gate",
     "name": "Golden Gate bridge",
     "category": "landmarks",
@@ -50,6 +141,32 @@
     "raw": "node_modules/model-downloads/poly-a648BwpXx-A.glb",
     "sourceBytes": 213884,
     "sourceSha256": "3990e68a04536066adf244b1eea572afaaea80192973e43b93f325929ab16c96"
+  },
+  {
+    "id": "poly-gtr",
+    "name": "Nissan GTR",
+    "category": "vehicles",
+    "author": "David Sirera",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/a_HKCtYAv2W",
+    "download": "https://static.poly.pizza/570c324d-029d-4cb1-b6fe-48a66a39d147.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/gtr.glb",
+    "sourceBytes": 774684,
+    "sourceSha256": "01e98ff38b9e133a908671d9b4934a174e3223e997986e411038ea533962017c"
+  },
+  {
+    "id": "poly-lambo",
+    "name": "CAR Model",
+    "category": "vehicles",
+    "author": "Ignition Labs",
+    "license": "CC-BY-3.0",
+    "source": "https://poly.pizza/m/5zUWP5UsLg-",
+    "download": "https://static.poly.pizza/f8c6bcd5-92a2-4f88-b821-64935a00216f.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/lambo.glb",
+    "sourceBytes": 1829316,
+    "sourceSha256": "c04bb20bce55ea878e4b340ed23492a1d6834bd40fdafc5512c06abd7c7079eb"
   },
   {
     "id": "poly-large-building",
@@ -89,6 +206,45 @@
     "raw": "node_modules/model-downloads/poly-DsrrAYmucG.glb",
     "sourceBytes": 115980,
     "sourceSha256": "b02dc9c28a8ec98dcce6660affa8ae8ae8e6951f9ee871ca44b4d64c849936f4"
+  },
+  {
+    "id": "poly-sport-coupe",
+    "name": "Sports Car",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/1mkmFkAz5v",
+    "download": "https://static.poly.pizza/34db1344-31cc-49ac-bc46-c055f68e39ca.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/sport-coupe.glb",
+    "sourceBytes": 175100,
+    "sourceSha256": "bbb1c718d2aaf5f4344e9fb2cd66d8332a998a515b09ddd4dfa14698d787124e"
+  },
+  {
+    "id": "poly-sport-roadster",
+    "name": "Sports Car",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/OyqKvX9xNh",
+    "download": "https://static.poly.pizza/e6410e19-a88f-4158-bc91-c19fccf85028.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/sport-roadster.glb",
+    "sourceBytes": 171300,
+    "sourceSha256": "2878182e9a17b809d45b0a184f51560eab755b2d7e3058bf02acbd5fcd0ca78b"
+  },
+  {
+    "id": "poly-sport-yellow",
+    "name": "Sports Car",
+    "category": "vehicles",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/Gzj704DXdr",
+    "download": "https://static.poly.pizza/1847cc66-801a-42fd-9a87-47e86c7a5435.glb.br",
+    "acquired": "2026-11-29",
+    "raw": "node_modules/model-downloads/v2/sport-yellow.glb",
+    "sourceBytes": 252528,
+    "sourceSha256": "e802a66e1f73d3e35b5d2462656b6e8d30a8e36d229e1776b082a82f955b94d2"
   },
   {
     "id": "poly-street-straight",
