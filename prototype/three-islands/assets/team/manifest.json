@@ -1,0 +1,212 @@
+[
+  {
+    "teamId": "warriors",
+    "source": "./assets/team/logos/GSW.png",
+    "path": "./assets/team/GSW.png",
+    "bytes": 7803,
+    "sha256": "3b3a133aedd6c9b2aa8dc78602059f361995a69f665cf00f5bd29f494869fe5c"
+  },
+  {
+    "teamId": "lakers",
+    "source": "./assets/team/logos/LAL.png",
+    "path": "./assets/team/LAL.png",
+    "bytes": 5826,
+    "sha256": "21eb7845e0aac839fd0d79b5fe67803e61d8dbbb1bc0cd18b3196146491ee782"
+  },
+  {
+    "teamId": "clippers",
+    "source": "./assets/team/logos/LAC.png",
+    "path": "./assets/team/LAC.png",
+    "bytes": 4844,
+    "sha256": "a50d185204c549e1fd34769c160b58cb83f927ef056f86d02c3b9b0cdd025c85"
+  },
+  {
+    "teamId": "nuggets",
+    "source": "./assets/team/logos/DEN.png",
+    "path": "./assets/team/DEN.png",
+    "bytes": 8647,
+    "sha256": "f74be3e7d4a7271b14adf65c994dde8358ede34625e99e2f89a717be1cf73e8d"
+  },
+  {
+    "teamId": "mavericks",
+    "source": "./assets/team/logos/DAL.png",
+    "path": "./assets/team/DAL.png",
+    "bytes": 8333,
+    "sha256": "c5e834e71f6556cc1028aea20231e3ba3bca0a2097a4f6f3c5e061245ef4a511"
+  },
+  {
+    "teamId": "bulls",
+    "source": "./assets/team/logos/CHI.png",
+    "path": "./assets/team/CHI.png",
+    "bytes": 4614,
+    "sha256": "5fa67e14e7d0e1831b96c51c3d72514c6d75b4b8f3f85f4d139d321569728dfa"
+  },
+  {
+    "teamId": "celtics",
+    "source": "./assets/team/logos/BOS.png",
+    "path": "./assets/team/BOS.png",
+    "bytes": 9218,
+    "sha256": "aa2eaeb62b25839d34d3617e723b5bbae07e51703440207120be7a5106992bf1"
+  },
+  {
+    "teamId": "knicks",
+    "source": "./assets/team/logos/NYK.png",
+    "path": "./assets/team/NYK.png",
+    "bytes": 6488,
+    "sha256": "cba6991df787dfee9529667746962ad7ac693fca26b3d3a01866aacd48c44dbc"
+  },
+  {
+    "teamId": "spurs",
+    "source": "./assets/team/logos/SAS.png",
+    "path": "./assets/team/SAS.png",
+    "bytes": 2808,
+    "sha256": "137d8152cea2e5f5c390599a6666c4d6662deeeca564b32107082a99f7f1c431"
+  },
+  {
+    "teamId": "thunder",
+    "source": "./assets/team/logos/OKC.png",
+    "path": "./assets/team/OKC.png",
+    "bytes": 6172,
+    "sha256": "3f28520db65484c61558e49b0e24592100b5b423b0f3c955b65494674f88d55d"
+  },
+  {
+    "teamId": "suns",
+    "source": "./assets/team/logos/PHX.png",
+    "path": "./assets/team/PHX.png",
+    "bytes": 8009,
+    "sha256": "c1dac7ec07a0c9c9e204a3998ca8e26ba254bc63e36c2074db3e03539056cb30"
+  },
+  {
+    "teamId": "timberwolves",
+    "source": "./assets/team/logos/MIN.png",
+    "path": "./assets/team/MIN.png",
+    "bytes": 9739,
+    "sha256": "dbeb6918d7394b88a9acdac7290f42c1730c4fc4aebfa1a8c037e82d62666327"
+  },
+  {
+    "teamId": "bucks",
+    "source": "./assets/team/logos/MIL.png",
+    "path": "./assets/team/MIL.png",
+    "bytes": 7910,
+    "sha256": "760b030297d5c76f01118b86a43770771a0a84ff389ce2464953e27bc4eb86ae"
+  },
+  {
+    "teamId": "sixers",
+    "source": "./assets/team/logos/PHI.png",
+    "path": "./assets/team/PHI.png",
+    "bytes": 9195,
+    "sha256": "cc294f5dd1ed895fb0bc83cbef97e18478db18cf0d7fe34ae51f54f1bcd126a4"
+  },
+  {
+    "teamId": "heat",
+    "source": "./assets/team/logos/MIA.png",
+    "path": "./assets/team/MIA.png",
+    "bytes": 4154,
+    "sha256": "b394504391c15458593b6af6624e6c90ccd7a81f495c4a10a30a45726d625664"
+  },
+  {
+    "teamId": "raptors",
+    "source": "./assets/team/logos/TOR.png",
+    "path": "./assets/team/TOR.png",
+    "bytes": 6130,
+    "sha256": "5ee4a207354871b0e103d5da2f0b792501719ccc9fedff23270b221e36fac292"
+  },
+  {
+    "teamId": "nets",
+    "source": "./assets/team/logos/BKN.png",
+    "path": "./assets/team/BKN.png",
+    "bytes": 5837,
+    "sha256": "e27a5b45b4e6379f641145f13d7033b053d56bbd8da465db7c297c739120f484"
+  },
+  {
+    "teamId": "cavaliers",
+    "source": "./assets/team/logos/CLE.png",
+    "path": "./assets/team/CLE.png",
+    "bytes": 5054,
+    "sha256": "ce0f0e2e6d393154c3d47fb39852772e7b57202410e5d723fcee3bc7bc45fb76"
+  },
+  {
+    "teamId": "jazz",
+    "source": "./assets/team/logos/UTA.png",
+    "path": "./assets/team/UTA.png",
+    "bytes": 1187,
+    "sha256": "87c40242f12e87b273755d431e601b37db89259d58e1e24dccd8707348698186"
+  },
+  {
+    "teamId": "rockets",
+    "source": "./assets/team/logos/HOU.png",
+    "path": "./assets/team/HOU.png",
+    "bytes": 3293,
+    "sha256": "2e07cce5923611037cc98b8d7545c60367857b28d276714502340d092207ade8"
+  },
+  {
+    "teamId": "blazers",
+    "source": "./assets/team/logos/POR.png",
+    "path": "./assets/team/POR.png",
+    "bytes": 3230,
+    "sha256": "f0bef57088c5b00e75ca36f34a733495bfc3cff1a0def17bdd567299b82b5a47"
+  },
+  {
+    "teamId": "kings",
+    "source": "./assets/team/logos/SAC.png",
+    "path": "./assets/team/SAC.png",
+    "bytes": 6950,
+    "sha256": "d0fb893ef0ee0b172119c74e0ce1539c879b2b6038dc4fe5a889dce42e198c0c"
+  },
+  {
+    "teamId": "grizzlies",
+    "source": "./assets/team/logos/MEM.png",
+    "path": "./assets/team/MEM.png",
+    "bytes": 7020,
+    "sha256": "a09f1cfc5f32a0b269c40a24a9c46cabbf23ba307e156765b1d4b803518bba68"
+  },
+  {
+    "teamId": "pelicans",
+    "source": "./assets/team/logos/NOP.png",
+    "path": "./assets/team/NOP.png",
+    "bytes": 7073,
+    "sha256": "1ef110017b8518724f1ce16772be602c4320f26e64114689613f78491e577317"
+  },
+  {
+    "teamId": "pistons",
+    "source": "./assets/team/logos/DET.png",
+    "path": "./assets/team/DET.png",
+    "bytes": 8208,
+    "sha256": "f25e0e46e0beca21957ab88e3f546b9ebd4b465d726f0cd3439a0ee8ac63eded"
+  },
+  {
+    "teamId": "pacers",
+    "source": "./assets/team/logos/IND.png",
+    "path": "./assets/team/IND.png",
+    "bytes": 9149,
+    "sha256": "faf6d9ef065216121d2ffc167717476fc06caa79ed1640c333f604f6a981642a"
+  },
+  {
+    "teamId": "wizards",
+    "source": "./assets/team/logos/WAS.png",
+    "path": "./assets/team/WAS.png",
+    "bytes": 9603,
+    "sha256": "85d8634789ec2c809b5a243d729e3079855ab01a5cf47dd81513c18c94870a0f"
+  },
+  {
+    "teamId": "hawks",
+    "source": "./assets/team/logos/ATL.png",
+    "path": "./assets/team/ATL.png",
+    "bytes": 9064,
+    "sha256": "b861d7141f47fde16134cd2540d7ea6c2f4992646bd9cd6f396fc7af5a82524b"
+  },
+  {
+    "teamId": "hornets",
+    "source": "./assets/team/logos/CHA.png",
+    "path": "./assets/team/CHA.png",
+    "bytes": 7739,
+    "sha256": "b33eced4bf436a544c6bcab3af7e11334bcb69f2340fa3e4fe3e7b1264823a1c"
+  },
+  {
+    "teamId": "magic",
+    "source": "./assets/team/logos/ORL.png",
+    "path": "./assets/team/ORL.png",
+    "bytes": 5299,
+    "sha256": "bc7c97a56fd2928085c9c13d78d181792768ecaf9f8c2c5487729850dc057094"
+  }
+]

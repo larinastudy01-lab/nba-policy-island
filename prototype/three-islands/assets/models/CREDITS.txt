@@ -1,0 +1,12 @@
+Sports Car — Quaternius — CC0 1.0
+Source: https://poly.pizza/m/1mkmFkAz5v
+Trees / NormalTree_1 — Quaternius — CC0 1.0
+Source: https://poly.pizza/m/etFGNvsiFv
+Acquired: 2026-11-28, Asia/Taipei
+
+CC0: https://creativecommons.org/publicdomain/zero/1.0/legalcode.en
+Per-file download URLs, checksums and modifications: manifest.json
+Full investigation and unimported candidate packs: ../../../../ASSET_LICENSES.md
+
+These CC0 records cover only the two GLB models, not NBA team trademarks,
+user-supplied logos, or the unimported paid ZaddyFi expansion.

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "quaternius-sports-car",
+    "path": "./assets/models/quaternius-sports-car.glb",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/1mkmFkAz5v",
+    "download": "https://static.poly.pizza/34db1344-31cc-49ac-bc46-c055f68e39ca.glb.br",
+    "acquired": "2026-11-28",
+    "bytes": 175100,
+    "sha256": "bbb1c718d2aaf5f4344e9fb2cd66d8332a998a515b09ddd4dfa14698d787124e",
+    "sourceSha256": "bbb1c718d2aaf5f4344e9fb2cd66d8332a998a515b09ddd4dfa14698d787124e",
+    "modification": "Original mesh; runtime flat palette/Lambert materials"
+  },
+  {
+    "id": "quaternius-tree",
+    "path": "./assets/models/quaternius-tree.glb",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://poly.pizza/m/etFGNvsiFv",
+    "download": "https://static.poly.pizza/53a83125-e16a-4024-b8f6-1e72679c7ddf.glb.br",
+    "acquired": "2026-11-28",
+    "bytes": 302292,
+    "sha256": "0c0c1493cd041a0ba7d98c9306580ebc8fe7a09ef51eb76e00658cd661c33910",
+    "sourceSha256": "2dc587f401a3a86e0e1ee0bb95b4a0293b620b445a26278fcf55b5b68b40b097",
+    "modification": "NormalTree_1 only; removed UV/normal/PBR textures, flat bark/leaf palette; retained geometry and transforms"
+  }
+]

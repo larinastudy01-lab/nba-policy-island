@@ -1,0 +1,77 @@
+{
+  "recordedAt": "2026-11-28T14:32:37.750Z",
+  "environment": {
+    "node": "v24.15.0",
+    "platform": "win32"
+  },
+  "commands": [
+    {
+      "command": "node --check [all project JS/CJS, including prototype vendor]",
+      "passed": true,
+      "files": 67
+    },
+    {
+      "command": "node --test --test-reporter=tap tests/*.test.cjs",
+      "passed": true,
+      "tests": 275,
+      "pass": 275,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "python tests/check-static.py",
+      "passed": true,
+      "output": [
+        "Map: terrain/layers use one world; scoreboard stays outside camera transform",
+        "CSS braces balanced: style.css (not a browser layout check)",
+        "CSS braces balanced: assets\\policy.css (not a browser layout check)",
+        "CSS braces balanced: assets\\fan.css (not a browser layout check)",
+        "CSS braces balanced: assets\\games.css (not a browser layout check)",
+        "CSS braces balanced: assets\\explorer.css (not a browser layout check)",
+        "CSS braces balanced: assets\\bay.css (not a browser layout check)",
+        "CSS braces balanced: assets\\scenery.css (not a browser layout check)",
+        "CSS braces balanced: assets\\pixel.css (not a browser layout check)",
+        "CSS braces balanced: assets\\archipelago.css (not a browser layout check)",
+        "CSS braces balanced: assets\\memory.css (not a browser layout check)",
+        "CSS braces balanced: assets\\shop.css (not a browser layout check)",
+        "CSS braces balanced: assets\\team-logo.css (not a browser layout check)",
+        "CSS braces balanced: assets\\warriors-bay.css (not a browser layout check)",
+        "Local WAV valid: shot-hit.wav, 0.36s, PCM16 mono",
+        "Local WAV valid: round-end.wav, 0.68s, PCM16 mono",
+        "HTML: 347 unique IDs; all local assets and anchors resolve",
+        "SVG: XML parsed, viewBox and local references valid",
+        "Required classroom HTML structures exist; 3 court optgroups; audio has no autoplay",
+        "No inline handlers, remote scripts or root-relative assets",
+        "Fan assets: 35 original SVGs parsed; data-driven relative asset paths resolve",
+        "Photo XML: 16 home, 1 night and 3 encounter compositions parsed",
+        "Photo XML has two characters, no external image references; PNG pixel output remains manual QA",
+        "Game XML: 15 dedicated SVG scenes parsed without browser rendering",
+        "Bay XML: 5 local terrain/light/occlusion layers and 12 arena/court/pedestrian compositions valid",
+        "Scenery XML: 20 day/night landmarks, 6 cars x 3 views, 2 traffic lanes, 8 scenic photo compositions valid",
+        "Pixel: 188 PNG/SVG pairs; valid native grids/CRC/pixels; 6 arena, 3 court, 6 car, 8 pedestrian, 9 prop models",
+        "Memories: 5 original local pixel scenes + 5 map props, XML/alt titles/integer grid valid",
+        "Shops: 2 day/night storefronts + 8 original pixel products, XML and integer grid valid",
+        "Team logos: 30 unique mappings; original bytes/alpha/CRC/dimensions and Pages subpaths valid"
+      ]
+    },
+    {
+      "command": "node prototype/three-islands/audit.cjs",
+      "passed": true
+    },
+    {
+      "command": "git diff --exit-code HEAD -- index.html style.css script.js assets .github",
+      "passed": true,
+      "meaning": "Existing production files unchanged"
+    }
+  ],
+  "browserOrWebGLStarted": false,
+  "remoteMutations": false,
+  "pending": [
+    "Visual desktop/mobile QA",
+    "Runtime load time/FPS/draw calls/JS heap/GPU measurements",
+    "PNG download",
+    "Published Pages path",
+    "Real two-device multiplayer"
+  ],
+  "note": "Three geometry/loader run in Node; app event checks use DOM/renderer substitutes, not a GPU benchmark."
+}

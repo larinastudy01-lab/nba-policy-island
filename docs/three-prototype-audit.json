@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "recordedAt": "2026-11-28T14:32:37.441Z",
+  "method": "Terminal static inventory, not browser/network/GPU benchmark",
+  "original": {
+    "htmlListedFiles": {
+      "files": 49,
+      "rawBytes": 1089971,
+      "gzipBytes": 298120
+    },
+    "fullSizeLogoBytes": 26332943,
+    "externalGLBFiles": 0
+  },
+  "prototype": {
+    "entryAndModuleFiles": {
+      "files": 23,
+      "rawBytes": 2538289,
+      "gzipBytes": 551870
+    },
+    "thumbnailBytes": 198596,
+    "modelBytes": 477392,
+    "models": [
+      {
+        "id": "quaternius-sports-car",
+        "path": "./assets/models/quaternius-sports-car.glb",
+        "author": "Quaternius",
+        "license": "CC0-1.0",
+        "source": "https://poly.pizza/m/1mkmFkAz5v",
+        "download": "https://static.poly.pizza/34db1344-31cc-49ac-bc46-c055f68e39ca.glb.br",
+        "acquired": "2026-11-28",
+        "bytes": 175100,
+        "sha256": "bbb1c718d2aaf5f4344e9fb2cd66d8332a998a515b09ddd4dfa14698d787124e",
+        "sourceSha256": "bbb1c718d2aaf5f4344e9fb2cd66d8332a998a515b09ddd4dfa14698d787124e",
+        "modification": "Original mesh; runtime flat palette/Lambert materials",
+        "meshObjects": 4,
+        "meshPrimitives": 11,
+        "triangles": 3148,
+        "imageFiles": 0
+      },
+      {
+        "id": "quaternius-tree",
+        "path": "./assets/models/quaternius-tree.glb",
+        "author": "Quaternius",
+        "license": "CC0-1.0",
+        "source": "https://poly.pizza/m/etFGNvsiFv",
+        "download": "https://static.poly.pizza/53a83125-e16a-4024-b8f6-1e72679c7ddf.glb.br",
+        "acquired": "2026-11-28",
+        "bytes": 302292,
+        "sha256": "0c0c1493cd041a0ba7d98c9306580ebc8fe7a09ef51eb76e00658cd661c33910",
+        "sourceSha256": "2dc587f401a3a86e0e1ee0bb95b4a0293b620b445a26278fcf55b5b68b40b097",
+        "modification": "NormalTree_1 only; removed UV/normal/PBR textures, flat bark/leaf palette; retained geometry and transforms",
+        "meshObjects": 1,
+        "meshPrimitives": 2,
+        "triangles": 8520,
+        "imageFiles": 0
+      }
+    ],
+    "detailsEligible": [
+      "warriors",
+      "lakers",
+      "bulls"
+    ],
+    "maxVisibleDetailedIslands": 1,
+    "detailCacheBudget": {
+      "standard": 2,
+      "low": 1
+    }
+  },
+  "vendor": [
+    {
+      "path": "vendor/three-r187/build/three.module.js",
+      "bytes": 658900,
+      "sha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341"
+    },
+    {
+      "path": "vendor/three-r187/build/three.core.js",
+      "bytes": 1474799,
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "vendor/three-r187/addons/loaders/GLTFLoader.js",
+      "bytes": 119861,
+      "sha256": "532ac726e120039acbcd6cf54328c57acbf7b438176afaa6951257126d11bff1"
+    },
+    {
+      "path": "vendor/three-r187/addons/utils/BufferGeometryUtils.js",
+      "bytes": 39153,
+      "sha256": "7bda2a8ba836b2bcf67cb938d4b9e1bb5d1b1bc616817103ed858c0b58296ce7"
+    },
+    {
+      "path": "vendor/three-r187/addons/utils/SkeletonUtils.js",
+      "bytes": 11535,
+      "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f"
+    },
+    {
+      "path": "vendor/three-r187/LICENSE",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    }
+  ],
+  "unmeasured": {
+    "firstLoadMs": null,
+    "drawCalls": null,
+    "FPS": null,
+    "JSHeap": null,
+    "GPUMemory": null,
+    "realMobile": null,
+    "githubPagesLive": null
+  },
+  "limitations": [
+    "HTML-listed files exclude dynamically requested images; gzip is disk estimation, not actual server transfer.",
+    "No WebGL context or browser was created. Mesh primitives are not measured draw calls.",
+    "Model geometry parse and memory counters do not establish real visual quality or GPU memory."
+  ]
+}
