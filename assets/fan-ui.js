@@ -16,7 +16,7 @@
 
     function upgradePhoto(image,record){
       const key=JSON.stringify(record);image.dataset.photoKey=key;image.dataset.artVersion=record.artVersion||"legacy";
-      if(record.artVersion!=="stylized-3d-v1"||!root.NBA3DPhoto)return;
+      if(!["stylized-3d-v1","stylized-3d-assets-v1"].includes(record.artVersion)||!root.NBA3DPhoto)return;
       root.NBA3DPhoto.exportPNG(record).then(blob=>{const reader=new FileReader();reader.onload=()=>{if(image.dataset.photoKey===key)image.src=reader.result;};reader.readAsDataURL(blob);}).catch(()=>{image.dataset.preview="compatible-vector";});
     }
     function storageNotice() {
@@ -166,7 +166,7 @@
       if(sightContext)return F.normalizePhoto({version:3,artVersion:root.NBAPixel.SPEC.version,kind:"sight",locationId:sightContext.id,background:sightContext.background,avatar:session.getState().saved,pose:$("photo-pose").value,capturedAt:new Date().toISOString()});
       return encounterContext ? F.createEncounterPhoto(encounterContext, session.getState().saved, { pose: $("photo-pose").value }) : F.createPhoto(teamId, session.getState().saved, { pose: $("photo-pose").value, background: $("photo-background").value }, getGameState(),getBayFixture());
     }
-    function liveRecord(){const record=createLiveRecord();return root.NBA_MAP_RENDERER==="three"?{...record,artVersion:"stylized-3d-v1"}:record;}
+    function liveRecord(){const record=createLiveRecord();return root.NBA_MAP_RENDERER==="three"?{...record,artVersion:"stylized-3d-assets-v1"}:record;}
     function renderEncounterPanel(placeId) {
       const encounter = today(), place = Island.getLandmark("encounter", placeId), arrived=hasArrived(placeId), present = encounter.locationId === placeId && arrived;
       const revealed = present && revealedKey === encounterKey(encounter), star = F.getStar(encounter.starId);

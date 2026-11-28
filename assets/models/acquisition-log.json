@@ -1,0 +1,72 @@
+{
+  "acquired": "2026-11-28",
+  "attempts": [
+    {
+      "name": "Vinish Basketball ZIP",
+      "status": "acquired"
+    },
+    {
+      "name": "Innerscene Arena",
+      "status": "acquired"
+    },
+    {
+      "name": "Poly Pizza Golden Gate bridge",
+      "status": "acquired"
+    },
+    {
+      "name": "Poly Pizza Lady Liberty",
+      "status": "acquired"
+    },
+    {
+      "name": "Poly Pizza Empire State Building",
+      "status": "acquired"
+    },
+    {
+      "name": "Poly Pizza Street Straight",
+      "status": "acquired"
+    },
+    {
+      "name": "Poly Pizza Palm Tree",
+      "status": "acquired"
+    },
+    {
+      "name": "Poly Pizza Large Building",
+      "status": "acquired"
+    },
+    {
+      "name": "Poly Pizza Animated Human",
+      "status": "acquired"
+    },
+    {
+      "name": "Vinish security-guard",
+      "status": "acquired"
+    },
+    {
+      "name": "Vinish coconut-palm",
+      "status": "acquired"
+    },
+    {
+      "name": "Vinish wedge-supercar",
+      "status": "acquired"
+    },
+    {
+      "name": "Poly Haven Bench",
+      "status": "acquired"
+    },
+    {
+      "name": "Kenney city-kit-roads",
+      "status": "unavailable",
+      "reason": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "Kenney city-kit-commercial",
+      "status": "unavailable",
+      "reason": "HTTP Error 403: Forbidden"
+    },
+    {
+      "name": "Kenney racing-kit",
+      "status": "unavailable",
+      "reason": "HTTP Error 403: Forbidden"
+    }
+  ]
+}

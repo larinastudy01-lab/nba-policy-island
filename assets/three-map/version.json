@@ -1,11 +1,17 @@
 {
-  "version": "stylized-3d-v1",
-  "date": "2026-11-28",
+  "version": "stylized-3d-assets-v1",
+  "date": "2026-11-29",
   "branch": "integration/stylized-three-v1",
   "baseline": "8cccaa4c0b25d2e464990ac404216f5e2ac84215",
   "backupBranch": "backup/pre-stylized-8cccaa4",
   "primary": "three",
   "fallback": "?map=2d",
-  "detailIslands": ["warriors", "lakers", "bulls"],
-  "rollout": "local integration branch; main and GitHub Pages unchanged"
+  "detailIslands": [
+    "warriors",
+    "lakers",
+    "bulls",
+    "knicks"
+  ],
+  "rollout": "local integration branch; main and GitHub Pages unchanged",
+  "localDownloadedModels": 24
 }

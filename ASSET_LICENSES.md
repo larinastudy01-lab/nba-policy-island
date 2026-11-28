@@ -1,5 +1,48 @@
 # NBA 政策島素材與授權紀錄
 
+本輪已自動取得並整合 24 個模型。以下新清單與 `assets/models/manifest.json` 為目前狀態；後段保留前一版的取得紀錄。所有素材在專案內載入，原站下載失敗的完整包另見 `MANUAL_DOWNLOAD.md`。
+
+## Automatic model acquisition and integration - 2026-11-28
+
+24 local GLBs acquired: 6 CC0, 3 CC BY 3.0, 15 CC BY 4.0. Source files remain in ignored node_modules/model-downloads; optimized runtime models are in assets/models. Hashes, source URLs, authors, dates, geometry, materials and animations are recorded in [manifest](assets/models/manifest.json).
+
+Photographic PBR maps and physical transmission removed; retain net/face/leaf alpha illustrations and Quaternius colour atlas. Animated Human has bone-based outfit vertex colours. Static meshes welded, deduplicated, joined and simplified; positions quantized to 14 bits, normals to 10 bits. Skins and animation tracks retained.
+
+Website attribution: Settings -> [3D Model Credits](assets/models/credits.html). GLB asset.copyright embeds author/license/source/modification. Landmark PNG exports also include attribution. License texts: [CC0](https://creativecommons.org/publicdomain/zero/1.0/), [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+| ID / model | Author | License / original page | Local file |
+|---|---|---|---|
+| `innerscene-arena` / Arena | Innerscene Corp | [CC0-1.0](https://www.innerscene.com/tools/library/3d-parts/arena-2eda82fe) | [innerscene-arena.glb](assets/models/arenas/innerscene-arena.glb) |
+| `poly-animated-human` / Animated Human | Quaternius | [CC0-1.0](https://poly.pizza/m/c3Ibh9I3udk) | [poly-animated-human.glb](assets/models/characters/poly-animated-human.glb) |
+| `poly-empire-state` / Empire State Building | Courday Farnam | [CC-BY-3.0](https://poly.pizza/m/7egp-6G6S57) | [poly-empire-state.glb](assets/models/landmarks/poly-empire-state.glb) |
+| `poly-golden-gate` / Golden Gate bridge | Steren Giannini | [CC-BY-3.0](https://poly.pizza/m/a648BwpXx-A) | [poly-golden-gate.glb](assets/models/landmarks/poly-golden-gate.glb) |
+| `poly-large-building` / Large Building | Kenney | [CC0-1.0](https://poly.pizza/m/JgGLJH2iXj) | [poly-large-building.glb](assets/models/city/poly-large-building.glb) |
+| `poly-liberty` / Lady Liberty | Anna M | [CC-BY-3.0](https://poly.pizza/m/ef9Yd09Doxh) | [poly-liberty.glb](assets/models/landmarks/poly-liberty.glb) |
+| `poly-palm-tree` / Palm Tree | Quaternius | [CC0-1.0](https://poly.pizza/m/DsrrAYmucG) | [poly-palm-tree.glb](assets/models/nature/poly-palm-tree.glb) |
+| `poly-street-straight` / Street Straight | Quaternius | [CC0-1.0](https://poly.pizza/m/UA4axT3nIQ) | [poly-street-straight.glb](assets/models/roads/poly-street-straight.glb) |
+| `polyhaven-bench` / Painted Wooden Bench | Kirill Sannikov | [CC0-1.0](https://polyhaven.com/a/painted_wooden_bench) | [polyhaven-bench.glb](assets/models/street/polyhaven-bench.glb) |
+| `vinish-arena-hoop` / Arena Hoop | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-arena-hoop.glb](assets/models/basketball/vinish-arena-hoop.glb) |
+| `vinish-ball-rack` / Ball Rack | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-ball-rack.glb](assets/models/basketball/vinish-ball-rack.glb) |
+| `vinish-bleachers` / Bleachers | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-bleachers.glb](assets/models/basketball/vinish-bleachers.glb) |
+| `vinish-coconut-palm` / Coconut Palm | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/palms) | [vinish-coconut-palm.glb](assets/models/nature/vinish-coconut-palm.glb) |
+| `vinish-flip-scoreboard` / Flip Scoreboard | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-flip-scoreboard.glb](assets/models/basketball/vinish-flip-scoreboard.glb) |
+| `vinish-half-court` / Half Court | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-half-court.glb](assets/models/basketball/vinish-half-court.glb) |
+| `vinish-led-scoreboard` / Led Scoreboard | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-led-scoreboard.glb](assets/models/basketball/vinish-led-scoreboard.glb) |
+| `vinish-portable-shot-clock` / Portable Shot Clock | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-portable-shot-clock.glb](assets/models/basketball/vinish-portable-shot-clock.glb) |
+| `vinish-scorers-table` / Scorers Table | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-scorers-table.glb](assets/models/basketball/vinish-scorers-table.glb) |
+| `vinish-security-guard` / Security Guard | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/workers-and-jobs) | [vinish-security-guard.glb](assets/models/characters/vinish-security-guard.glb) |
+| `vinish-street-hoop` / Street Hoop | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-street-hoop.glb](assets/models/basketball/vinish-street-hoop.glb) |
+| `vinish-team-bench` / Team Bench | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-team-bench.glb](assets/models/basketball/vinish-team-bench.glb) |
+| `vinish-two-tone-basketball` / Two Tone Basketball | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-two-tone-basketball.glb](assets/models/basketball/vinish-two-tone-basketball.glb) |
+| `vinish-wedge-supercar` / Wedge Supercar | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/supercars) | [vinish-wedge-supercar.glb](assets/models/vehicles/vinish-wedge-supercar.glb) |
+| `vinish-youth-hoop` / Youth Hoop | vinish.dev | [CC-BY-4.0](https://vinish.dev/free-3d-models/basketball) | [vinish-youth-hoop.glb](assets/models/basketball/vinish-youth-hoop.glb) |
+
+Acquisition: `python scripts/acquire-models.py` validates GLB headers, rejects HTML error pages, safely extracts ZIPs, logs failures and continues. Optimization: `node scripts/optimize-models.mjs` with glTF Transform 4.2.1 and meshoptimizer 0.23.0 in node_modules/model-tools. No runtime tool installation, external model URLs, Draco or Meshopt decoder.
+
+Kenney original public download endpoints for three full packs returned HTTP 403; only these confirmed failures appear in [MANUAL_DOWNLOAD.md](MANUAL_DOWNLOAD.md). Kenney Large Building and individual Quaternius road/palm/human models were acquired through Poly Pizza, each with its own verified CC0 license. Poly Haven bench geometry was acquired as glTF + BIN and given the common wood palette; photographic PBR images were deliberately not downloaded.
+
+The following sections are retained historical records. Their earlier not-downloaded statements refer to that earlier phase; this section and current manifest describe the actual acquired models.
+
 ## Stylized 3D 正式整合分支｜2026-11-28
 
 版本 `stylized-3d-v1`，分支 `integration/stylized-three-v1`。以下為本次變動；下方保留上一階段的取得證據。

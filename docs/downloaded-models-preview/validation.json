@@ -1,0 +1,725 @@
+{
+  "recordedAt": "2026-11-28T16:06:48.624Z",
+  "checks": [
+    "Real Chrome GLTFLoader + texture decode + actual WebGL rendering: 24/24 local GLBs",
+    "All 24 imported model types are used by four near-view island scenes; overview stays lightweight",
+    "Imported arena keeps actual original panel, policy 2400 and 3D PNG export",
+    "Downloaded Golden Gate model appears in real PNG with author/license credit",
+    "Day/night, LRU return, no renderer/shader/texture errors or HTTP 404",
+    "Mobile emulation loads near-view models in low mode without external downloads"
+  ],
+  "errors": [],
+  "missing": [],
+  "models": [
+    {
+      "id": "innerscene-arena",
+      "drawCalls": 9,
+      "triangles": 13120,
+      "animations": []
+    },
+    {
+      "id": "poly-animated-human",
+      "drawCalls": 1,
+      "triangles": 1578,
+      "animations": [
+        "Human Armature|ArmatureAction.002",
+        "Human Armature|Death",
+        "Human Armature|Idle",
+        "Human Armature|Jump",
+        "Human Armature|Punch",
+        "Human Armature|Run",
+        "Human Armature|Walk",
+        "Human Armature|Working"
+      ]
+    },
+    {
+      "id": "poly-empire-state",
+      "drawCalls": 2,
+      "triangles": 3724,
+      "animations": []
+    },
+    {
+      "id": "poly-golden-gate",
+      "drawCalls": 4,
+      "triangles": 3712,
+      "animations": []
+    },
+    {
+      "id": "poly-large-building",
+      "drawCalls": 5,
+      "triangles": 840,
+      "animations": []
+    },
+    {
+      "id": "poly-liberty",
+      "drawCalls": 3,
+      "triangles": 2316,
+      "animations": []
+    },
+    {
+      "id": "poly-palm-tree",
+      "drawCalls": 1,
+      "triangles": 2846,
+      "animations": []
+    },
+    {
+      "id": "poly-street-straight",
+      "drawCalls": 1,
+      "triangles": 148,
+      "animations": []
+    },
+    {
+      "id": "polyhaven-bench",
+      "drawCalls": 1,
+      "triangles": 522,
+      "animations": []
+    },
+    {
+      "id": "vinish-arena-hoop",
+      "drawCalls": 8,
+      "triangles": 2992,
+      "animations": []
+    },
+    {
+      "id": "vinish-ball-rack",
+      "drawCalls": 4,
+      "triangles": 32686,
+      "animations": []
+    },
+    {
+      "id": "vinish-bleachers",
+      "drawCalls": 2,
+      "triangles": 1924,
+      "animations": []
+    },
+    {
+      "id": "vinish-coconut-palm",
+      "drawCalls": 4,
+      "triangles": 5774,
+      "animations": []
+    },
+    {
+      "id": "vinish-flip-scoreboard",
+      "drawCalls": 5,
+      "triangles": 2556,
+      "animations": []
+    },
+    {
+      "id": "vinish-half-court",
+      "drawCalls": 3,
+      "triangles": 637,
+      "animations": []
+    },
+    {
+      "id": "vinish-led-scoreboard",
+      "drawCalls": 6,
+      "triangles": 1657,
+      "animations": []
+    },
+    {
+      "id": "vinish-portable-shot-clock",
+      "drawCalls": 4,
+      "triangles": 1040,
+      "animations": []
+    },
+    {
+      "id": "vinish-scorers-table",
+      "drawCalls": 9,
+      "triangles": 2794,
+      "animations": []
+    },
+    {
+      "id": "vinish-security-guard",
+      "drawCalls": 14,
+      "triangles": 15624,
+      "animations": [
+        "Idle",
+        "Walk",
+        "Run"
+      ]
+    },
+    {
+      "id": "vinish-street-hoop",
+      "drawCalls": 7,
+      "triangles": 2846,
+      "animations": []
+    },
+    {
+      "id": "vinish-team-bench",
+      "drawCalls": 7,
+      "triangles": 8928,
+      "animations": []
+    },
+    {
+      "id": "vinish-two-tone-basketball",
+      "drawCalls": 3,
+      "triangles": 6760,
+      "animations": []
+    },
+    {
+      "id": "vinish-wedge-supercar",
+      "drawCalls": 16,
+      "triangles": 66322,
+      "animations": []
+    },
+    {
+      "id": "vinish-youth-hoop",
+      "drawCalls": 6,
+      "triangles": 2280,
+      "animations": []
+    }
+  ],
+  "islands": [
+    {
+      "scenario": "warriors",
+      "version": "stylized-3d-assets-v1",
+      "firstFrameMs": 2112.800000011921,
+      "modelsReadyMs": 4312.699999988079,
+      "fps": 60.0020000666689,
+      "frameMsP95": 18.399999999999636,
+      "drawCalls": 362,
+      "triangles": 570594,
+      "geometries": 484,
+      "textures": 45,
+      "jsHeapBytes": 67096865,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 378,
+      "activeDetails": 1,
+      "cachedDetails": 1,
+      "modelFiles": 14,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "warriors",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 12,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard"
+        ],
+        "failures": []
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "vinish-street-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "vinish-portable-shot-clock",
+        "vinish-ball-rack",
+        "innerscene-arena",
+        "poly-golden-gate",
+        "polyhaven-bench",
+        "vinish-wedge-supercar",
+        "vinish-security-guard"
+      ],
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 29.500000000000014,
+        "z": 49.50000000000003,
+        "span": 57.00000000000003
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T16:06:12.137Z"
+    },
+    {
+      "scenario": "lakers",
+      "version": "stylized-3d-assets-v1",
+      "firstFrameMs": 2112.800000011921,
+      "modelsReadyMs": 4312.699999988079,
+      "fps": 60.0020000666689,
+      "frameMsP95": 18.30000000000109,
+      "drawCalls": 317,
+      "triangles": 329258,
+      "geometries": 559,
+      "textures": 54,
+      "jsHeapBytes": 77554623,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 769,
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 24,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "lakers",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 22,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "vinish-arena-hoop",
+          "vinish-team-bench",
+          "vinish-scorers-table",
+          "vinish-flip-scoreboard",
+          "vinish-youth-hoop",
+          "poly-large-building",
+          "poly-palm-tree",
+          "vinish-coconut-palm",
+          "poly-animated-human",
+          "poly-street-straight"
+        ],
+        "failures": []
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "vinish-arena-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "vinish-team-bench",
+        "vinish-scorers-table",
+        "vinish-flip-scoreboard",
+        "vinish-youth-hoop",
+        "poly-large-building",
+        "poly-palm-tree",
+        "vinish-coconut-palm",
+        "poly-animated-human",
+        "poly-street-straight"
+      ],
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 28.00000000000001,
+        "z": 85.49999999999996,
+        "span": 53.00000000000002
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T16:06:19.105Z"
+    },
+    {
+      "scenario": "bulls",
+      "version": "stylized-3d-assets-v1",
+      "firstFrameMs": 2112.800000011921,
+      "modelsReadyMs": 4312.699999988079,
+      "fps": 60.00200006666886,
+      "frameMsP95": 18.30000000000291,
+      "drawCalls": 224,
+      "triangles": 248886,
+      "geometries": 537,
+      "textures": 38,
+      "jsHeapBytes": 78748486,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1171,
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 24,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "bulls",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 22,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "vinish-arena-hoop",
+          "vinish-team-bench",
+          "vinish-scorers-table",
+          "vinish-flip-scoreboard",
+          "vinish-youth-hoop",
+          "poly-large-building",
+          "poly-palm-tree",
+          "vinish-coconut-palm",
+          "poly-animated-human",
+          "poly-street-straight"
+        ],
+        "failures": []
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "vinish-arena-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "poly-large-building",
+        "polyhaven-bench"
+      ],
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 157.9999999999999,
+        "z": 79.50000000000004,
+        "span": 53.00000000000001
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T16:06:25.901Z"
+    },
+    {
+      "scenario": "knicks",
+      "version": "stylized-3d-assets-v1",
+      "firstFrameMs": 2112.800000011921,
+      "modelsReadyMs": 4312.699999988079,
+      "fps": 60.12224857209657,
+      "frameMsP95": 18.30000000000291,
+      "drawCalls": 205,
+      "triangles": 165910,
+      "geometries": 546,
+      "textures": 38,
+      "jsHeapBytes": 76081591,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 1575,
+      "activeDetails": 1,
+      "cachedDetails": 2,
+      "modelFiles": 26,
+      "quality": "standard",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "knicks",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 24,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard",
+          "vinish-arena-hoop",
+          "vinish-team-bench",
+          "vinish-scorers-table",
+          "vinish-flip-scoreboard",
+          "vinish-youth-hoop",
+          "poly-large-building",
+          "poly-palm-tree",
+          "vinish-coconut-palm",
+          "poly-animated-human",
+          "poly-street-straight",
+          "poly-liberty",
+          "poly-empire-state"
+        ],
+        "failures": []
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "vinish-arena-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "poly-liberty",
+        "poly-empire-state",
+        "poly-large-building"
+      ],
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 275.9999999999998,
+        "z": 77.50000000000004,
+        "span": 53.00000000000001
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 1440,
+        "height": 1000
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "recordedAt": "2026-11-28T16:06:32.675Z"
+    },
+    {
+      "scenario": "warriors-mobile-emulation",
+      "version": "stylized-3d-assets-v1",
+      "firstFrameMs": 1347.4000000059605,
+      "modelsReadyMs": 2047.800000011921,
+      "fps": 28.394750126198886,
+      "frameMsP95": 36.5,
+      "drawCalls": 245,
+      "triangles": 331826,
+      "geometries": 491,
+      "textures": 44,
+      "jsHeapBytes": 74282596,
+      "errors": [],
+      "modelErrors": [],
+      "frames": 191,
+      "activeDetails": 1,
+      "cachedDetails": 1,
+      "modelFiles": 14,
+      "quality": "low",
+      "renderer": "three-stylized-v1",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5060 Laptop GPU (0x00002D59) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "teamId": "warriors",
+      "overview": false,
+      "theme": "day",
+      "position": {
+        "x": 240,
+        "y": 509,
+        "locationId": "warriors",
+        "targetId": "warriors",
+        "direction": "se",
+        "frame": 0,
+        "moving": false
+      },
+      "downloadedModels": {
+        "cached": 12,
+        "ids": [
+          "vinish-half-court",
+          "vinish-street-hoop",
+          "vinish-led-scoreboard",
+          "vinish-bleachers",
+          "vinish-two-tone-basketball",
+          "vinish-portable-shot-clock",
+          "vinish-ball-rack",
+          "innerscene-arena",
+          "poly-golden-gate",
+          "polyhaven-bench",
+          "vinish-wedge-supercar",
+          "vinish-security-guard"
+        ],
+        "failures": []
+      },
+      "placedModels": [
+        "vinish-half-court",
+        "vinish-street-hoop",
+        "vinish-led-scoreboard",
+        "vinish-bleachers",
+        "vinish-two-tone-basketball",
+        "vinish-portable-shot-clock",
+        "vinish-ball-rack",
+        "innerscene-arena",
+        "poly-golden-gate",
+        "polyhaven-bench",
+        "vinish-wedge-supercar",
+        "vinish-security-guard"
+      ],
+      "lighting": {
+        "night": false,
+        "live": [
+          "lakers",
+          "clippers",
+          "mavericks",
+          "celtics",
+          "spurs",
+          "suns",
+          "bucks",
+          "heat",
+          "nets",
+          "jazz",
+          "blazers",
+          "grizzlies",
+          "pistons",
+          "wizards",
+          "hornets"
+        ],
+        "beams": []
+      },
+      "encounterVisible": false,
+      "camera": {
+        "x": 29.500000000000007,
+        "z": 49.500000000000014,
+        "span": 57.000000000000014
+      },
+      "loopScheduled": true,
+      "paused": false,
+      "devicePixelRatio": 1,
+      "canvas": {
+        "width": 390,
+        "height": 844
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "recordedAt": "2026-11-28T16:06:48.029Z"
+    }
+  ],
+  "note": "Real Chrome on recorded desktop GPU; no deployment or remote SQL. Physical mobile and friend PK pending."
+}
